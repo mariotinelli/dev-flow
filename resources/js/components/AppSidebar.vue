@@ -1,6 +1,19 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, FolderGit2, LayoutGrid } from '@lucide/vue';
+import {
+    BarChart3,
+    BookOpen,
+    Bot,
+    FileText,
+    FolderGit2,
+    FolderKanban,
+    LayoutGrid,
+    ListChecks,
+    ListTodo,
+    Settings,
+    Users,
+    Zap,
+} from '@lucide/vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
@@ -15,13 +28,93 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
-import type { NavItem } from '@/types';
+import type { NavGroup, NavItem } from '@/types';
 
-const mainNavItems: NavItem[] = [
+const mainNavGroups: NavGroup[] = [
     {
-        title: 'Dashboard',
-        href: dashboard(),
-        icon: LayoutGrid,
+        title: 'Visão Geral',
+        items: [
+            {
+                title: 'Dashboard',
+                href: dashboard(),
+                icon: LayoutGrid,
+            },
+            {
+                title: 'Projetos',
+                href: dashboard(),
+                icon: FolderKanban,
+            },
+            {
+                title: 'Tarefas',
+                href: dashboard(),
+                icon: ListTodo,
+            },
+        ],
+    },
+    {
+        title: 'Trabalho',
+        items: [
+            {
+                title: 'Sprint',
+                href: dashboard(),
+                icon: Zap,
+            },
+            {
+                title: 'Backlog',
+                href: dashboard(),
+                icon: ListChecks,
+            },
+        ],
+    },
+    {
+        title: 'Inteligência',
+        items: [
+            {
+                title: 'Chat IA',
+                href: dashboard(),
+                icon: Bot,
+            },
+        ],
+    },
+    {
+        title: 'Membros & Docs',
+        items: [
+            {
+                title: 'Documentação',
+                href: dashboard(),
+                icon: FileText,
+            },
+            {
+                title: 'Desenvolvedores',
+                href: dashboard(),
+                icon: Users,
+            },
+        ],
+    },
+    {
+        title: 'Análises',
+        items: [
+            {
+                title: 'Métricas',
+                href: dashboard(),
+                icon: BarChart3,
+            },
+            {
+                title: 'Relatórios',
+                href: dashboard(),
+                icon: BookOpen,
+            },
+        ],
+    },
+    {
+        title: 'Sistema',
+        items: [
+            {
+                title: 'Configurações',
+                href: dashboard(),
+                icon: Settings,
+            },
+        ],
     },
 ];
 
@@ -54,7 +147,7 @@ const footerNavItems: NavItem[] = [
         </SidebarHeader>
 
         <SidebarContent>
-            <NavMain :items="mainNavItems" />
+            <NavMain :groups="mainNavGroups" />
         </SidebarContent>
 
         <SidebarFooter>
