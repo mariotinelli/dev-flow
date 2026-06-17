@@ -28,6 +28,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import { index as developers } from '@/routes/developers';
 import type { NavGroup, NavItem } from '@/types';
 
 const mainNavGroups: NavGroup[] = [
@@ -35,7 +36,7 @@ const mainNavGroups: NavGroup[] = [
         title: 'Visão Geral',
         items: [
             {
-                title: 'Dashboard',
+                title: 'Painel',
                 href: dashboard(),
                 icon: LayoutGrid,
             },
@@ -86,7 +87,7 @@ const mainNavGroups: NavGroup[] = [
             },
             {
                 title: 'Desenvolvedores',
-                href: dashboard(),
+                href: developers(),
                 icon: Users,
             },
         ],
@@ -120,12 +121,12 @@ const mainNavGroups: NavGroup[] = [
 
 const footerNavItems: NavItem[] = [
     {
-        title: 'Repository',
+        title: 'Repositório',
         href: 'https://github.com/laravel/vue-starter-kit',
         icon: FolderGit2,
     },
     {
-        title: 'Documentation',
+        title: 'Documentação',
         href: 'https://laravel.com/docs/starter-kits#vue',
         icon: BookOpen,
     },

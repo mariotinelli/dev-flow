@@ -10,7 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
-class DestroyController extends Controller
+class ActivateController extends Controller
 {
     /**
      * Handle the incoming request.
@@ -18,13 +18,13 @@ class DestroyController extends Controller
     public function __invoke(Developer $developer): RedirectResponse
     {
         DB::transaction(function () use ($developer): void {
-            $developer->load('user');
+            $developer->load(['user' => fn ($query) => $query->withTrashed()]);
 
-            $developer->delete();
-            $developer->user->delete();
+            $developer->restore();
+            $developer->user->restore();
         });
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => 'Desenvolvedor inativado.']);
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Desenvolvedor ativado.']);
 
         return to_route('developers.index');
     }

@@ -17,7 +17,7 @@ withDefaults(defineProps<Props>(), {
 <template>
     <AppShell variant="header">
         <AppHeader :breadcrumbs="breadcrumbs" />
-        <AppContent variant="header">
+        <AppContent variant="header" class="px-4 py-6 sm:px-6 lg:px-8">
             <slot />
         </AppContent>
         <Toaster />

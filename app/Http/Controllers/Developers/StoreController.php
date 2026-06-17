@@ -42,7 +42,7 @@ class StoreController extends Controller
 
         Password::sendResetLink(['email' => $user->email]);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Developer created and password setup link sent.')]);
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Desenvolvedor cadastrado.']);
 
         return to_route('developers.index');
     }

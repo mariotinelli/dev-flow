@@ -47,7 +47,7 @@ class UpdateController extends Controller
             ]);
         });
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Developer updated.')]);
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Desenvolvedor atualizado.']);
 
         return to_route('developers.index');
     }
