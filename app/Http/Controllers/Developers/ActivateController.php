@@ -17,8 +17,10 @@ class ActivateController extends Controller
      */
     public function __invoke(Developer $developer): RedirectResponse
     {
+        $this->authorize('restore', $developer);
+
         DB::transaction(function () use ($developer): void {
-            $developer->load(['user' => fn ($query) => $query->withTrashed()]);
+            $developer->load('user');
 
             $developer->restore();
             $developer->user->restore();

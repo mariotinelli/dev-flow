@@ -6,16 +6,27 @@ use App\Enums\ContractType;
 use App\Enums\Seniority;
 use App\Models\Developer;
 use App\Models\User;
+use Database\Seeders\PermissionSeeder;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Notification;
 use Inertia\Testing\AssertableInertia as Assert;
+
+beforeEach(function () {
+    $this->seed(PermissionSeeder::class);
+});
 
 test('guests are redirected from developer management', function () {
     $this->get(route('developers.index'))->assertRedirect(route('login'));
 });
 
+test('authenticated users without permission cannot view developers', function () {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)->get(route('developers.index'))->assertForbidden();
+});
+
 test('authenticated users can view developers', function () {
-    $user      = User::factory()->create();
+    $user      = User::factory()->admin()->create();
     $developer = Developer::factory()->create();
 
     $response = $this->actingAs($user)->get(route('developers.index'));
@@ -25,7 +36,7 @@ test('authenticated users can view developers', function () {
 });
 
 test('authenticated users can filter developers', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
 
     $matchingUser = User::factory()->create([
         'name'  => 'Ada Lovelace',
@@ -67,7 +78,7 @@ test('authenticated users can filter developers', function () {
 });
 
 test('developer status is based on deleted at', function () {
-    $user      = User::factory()->create();
+    $user      = User::factory()->admin()->create();
     $developer = Developer::factory()->create();
 
     $developer->user->delete();
@@ -88,7 +99,7 @@ test('developer status is based on deleted at', function () {
 });
 
 test('developers list is paginated and keeps filters in pagination links', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
 
     Developer::factory()
         ->count(13)
@@ -119,7 +130,7 @@ test('developers list is paginated and keeps filters in pagination links', funct
 test('authenticated users can create developers and send a password setup link', function () {
     Notification::fake();
 
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
 
     $response = $this->actingAs($user)->post(route('developers.store'), [
         'name'          => 'Ada Lovelace',
@@ -134,7 +145,7 @@ test('authenticated users can create developers and send a password setup link',
         ->assertSessionHas('inertia.flash_data', [
             'toast' => [
                 'type'    => 'success',
-                'message' => 'Desenvolvedor criado e link para definir senha enviado.',
+                'message' => 'Desenvolvedor cadastrado.',
             ],
         ]);
 
@@ -151,7 +162,7 @@ test('authenticated users can create developers and send a password setup link',
 });
 
 test('developer creation validates required fields', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
 
     $response = $this->actingAs($user)->post(route('developers.store'), []);
 
@@ -159,7 +170,7 @@ test('developer creation validates required fields', function () {
 });
 
 test('developer email must be unique', function () {
-    $user              = User::factory()->create();
+    $user              = User::factory()->admin()->create();
     $existingDeveloper = Developer::factory()->create();
 
     $response = $this->actingAs($user)->post(route('developers.store'), [
@@ -174,7 +185,7 @@ test('developer email must be unique', function () {
 });
 
 test('authenticated users can update developers', function () {
-    $user      = User::factory()->create();
+    $user      = User::factory()->admin()->create();
     $developer = Developer::factory()->create([
         'contract_type' => ContractType::Freelance,
         'seniority'     => Seniority::Junior,
@@ -212,7 +223,7 @@ test('authenticated users can update developers', function () {
 });
 
 test('authenticated users can deactivate developers and their users', function () {
-    $user          = User::factory()->create();
+    $user          = User::factory()->admin()->create();
     $developer     = Developer::factory()->create();
     $developerUser = $developer->user;
 
@@ -231,7 +242,7 @@ test('authenticated users can deactivate developers and their users', function (
 });
 
 test('authenticated users can activate developers and their users', function () {
-    $user          = User::factory()->create();
+    $user          = User::factory()->admin()->create();
     $developer     = Developer::factory()->create();
     $developerUser = $developer->user;
 
@@ -253,7 +264,7 @@ test('authenticated users can activate developers and their users', function () 
 });
 
 test('soft deleted developer users cannot authenticate', function () {
-    $user          = User::factory()->create();
+    $user          = User::factory()->admin()->create();
     $developer     = Developer::factory()->create();
     $developerUser = $developer->user;
 

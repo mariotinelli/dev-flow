@@ -74,7 +74,7 @@ defineProps<{
                     </TableCell>
                     <TableCell class="px-4 py-4">
                         <div v-if="developer.is_active" class="flex items-center justify-end gap-2">
-                            <Button variant="outline" size="sm" as-child>
+                            <Button v-if="developer.can.update" variant="outline" size="sm" as-child>
                                 <Link :href="edit(developer.id)">Editar</Link>
                             </Button>
 

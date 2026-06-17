@@ -14,6 +14,9 @@ import DeveloperTable from './partials/DeveloperTable.vue';
 
 const props = defineProps<{
     developers: PaginatedDevelopers;
+    can: {
+        create: boolean;
+    };
     filters: DeveloperFilterValues;
     contractTypes: SelectOption[];
     seniorities: SelectOption[];
@@ -108,7 +111,7 @@ function clearFilters(): void {
                     </Button>
                 </div>
 
-                <Button as-child>
+                <Button v-if="can.create" as-child>
                     <Link :href="create()">
                         <Plus class="size-4" />
                         Novo desenvolvedor

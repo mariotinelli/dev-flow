@@ -22,6 +22,8 @@ class IndexController extends Controller
      */
     public function __invoke(Request $request): Response
     {
+        $this->authorize('viewAny', Developer::class);
+
         $filters = $request->validate([
             'search'        => ['nullable', 'string', 'max:255'],
             'contract_type' => ['nullable', 'integer', Rule::in(ContractType::values())],
@@ -29,16 +31,14 @@ class IndexController extends Controller
             'status'        => ['nullable', 'string', Rule::in(BaseStatus::values())],
         ]);
 
-        $developers = Developer::query()
-            ->withTrashed()
-            ->with(['user' => fn ($query) => $query->withTrashed()])
+        $developers = Developer::withTrashed()
+            ->with('user')
             ->when($filters['search'] ?? null, function ($query, string $search): void {
                 $query->where(function ($query) use ($search): void {
                     $query
                         ->where('role', 'like', "%{$search}%")
                         ->orWhereHas('user', function ($query) use ($search): void {
                             $query
-                                ->withTrashed()
                                 ->where('name', 'like', "%{$search}%")
                                 ->orWhere('email', 'like', "%{$search}%");
                         });
@@ -50,6 +50,7 @@ class IndexController extends Controller
                 match ($status) {
                     BaseStatus::Active->value   => $query->whereNull('deleted_at'),
                     BaseStatus::Inactive->value => $query->whereNotNull('deleted_at'),
+                    default                     => null,
                 };
             })
             ->latest()
@@ -58,7 +59,10 @@ class IndexController extends Controller
 
         return Inertia::render('developers/Index', [
             'developers' => DeveloperResource::collection($developers),
-            'filters'    => [
+            'can'        => [
+                'create' => $request->user()->can('create', Developer::class),
+            ],
+            'filters' => [
                 'search'        => $filters['search'] ?? '',
                 'contract_type' => isset($filters['contract_type']) ? (string) $filters['contract_type'] : 'all',
                 'seniority'     => isset($filters['seniority']) ? (string) $filters['seniority'] : 'all',

@@ -56,7 +56,7 @@ defineProps<{
         </div>
 
         <div v-if="developer.is_active" class="mt-auto flex items-center justify-end gap-2 border-t pt-4">
-            <Button variant="outline" size="sm" as-child>
+            <Button v-if="developer.can.update" variant="outline" size="sm" as-child>
                 <Link :href="edit(developer.id)">Editar</Link>
             </Button>
 

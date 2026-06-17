@@ -6,6 +6,7 @@ namespace App\Http\Requests;
 
 use App\Enums\ContractType;
 use App\Enums\Seniority;
+use App\Models\Developer;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -17,7 +18,7 @@ class UpdateDeveloperRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return $this->user()?->can('update', $this->route('developer')) ?? false;
     }
 
     /**
@@ -28,6 +29,8 @@ class UpdateDeveloperRequest extends FormRequest
     public function rules(): array
     {
         $developer = $this->route('developer');
+
+        assert($developer instanceof Developer);
 
         return [
             'name'  => ['required', 'string', 'max:255'],

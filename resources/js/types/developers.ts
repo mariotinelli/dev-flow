@@ -10,6 +10,11 @@ export type Developer = {
     seniority_label: string;
     is_active: boolean;
     status_label: string;
+    can: {
+        update: boolean;
+        delete: boolean;
+        restore: boolean;
+    };
 };
 
 export type SelectOption = {

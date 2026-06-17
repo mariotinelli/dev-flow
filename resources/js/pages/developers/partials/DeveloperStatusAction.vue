@@ -23,6 +23,8 @@ const props = defineProps<{
 
 const isOpen = ref(false);
 
+const canChangeStatus = props.developer.is_active ? props.developer.can.delete : props.developer.can.restore;
+
 function updateStatus(): void {
     isOpen.value = false;
 
@@ -46,7 +48,7 @@ function updateStatus(): void {
 
 <template>
     <AlertDialog v-model:open="isOpen">
-        <AlertDialogTrigger as-child>
+        <AlertDialogTrigger v-if="canChangeStatus" as-child>
             <Button type="button" :variant="developer.is_active ? 'destructive' : 'default'" size="sm">
                 {{ developer.is_active ? 'Inativar' : 'Ativar' }}
             </Button>

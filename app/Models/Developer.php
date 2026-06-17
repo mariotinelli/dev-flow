@@ -23,6 +23,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
+ * @property-read User $user
  */
 class Developer extends Model
 {
@@ -30,9 +31,12 @@ class Developer extends Model
     use HasFactory;
     use SoftDeletes;
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class)->withTrashed();
     }
 
     protected function casts(): array

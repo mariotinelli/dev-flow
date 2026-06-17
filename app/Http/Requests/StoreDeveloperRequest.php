@@ -6,6 +6,7 @@ namespace App\Http\Requests;
 
 use App\Enums\ContractType;
 use App\Enums\Seniority;
+use App\Models\Developer;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -17,7 +18,7 @@ class StoreDeveloperRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return $this->user()?->can('create', Developer::class) ?? false;
     }
 
     /**

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 import {
     BarChart3,
     BookOpen,
@@ -11,9 +11,11 @@ import {
     ListChecks,
     ListTodo,
     Settings,
+    ShieldCheck,
     Users,
     Zap,
 } from '@lucide/vue';
+import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
@@ -29,7 +31,10 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import { index as developers } from '@/routes/developers';
-import type { NavGroup, NavItem } from '@/types';
+import { index as roles } from '@/routes/roles';
+import type { Auth, NavGroup, NavItem } from '@/types';
+
+const page = usePage<{ auth: Auth }>();
 
 const mainNavGroups: NavGroup[] = [
     {
@@ -89,6 +94,7 @@ const mainNavGroups: NavGroup[] = [
                 title: 'Desenvolvedores',
                 href: developers(),
                 icon: Users,
+                permission: 'developers.view',
             },
         ],
     },
@@ -111,6 +117,12 @@ const mainNavGroups: NavGroup[] = [
         title: 'Sistema',
         items: [
             {
+                title: 'Perfis',
+                href: roles(),
+                icon: ShieldCheck,
+                permission: 'roles.view',
+            },
+            {
                 title: 'Configurações',
                 href: dashboard(),
                 icon: Settings,
@@ -118,6 +130,15 @@ const mainNavGroups: NavGroup[] = [
         ],
     },
 ];
+
+const visibleMainNavGroups = computed<NavGroup[]>(() =>
+    mainNavGroups
+        .map((group) => ({
+            ...group,
+            items: group.items.filter((item) => !item.permission || page.props.auth.permissions[item.permission]),
+        }))
+        .filter((group) => group.items.length > 0),
+);
 
 const footerNavItems: NavItem[] = [
     {
@@ -148,7 +169,7 @@ const footerNavItems: NavItem[] = [
         </SidebarHeader>
 
         <SidebarContent>
-            <NavMain :groups="mainNavGroups" />
+            <NavMain :groups="visibleMainNavGroups" />
         </SidebarContent>
 
         <SidebarFooter>

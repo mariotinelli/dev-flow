@@ -2,13 +2,8 @@
 
 declare(strict_types = 1);
 
-use App\Http\Controllers\Developers\ActivateController;
-use App\Http\Controllers\Developers\CreateController;
-use App\Http\Controllers\Developers\DestroyController;
-use App\Http\Controllers\Developers\EditController;
-use App\Http\Controllers\Developers\IndexController;
-use App\Http\Controllers\Developers\StoreController;
-use App\Http\Controllers\Developers\UpdateController;
+use App\Http\Controllers\Developers;
+use App\Http\Controllers\Roles;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');
@@ -16,14 +11,23 @@ Route::inertia('/', 'Welcome')->name('home');
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
 
-    Route::prefix('developers')->name('developers.')->group(function () {
-        Route::get('/', IndexController::class)->name('index');
-        Route::get('create', CreateController::class)->name('create');
-        Route::post('/', StoreController::class)->name('store');
-        Route::get('{developer}/edit', EditController::class)->name('edit');
-        Route::post('{developer}', UpdateController::class)->name('update');
-        Route::post('{developer}/activate', ActivateController::class)->withTrashed()->name('activate');
-        Route::delete('{developer}', DestroyController::class)->name('destroy');
+    Route::prefix('desenvolvedores')->name('developers.')->group(function () {
+        Route::get('/', Developers\IndexController::class)->name('index');
+        Route::get('cadastrar', Developers\CreateController::class)->name('create');
+        Route::post('/', Developers\StoreController::class)->name('store');
+        Route::get('{developer}/editar', Developers\EditController::class)->name('edit');
+        Route::post('{developer}', Developers\UpdateController::class)->name('update');
+        Route::post('{developer}/ativar', Developers\ActivateController::class)->withTrashed()->name('activate');
+        Route::delete('{developer}', Developers\DestroyController::class)->name('destroy');
+    });
+
+    Route::prefix('perfis')->name('roles.')->group(function () {
+        Route::get('/', Roles\IndexController::class)->name('index');
+        Route::get('cadastrar', Roles\CreateController::class)->name('create');
+        Route::post('/', Roles\StoreController::class)->name('store');
+        Route::get('{role}/editar', Roles\EditController::class)->name('edit');
+        Route::post('{role}', Roles\UpdateController::class)->name('update');
+        Route::delete('{role}', Roles\DestroyController::class)->name('destroy');
     });
 });
 

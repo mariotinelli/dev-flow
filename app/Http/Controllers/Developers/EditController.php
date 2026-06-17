@@ -20,6 +20,8 @@ class EditController extends Controller
      */
     public function __invoke(Request $request, Developer $developer): Response
     {
+        $this->authorize('update', $developer);
+
         $developer->load('user');
 
         return Inertia::render('developers/Edit', [

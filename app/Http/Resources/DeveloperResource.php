@@ -15,7 +15,7 @@ class DeveloperResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @return array{id: int, name: string, email: string, avatar_url: string|null, role: string, contract_type: int, contract_type_label: string, seniority: int, seniority_label: string, is_active: bool, status_label: string}
+     * @return array{id: int, name: string, email: string, avatar_url: string|null, role: string, contract_type: int, contract_type_label: string, seniority: int, seniority_label: string, is_active: bool, status_label: string, can: array{update: bool, delete: bool, restore: bool}}
      */
     public function toArray(Request $request): array
     {
@@ -31,6 +31,11 @@ class DeveloperResource extends JsonResource
             'seniority_label'     => $this->seniority->label(),
             'is_active'           => !$this->trashed(),
             'status_label'        => $this->trashed() ? 'Inativo' : 'Ativo',
+            'can'                 => [
+                'update'  => $request->user()->can('update', $this->resource),
+                'delete'  => $request->user()->can('delete', $this->resource),
+                'restore' => $request->user()->can('restore', $this->resource),
+            ],
         ];
     }
 }

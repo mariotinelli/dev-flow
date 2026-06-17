@@ -17,6 +17,8 @@ class DestroyController extends Controller
      */
     public function __invoke(Developer $developer): RedirectResponse
     {
+        $this->authorize('delete', $developer);
+
         DB::transaction(function () use ($developer): void {
             $developer->load('user');
 
