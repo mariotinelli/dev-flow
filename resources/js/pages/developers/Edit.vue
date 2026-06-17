@@ -7,13 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { getInitials } from '@/composables/useInitials';
 import { index } from '@/routes/developers';
 import type { Developer, SelectOption } from '@/types';
@@ -57,14 +51,8 @@ defineOptions({
         >
             <div class="flex items-center gap-4">
                 <Avatar class="size-16">
-                    <AvatarImage
-                        v-if="developer.avatar_url"
-                        :src="developer.avatar_url"
-                        :alt="developer.name"
-                    />
-                    <AvatarFallback>{{
-                        getInitials(developer.name)
-                    }}</AvatarFallback>
+                    <AvatarImage v-if="developer.avatar_url" :src="developer.avatar_url" :alt="developer.name" />
+                    <AvatarFallback>{{ getInitials(developer.name) }}</AvatarFallback>
                 </Avatar>
                 <div>
                     <p class="font-medium">{{ developer.name }}</p>
@@ -77,13 +65,7 @@ defineOptions({
             <div class="grid gap-6 md:grid-cols-2">
                 <div class="grid gap-2">
                     <Label for="name">Nome</Label>
-                    <Input
-                        id="name"
-                        name="name"
-                        required
-                        autocomplete="name"
-                        :default-value="developer.name"
-                    />
+                    <Input id="name" name="name" required autocomplete="name" :default-value="developer.name" />
                     <InputError :message="errors.name" />
                 </div>
 
@@ -105,8 +87,7 @@ defineOptions({
                 <Label for="avatar">Avatar</Label>
                 <Input id="avatar" type="file" name="avatar" accept="image/*" />
                 <p class="text-xs text-muted-foreground">
-                    Envie uma nova imagem apenas se quiser substituir o avatar
-                    atual.
+                    Envie uma nova imagem apenas se quiser substituir o avatar atual.
                 </p>
                 <InputError :message="errors.avatar" />
             </div>
@@ -114,22 +95,13 @@ defineOptions({
             <div class="grid gap-6 md:grid-cols-3">
                 <div class="grid gap-2 md:col-span-1">
                     <Label for="role">Cargo/Função</Label>
-                    <Input
-                        id="role"
-                        name="role"
-                        required
-                        :default-value="developer.role"
-                    />
+                    <Input id="role" name="role" required :default-value="developer.role" />
                     <InputError :message="errors.role" />
                 </div>
 
                 <div class="grid gap-2">
                     <Label for="contract_type">Contrato</Label>
-                    <Select
-                        name="contract_type"
-                        required
-                        :default-value="developer.contract_type"
-                    >
+                    <Select name="contract_type" required :default-value="developer.contract_type">
                         <SelectTrigger id="contract_type" class="w-full">
                             <SelectValue placeholder="Selecione" />
                         </SelectTrigger>
@@ -148,11 +120,7 @@ defineOptions({
 
                 <div class="grid gap-2">
                     <Label for="seniority">Senioridade</Label>
-                    <Select
-                        name="seniority"
-                        required
-                        :default-value="developer.seniority"
-                    >
+                    <Select name="seniority" required :default-value="developer.seniority">
                         <SelectTrigger id="seniority" class="w-full">
                             <SelectValue placeholder="Selecione" />
                         </SelectTrigger>
@@ -174,9 +142,7 @@ defineOptions({
                 <Button variant="outline" as-child>
                     <Link :href="index()">Cancelar</Link>
                 </Button>
-                <Button type="submit" :disabled="processing"
-                    >Salvar alterações</Button
-                >
+                <Button type="submit" :disabled="processing">Salvar alterações</Button>
             </div>
         </Form>
     </div>

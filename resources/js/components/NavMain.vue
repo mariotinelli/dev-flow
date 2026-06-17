@@ -22,11 +22,7 @@ const { isCurrentOrParentUrl } = useCurrentUrl();
         <SidebarGroupLabel>{{ group.title }}</SidebarGroupLabel>
         <SidebarMenu>
             <SidebarMenuItem v-for="item in group.items" :key="item.title">
-                <SidebarMenuButton
-                    as-child
-                    :is-active="isCurrentOrParentUrl(item.href)"
-                    :tooltip="item.title"
-                >
+                <SidebarMenuButton as-child :is-active="isCurrentOrParentUrl(item.href)" :tooltip="item.title">
                     <Link :href="item.href">
                         <component :is="item.icon" />
                         <span>{{ item.title }}</span>

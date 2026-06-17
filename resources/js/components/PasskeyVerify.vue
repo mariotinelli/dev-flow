@@ -38,19 +38,11 @@ const { verify, isLoading, error, isSupported } = usePasskeyVerify({
 <template>
     <div v-if="isSupported">
         <div class="grid gap-2">
-            <Button
-                type="button"
-                variant="outline"
-                class="w-full"
-                @click="verify"
-                :disabled="isLoading"
-            >
+            <Button type="button" variant="outline" class="w-full" @click="verify" :disabled="isLoading">
                 <Spinner v-if="isLoading" />
                 <KeyRound v-else class="h-4 w-4" />
                 {{
-                    isLoading
-                        ? (props.loadingLabel ?? 'Authenticating...')
-                        : (props.label ?? 'Sign in with a passkey')
+                    isLoading ? (props.loadingLabel ?? 'Authenticating...') : (props.label ?? 'Sign in with a passkey')
                 }}
             </Button>
 

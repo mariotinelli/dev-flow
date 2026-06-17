@@ -5,12 +5,7 @@ import { reactive, ref } from 'vue';
 import Heading from '@/components/Heading.vue';
 import { Button } from '@/components/ui/button';
 import { create, index } from '@/routes/developers';
-import type {
-    DeveloperFilterValues,
-    PaginatedDevelopers,
-    SelectOption,
-    StatusOption,
-} from '@/types';
+import type { DeveloperFilterValues, PaginatedDevelopers, SelectOption, StatusOption } from '@/types';
 import DeveloperEmptyState from './partials/DeveloperEmptyState.vue';
 import DeveloperFilters from './partials/DeveloperFilters.vue';
 import DeveloperGrid from './partials/DeveloperGrid.vue';
@@ -48,9 +43,7 @@ const filterForm = reactive<DeveloperFilterValues>({ ...props.filters });
 function submitFilters(): void {
     const query = Object.fromEntries(
         Object.entries(filterForm).filter(
-            ([key, value]) =>
-                value !== '' &&
-                value !== (key === 'status' ? BaseStatus.All : 'all'),
+            ([key, value]) => value !== '' && value !== (key === 'status' ? BaseStatus.All : 'all'),
         ),
     );
 
@@ -83,13 +76,8 @@ function clearFilters(): void {
     <div class="flex h-full flex-1 flex-col gap-6">
         <Head title="Desenvolvedores" />
 
-        <div
-            class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
-        >
-            <Heading
-                title="Desenvolvedores"
-                description="Gerencie os membros técnicos que podem acessar o sistema."
-            />
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <Heading title="Desenvolvedores" description="Gerencie os membros técnicos que podem acessar o sistema." />
 
             <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
                 <div
@@ -139,10 +127,7 @@ function clearFilters(): void {
         />
 
         <DeveloperEmptyState v-if="developers.data.length === 0" />
-        <DeveloperGrid
-            v-else-if="viewMode === 'grid'"
-            :developers="developers.data"
-        />
+        <DeveloperGrid v-else-if="viewMode === 'grid'" :developers="developers.data" />
         <DeveloperTable v-else :developers="developers.data" />
 
         <DeveloperPagination :meta="developers.meta" />

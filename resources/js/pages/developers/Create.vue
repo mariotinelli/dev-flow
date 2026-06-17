@@ -6,13 +6,7 @@ import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { index } from '@/routes/developers';
 import type { SelectOption } from '@/types';
 
@@ -61,13 +55,7 @@ defineOptions({
 
                 <div class="grid gap-2">
                     <Label for="email">E-mail</Label>
-                    <Input
-                        id="email"
-                        type="email"
-                        name="email"
-                        required
-                        autocomplete="email"
-                    />
+                    <Input id="email" type="email" name="email" required autocomplete="email" />
                     <InputError :message="errors.email" />
                 </div>
             </div>
@@ -81,12 +69,7 @@ defineOptions({
             <div class="grid gap-6 md:grid-cols-3">
                 <div class="grid gap-2 md:col-span-1">
                     <Label for="role">Cargo/Função</Label>
-                    <Input
-                        id="role"
-                        name="role"
-                        required
-                        placeholder="Desenvolvedor backend"
-                    />
+                    <Input id="role" name="role" required placeholder="Desenvolvedor backend" />
                     <InputError :message="errors.role" />
                 </div>
 
@@ -133,9 +116,7 @@ defineOptions({
                 <Button variant="outline" as-child>
                     <Link :href="index()">Cancelar</Link>
                 </Button>
-                <Button type="submit" :disabled="processing"
-                    >Salvar e enviar link</Button
-                >
+                <Button type="submit" :disabled="processing">Salvar e enviar link</Button>
             </div>
         </Form>
     </div>

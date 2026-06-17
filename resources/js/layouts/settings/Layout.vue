@@ -30,25 +30,16 @@ const { isCurrentOrParentUrl } = useCurrentUrl();
 
 <template>
     <div>
-        <Heading
-            title="Configurações"
-            description="Gerencie seu perfil e as configurações da conta"
-        />
+        <Heading title="Configurações" description="Gerencie seu perfil e as configurações da conta" />
 
         <div class="flex flex-col lg:flex-row lg:space-x-12">
             <aside class="w-full max-w-xl lg:w-48">
-                <nav
-                    class="flex flex-col space-y-1 space-x-0"
-                    aria-label="Configurações"
-                >
+                <nav class="flex flex-col space-y-1 space-x-0" aria-label="Configurações">
                     <Button
                         v-for="item in sidebarNavItems"
                         :key="toUrl(item.href)"
                         variant="ghost"
-                        :class="[
-                            'w-full justify-start',
-                            { 'bg-muted': isCurrentOrParentUrl(item.href) },
-                        ]"
+                        :class="['w-full justify-start', { 'bg-muted': isCurrentOrParentUrl(item.href) }]"
                         as-child
                     >
                         <Link :href="item.href">

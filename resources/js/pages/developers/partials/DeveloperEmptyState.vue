@@ -13,12 +13,9 @@ import { create } from '@/routes/developers';
             <UserRound class="size-8 text-muted-foreground" />
         </div>
         <div class="space-y-1">
-            <h2 class="text-lg font-semibold">
-                Nenhum desenvolvedor cadastrado
-            </h2>
+            <h2 class="text-lg font-semibold">Nenhum desenvolvedor cadastrado</h2>
             <p class="text-sm text-muted-foreground">
-                Cadastre o primeiro desenvolvedor e envie o link para definição
-                de senha.
+                Cadastre o primeiro desenvolvedor e envie o link para definição de senha.
             </p>
         </div>
         <Button as-child>

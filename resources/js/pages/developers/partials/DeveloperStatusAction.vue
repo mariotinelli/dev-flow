@@ -47,11 +47,7 @@ function updateStatus(): void {
 <template>
     <AlertDialog v-model:open="isOpen">
         <AlertDialogTrigger as-child>
-            <Button
-                type="button"
-                :variant="developer.is_active ? 'destructive' : 'default'"
-                size="sm"
-            >
+            <Button type="button" :variant="developer.is_active ? 'destructive' : 'default'" size="sm">
                 {{ developer.is_active ? 'Inativar' : 'Ativar' }}
             </Button>
         </AlertDialogTrigger>
@@ -60,20 +56,15 @@ function updateStatus(): void {
             <div class="space-y-6">
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                        {{
-                            developer.is_active
-                                ? 'Inativar desenvolvedor?'
-                                : 'Ativar desenvolvedor?'
-                        }}
+                        {{ developer.is_active ? 'Inativar desenvolvedor?' : 'Ativar desenvolvedor?' }}
                     </AlertDialogTitle>
                     <AlertDialogDescription>
                         <template v-if="developer.is_active">
-                            O acesso de {{ developer.name }} será inativado e
-                            ele não poderá mais autenticar no sistema.
+                            O acesso de {{ developer.name }} será inativado e ele não poderá mais autenticar no sistema.
                         </template>
                         <template v-else>
-                            O acesso de {{ developer.name }} será reativado e
-                            ele poderá autenticar novamente no sistema.
+                            O acesso de {{ developer.name }} será reativado e ele poderá autenticar novamente no
+                            sistema.
                         </template>
                     </AlertDialogDescription>
                 </AlertDialogHeader>
@@ -88,11 +79,7 @@ function updateStatus(): void {
                         "
                         @click="updateStatus"
                     >
-                        {{
-                            developer.is_active
-                                ? 'Confirmar inativação'
-                                : 'Confirmar ativação'
-                        }}
+                        {{ developer.is_active ? 'Confirmar inativação' : 'Confirmar ativação' }}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </div>

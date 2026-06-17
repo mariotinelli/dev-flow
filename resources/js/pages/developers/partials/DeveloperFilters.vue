@@ -3,18 +3,8 @@ import { Search, X } from '@lucide/vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
-import type {
-    DeveloperFilterValues,
-    SelectOption,
-    StatusOption,
-} from '@/types';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import type { DeveloperFilterValues, SelectOption, StatusOption } from '@/types';
 
 defineProps<{
     contractTypes: SelectOption[];
@@ -98,11 +88,7 @@ const emit = defineEmits<{
                 </SelectTrigger>
                 <SelectContent>
                     <SelectItem value="all">Todos</SelectItem>
-                    <SelectItem
-                        v-for="status in statuses"
-                        :key="status.value"
-                        :value="status.value"
-                    >
+                    <SelectItem v-for="status in statuses" :key="status.value" :value="status.value">
                         {{ status.label }}
                     </SelectItem>
                 </SelectContent>
@@ -111,12 +97,7 @@ const emit = defineEmits<{
 
         <div class="flex gap-2">
             <Button type="submit" class="flex-1 lg:flex-none">Filtrar</Button>
-            <Button
-                type="button"
-                variant="outline"
-                class="flex-1 gap-2 lg:flex-none"
-                @click="emit('clear')"
-            >
+            <Button type="button" variant="outline" class="flex-1 gap-2 lg:flex-none" @click="emit('clear')">
                 <X class="size-4" />
                 Limpar
             </Button>

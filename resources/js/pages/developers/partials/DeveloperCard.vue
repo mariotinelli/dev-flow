@@ -20,14 +20,8 @@ defineProps<{
         <div class="flex items-start justify-between gap-4">
             <div class="flex min-w-0 items-center gap-3">
                 <Avatar class="size-12">
-                    <AvatarImage
-                        v-if="developer.avatar_url"
-                        :src="developer.avatar_url"
-                        :alt="developer.name"
-                    />
-                    <AvatarFallback>{{
-                        getInitials(developer.name)
-                    }}</AvatarFallback>
+                    <AvatarImage v-if="developer.avatar_url" :src="developer.avatar_url" :alt="developer.name" />
+                    <AvatarFallback>{{ getInitials(developer.name) }}</AvatarFallback>
                 </Avatar>
 
                 <div class="min-w-0">
@@ -47,11 +41,7 @@ defineProps<{
 
         <div class="space-y-3">
             <div>
-                <p
-                    class="text-xs font-medium tracking-wide text-muted-foreground uppercase"
-                >
-                    Cargo/Função
-                </p>
+                <p class="text-xs font-medium tracking-wide text-muted-foreground uppercase">Cargo/Função</p>
                 <p class="text-sm">{{ developer.role }}</p>
             </div>
 
@@ -65,20 +55,14 @@ defineProps<{
             </div>
         </div>
 
-        <div
-            v-if="developer.is_active"
-            class="mt-auto flex items-center justify-end gap-2 border-t pt-4"
-        >
+        <div v-if="developer.is_active" class="mt-auto flex items-center justify-end gap-2 border-t pt-4">
             <Button variant="outline" size="sm" as-child>
                 <Link :href="edit(developer.id)">Editar</Link>
             </Button>
 
             <DeveloperStatusAction :developer="developer" />
         </div>
-        <div
-            v-else
-            class="mt-auto flex items-center justify-end gap-2 border-t pt-4"
-        >
+        <div v-else class="mt-auto flex items-center justify-end gap-2 border-t pt-4">
             <DeveloperStatusAction :developer="developer" />
         </div>
     </article>

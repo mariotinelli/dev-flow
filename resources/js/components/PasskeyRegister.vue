@@ -13,13 +13,9 @@ const emit = defineEmits<{
 const getDefaultPasskeyName = () => {
     const ua = navigator.userAgent;
 
-    const browser = ['Chrome', 'Firefox', 'Safari', 'Edge', 'Opera'].find(
-        (browser) => new RegExp(browser).test(ua),
-    );
+    const browser = ['Chrome', 'Firefox', 'Safari', 'Edge', 'Opera'].find((browser) => new RegExp(browser).test(ua));
 
-    const os = ['iPhone', 'iPad', 'Android', 'Mac', 'Windows'].find((os) =>
-        new RegExp(os).test(ua),
-    );
+    const os = ['iPhone', 'iPad', 'Android', 'Mac', 'Windows'].find((os) => new RegExp(os).test(ua));
 
     return [browser, os].filter(Boolean).join(' on ') || '';
 };
@@ -52,19 +48,11 @@ const handleCancel = () => {
 </script>
 
 <template>
-    <div v-if="!isSupported" class="text-sm text-muted-foreground">
-        Passkeys are not supported in this browser.
-    </div>
+    <div v-if="!isSupported" class="text-sm text-muted-foreground">Passkeys are not supported in this browser.</div>
 
-    <Button v-else-if="!showForm" variant="outline" @click="showForm = true">
-        Add passkey
-    </Button>
+    <Button v-else-if="!showForm" variant="outline" @click="showForm = true"> Add passkey </Button>
 
-    <form
-        v-else
-        @submit="handleSubmit"
-        class="space-y-4 rounded-lg border border-border bg-muted/50 p-4"
-    >
+    <form v-else @submit="handleSubmit" class="space-y-4 rounded-lg border border-border bg-muted/50 p-4">
         <div class="grid gap-2">
             <Label for="passkey-name">Passkey name</Label>
             <Input
@@ -75,9 +63,7 @@ const handleCancel = () => {
                 class="mt-1 block w-full border-foreground/20"
                 autofocus
             />
-            <p class="text-xs text-muted-foreground">
-                A name helps you identify this passkey later.
-            </p>
+            <p class="text-xs text-muted-foreground">A name helps you identify this passkey later.</p>
         </div>
 
         <InputError v-if="error" :message="error" />
@@ -86,9 +72,7 @@ const handleCancel = () => {
             <Button type="submit" :disabled="isLoading || !name.trim()">
                 {{ isLoading ? 'Registering...' : 'Register passkey' }}
             </Button>
-            <Button type="button" variant="ghost" @click="handleCancel">
-                Cancel
-            </Button>
+            <Button type="button" variant="ghost" @click="handleCancel"> Cancel </Button>
         </div>
     </form>
 </template>

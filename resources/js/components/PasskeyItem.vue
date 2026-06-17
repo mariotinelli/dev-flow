@@ -34,9 +34,7 @@ const handleDelete = () => {
 <template>
     <div class="flex items-center justify-between border-b p-4 last:border-b-0">
         <div class="flex items-center gap-4">
-            <div
-                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-muted"
-            >
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-muted">
                 <KeyRound class="h-5 w-5 text-muted-foreground" />
             </div>
             <div class="space-y-1">
@@ -74,18 +72,14 @@ const handleDelete = () => {
             <DialogContent>
                 <DialogTitle>Remove passkey</DialogTitle>
                 <DialogDescription>
-                    Are you sure you want to remove the "{{ passkey.name }}"
-                    passkey? You will no longer be able to use it to sign in.
+                    Are you sure you want to remove the "{{ passkey.name }}" passkey? You will no longer be able to use
+                    it to sign in.
                 </DialogDescription>
                 <DialogFooter class="gap-2">
                     <DialogClose as-child>
                         <Button variant="secondary">Cancel</Button>
                     </DialogClose>
-                    <Button
-                        variant="destructive"
-                        :disabled="isDeleting"
-                        @click="handleDelete"
-                    >
+                    <Button variant="destructive" :disabled="isDeleting" @click="handleDelete">
                         {{ isDeleting ? 'Removing...' : 'Remove passkey' }}
                     </Button>
                 </DialogFooter>

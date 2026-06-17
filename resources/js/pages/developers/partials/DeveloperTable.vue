@@ -3,14 +3,7 @@ import { Link } from '@inertiajs/vue3';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { getInitials } from '@/composables/useInitials';
 import { edit } from '@/routes/developers';
 import type { Developer } from '@/types';
@@ -26,9 +19,7 @@ defineProps<{
         class="overflow-hidden rounded-xl border border-sidebar-border/70 bg-card shadow-xs dark:border-sidebar-border"
     >
         <Table class="min-w-3xl">
-            <TableHeader
-                class="bg-muted/50 text-xs tracking-wide text-muted-foreground uppercase"
-            >
+            <TableHeader class="bg-muted/50 text-xs tracking-wide text-muted-foreground uppercase">
                 <TableRow>
                     <TableHead class="px-4 py-3"> Desenvolvedor </TableHead>
                     <TableHead class="px-4 py-3">Cargo/Função</TableHead>
@@ -77,19 +68,12 @@ defineProps<{
                         </Badge>
                     </TableCell>
                     <TableCell class="px-4 py-4">
-                        <Badge
-                            :variant="
-                                developer.is_active ? 'secondary' : 'outline'
-                            "
-                        >
+                        <Badge :variant="developer.is_active ? 'secondary' : 'outline'">
                             {{ developer.status_label }}
                         </Badge>
                     </TableCell>
                     <TableCell class="px-4 py-4">
-                        <div
-                            v-if="developer.is_active"
-                            class="flex items-center justify-end gap-2"
-                        >
+                        <div v-if="developer.is_active" class="flex items-center justify-end gap-2">
                             <Button variant="outline" size="sm" as-child>
                                 <Link :href="edit(developer.id)">Editar</Link>
                             </Button>

@@ -19,17 +19,12 @@ const props = defineProps<{
 }>();
 
 const previousPageLink = computed(() => props.meta.links[0]);
-const nextPageLink = computed(
-    () => props.meta.links[props.meta.links.length - 1],
-);
+const nextPageLink = computed(() => props.meta.links[props.meta.links.length - 1]);
 const pageLinks = computed(() => props.meta.links.slice(1, -1));
 </script>
 
 <template>
-    <div
-        v-if="meta.total > 0"
-        class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
-    >
+    <div v-if="meta.total > 0" class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <p class="text-sm text-muted-foreground">
             Exibindo {{ meta.from }}-{{ meta.to }} de {{ meta.total }}
             desenvolvedores
@@ -44,34 +39,17 @@ const pageLinks = computed(() => props.meta.links.slice(1, -1));
                             <span>Anterior</span>
                         </Link>
                     </PaginationPrevious>
-                    <PaginationPrevious
-                        v-else
-                        as="span"
-                        class="pointer-events-none opacity-50"
-                    />
+                    <PaginationPrevious v-else as="span" class="pointer-events-none opacity-50" />
                 </PaginationItem>
 
-                <PaginationItem
-                    v-for="link in pageLinks"
-                    :key="`${link.label}-${link.url}`"
-                >
-                    <PaginationEllipsis
-                        v-if="isPaginationEllipsis(link.label)"
-                    />
-                    <PaginationLink
-                        v-else-if="link.url"
-                        as-child
-                        :is-active="link.active"
-                    >
+                <PaginationItem v-for="link in pageLinks" :key="`${link.label}-${link.url}`">
+                    <PaginationEllipsis v-if="isPaginationEllipsis(link.label)" />
+                    <PaginationLink v-else-if="link.url" as-child :is-active="link.active">
                         <Link :href="link.url" preserve-scroll>
                             {{ paginationLabel(link.label) }}
                         </Link>
                     </PaginationLink>
-                    <PaginationLink
-                        v-else
-                        as="span"
-                        class="pointer-events-none opacity-50"
-                    >
+                    <PaginationLink v-else as="span" class="pointer-events-none opacity-50">
                         {{ paginationLabel(link.label) }}
                     </PaginationLink>
                 </PaginationItem>
@@ -83,11 +61,7 @@ const pageLinks = computed(() => props.meta.links.slice(1, -1));
                             <ChevronRight class="size-4" />
                         </Link>
                     </PaginationNext>
-                    <PaginationNext
-                        v-else
-                        as="span"
-                        class="pointer-events-none opacity-50"
-                    />
+                    <PaginationNext v-else as="span" class="pointer-events-none opacity-50" />
                 </PaginationItem>
             </PaginationContent>
         </Pagination>
