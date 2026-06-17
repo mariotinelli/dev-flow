@@ -4,13 +4,13 @@ declare(strict_types = 1);
 
 namespace App\Http\Resources;
 
-use App\Models\Developer;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
 
-/** @mixin Developer */
-class DeveloperResource extends JsonResource
+/** @mixin User */
+class UserResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -21,10 +21,11 @@ class DeveloperResource extends JsonResource
     {
         return [
             'id'                  => $this->id,
-            'name'                => $this->user->name,
-            'email'               => $this->user->email,
+            'name'                => $this->name,
+            'email'               => $this->email,
             'avatar_url'          => $this->avatar_path ? Storage::url($this->avatar_path) : null,
-            'role'                => $this->role,
+            'job_title'           => $this->job_title->value,
+            'job_title_label'     => $this->job_title->label(),
             'contract_type'       => $this->contract_type->value,
             'contract_type_label' => $this->contract_type->label(),
             'seniority'           => $this->seniority->value,

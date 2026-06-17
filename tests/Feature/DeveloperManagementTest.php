@@ -2,9 +2,10 @@
 
 declare(strict_types = 1);
 
+use App\Enums\BaseStatus;
 use App\Enums\ContractType;
+use App\Enums\JobTitle;
 use App\Enums\Seniority;
-use App\Models\Developer;
 use App\Models\User;
 use Database\Seeders\PermissionSeeder;
 use Illuminate\Auth\Notifications\ResetPassword;
@@ -15,168 +16,164 @@ beforeEach(function () {
     $this->seed(PermissionSeeder::class);
 });
 
-test('guests are redirected from developer management', function () {
-    $this->get(route('developers.index'))->assertRedirect(route('login'));
+test('guests are redirected from user management', function () {
+    $this->get(route('users.index'))->assertRedirect(route('login'));
 });
 
-test('authenticated users without permission cannot view developers', function () {
+test('authenticated users without permission cannot view users', function () {
     $user = User::factory()->create();
 
-    $this->actingAs($user)->get(route('developers.index'))->assertForbidden();
+    $this->actingAs($user)->get(route('users.index'))->assertForbidden();
 });
 
-test('authenticated users can view developers', function () {
-    $user      = User::factory()->admin()->create();
-    $developer = Developer::factory()->create();
+test('authenticated users can view users', function () {
+    $user = User::factory()->admin()->create();
+    User::factory()->count(3)->create();
 
-    $response = $this->actingAs($user)->get(route('developers.index'));
+    $response = $this->actingAs($user)->get(route('users.index'));
 
     $response->assertOk();
-    $response->assertSee($developer->user->name);
+    $response->assertSee($user->name);
 });
 
-test('authenticated users can filter developers', function () {
+test('authenticated users can filter users', function () {
     $user = User::factory()->admin()->create();
 
     $matchingUser = User::factory()->create([
         'name'  => 'Ada Lovelace',
         'email' => 'ada@example.com',
-    ]);
-
-    $matchingDeveloper = Developer::factory()->create([
-        'user_id'       => $matchingUser->id,
-        'role'          => 'Backend Developer',
+        'job_title'     => JobTitle::AIEngineer,
         'contract_type' => ContractType::Fixed,
         'seniority'     => Seniority::Lead,
     ]);
 
-    Developer::factory()->create([
-        'role'          => 'Frontend Developer',
+    User::factory()->create([
+        'job_title'     => JobTitle::QAEngineer,
         'contract_type' => ContractType::Freelance,
         'seniority'     => Seniority::Junior,
     ]);
 
     $this->actingAs($user)
-        ->get(route('developers.index', [
+        ->get(route('users.index', [
             'search'        => 'ada',
+            'job_title'     => JobTitle::AIEngineer->value,
             'contract_type' => ContractType::Fixed->value,
             'seniority'     => Seniority::Lead->value,
-            'status'        => 'active',
+            'status'        => BaseStatus::Active->value,
         ]))
         ->assertOk()
         ->assertInertia(
             fn (Assert $page) => $page
-                ->component('developers/Index')
-                ->has('developers.data', 1)
-                ->where('developers.data.0.id', $matchingDeveloper->id)
-                ->where('developers.data.0.status_label', 'Ativo')
+                ->component('users/Index')
+                ->has('users.data', 1)
+                ->where('users.data.0.id', $matchingUser->id)
+                ->where('users.data.0.status_label', 'Ativo')
                 ->where('filters.search', 'ada')
+                ->where('filters.job_title', (string) JobTitle::AIEngineer->value)
                 ->where('filters.contract_type', (string) ContractType::Fixed->value)
                 ->where('filters.seniority', (string) Seniority::Lead->value)
                 ->where('filters.status', 'active'),
         );
 });
 
-test('developer status is based on deleted at', function () {
+test('user status is based on deleted at', function () {
     $user      = User::factory()->admin()->create();
-    $developer = Developer::factory()->create();
-
-    $developer->user->delete();
-    $developer->delete();
+    $otherUser = User::factory()->trashed()->create();
 
     $this->actingAs($user)
-        ->get(route('developers.index', ['status' => 'inactive']))
+        ->get(route('users.index', ['status' => BaseStatus::Inactive->value]))
         ->assertOk()
         ->assertInertia(
             fn (Assert $page) => $page
-                ->component('developers/Index')
-                ->has('developers.data', 1)
-                ->where('developers.data.0.id', $developer->id)
-                ->where('developers.data.0.is_active', false)
-                ->where('developers.data.0.status_label', 'Inativo')
+                ->component('users/Index')
+                ->has('users.data', 1)
+                ->where('users.data.0.id', $otherUser->id)
+                ->where('users.data.0.is_active', false)
+                ->where('users.data.0.status_label', 'Inativo')
                 ->where('filters.status', 'inactive'),
         );
 });
 
-test('developers list is paginated and keeps filters in pagination links', function () {
+test('users list is paginated and keeps filters in pagination links', function () {
     $user = User::factory()->admin()->create();
 
-    Developer::factory()
+    User::factory()
         ->count(13)
         ->create([
+            'job_title'     => JobTitle::BackendDeveloper,
             'contract_type' => ContractType::Fixed,
             'seniority'     => Seniority::Senior,
         ]);
 
     $this->actingAs($user)
-        ->get(route('developers.index', [
+        ->get(route('users.index', [
+            'job_title'     => JobTitle::BackendDeveloper->value,
             'contract_type' => ContractType::Fixed->value,
             'seniority'     => Seniority::Senior->value,
-            'status'        => 'active',
+            'status'        => BaseStatus::Active->value,
             'page'          => 2,
         ]))
         ->assertOk()
         ->assertInertia(
             fn (Assert $page) => $page
-                ->component('developers/Index')
-                ->has('developers.data', 1)
-                ->where('developers.meta.current_page', 2)
-                ->where('developers.meta.last_page', 2)
-                ->where('developers.meta.total', 13)
-                ->where('developers.meta.links.0.url', fn (?string $url): bool => $url !== null && str_contains($url, 'contract_type=' . ContractType::Fixed->value)),
+                ->component('users/Index')
+                ->has('users.data', 1)
+                ->where('users.meta.current_page', 2)
+                ->where('users.meta.last_page', 2)
+                ->where('users.meta.total', 13)
+                ->where('users.meta.links.0.url', fn (?string $url): bool => $url !== null && str_contains($url, 'contract_type=' . ContractType::Fixed->value)),
         );
 });
 
-test('authenticated users can create developers and send a password setup link', function () {
+test('authenticated users can create users and send a password setup link', function () {
     Notification::fake();
 
     $user = User::factory()->admin()->create();
 
-    $response = $this->actingAs($user)->post(route('developers.store'), [
+    $response = $this->actingAs($user)->post(route('users.store'), [
         'name'          => 'Ada Lovelace',
         'email'         => 'ada@example.com',
-        'role'          => 'Backend Developer',
+        'job_title'     => JobTitle::BackendDeveloper->value,
         'contract_type' => ContractType::Freelance->value,
         'seniority'     => Seniority::Senior->value,
     ]);
 
     $response
-        ->assertRedirect(route('developers.index', absolute: false))
+        ->assertRedirect(route('users.index', absolute: false))
         ->assertSessionHas('inertia.flash_data', [
             'toast' => [
                 'type'    => 'success',
-                'message' => 'Desenvolvedor cadastrado.',
+                'message' => 'Usuário cadastrado.',
             ],
         ]);
 
-    $developerUser = User::where('email', 'ada@example.com')->firstOrFail();
+    $createdUser = User::where('email', 'ada@example.com')->firstOrFail();
 
-    $this->assertDatabaseHas('developers', [
-        'user_id'       => $developerUser->id,
-        'role'          => 'Backend Developer',
+    $this->assertDatabaseHas('users', [
+        'job_title'     => JobTitle::BackendDeveloper->value,
         'contract_type' => ContractType::Freelance->value,
         'seniority'     => Seniority::Senior->value,
     ]);
 
-    Notification::assertSentTo($developerUser, ResetPassword::class);
+    Notification::assertSentTo($createdUser, ResetPassword::class);
 });
 
-test('developer creation validates required fields', function () {
+test('user creation validates required fields', function () {
     $user = User::factory()->admin()->create();
 
-    $response = $this->actingAs($user)->post(route('developers.store'), []);
+    $response = $this->actingAs($user)->post(route('users.store'), []);
 
-    $response->assertSessionHasErrors(['name', 'email', 'role', 'contract_type', 'seniority']);
+    $response->assertSessionHasErrors(['name', 'email', 'job_title', 'contract_type', 'seniority']);
 });
 
-test('developer email must be unique', function () {
-    $user              = User::factory()->admin()->create();
-    $existingDeveloper = Developer::factory()->create();
+test('user email must be unique', function () {
+    $user         = User::factory()->admin()->create();
+    $existingUser = User::factory()->create();
 
-    $response = $this->actingAs($user)->post(route('developers.store'), [
+    $response = $this->actingAs($user)->post(route('users.store'), [
         'name'          => 'Grace Hopper',
-        'email'         => $existingDeveloper->user->email,
-        'role'          => 'Frontend Developer',
+        'email'         => $existingUser->email,
+        'job_title'     => JobTitle::BackendDeveloper->value,
         'contract_type' => ContractType::Fixed->value,
         'seniority'     => Seniority::Lead->value,
     ]);
@@ -186,93 +183,84 @@ test('developer email must be unique', function () {
 
 test('authenticated users can update developers', function () {
     $user      = User::factory()->admin()->create();
-    $developer = Developer::factory()->create([
+    $otherUser = User::factory()->create([
+        'job_title'     => JobTitle::BackendDeveloper,
         'contract_type' => ContractType::Freelance,
         'seniority'     => Seniority::Junior,
     ]);
 
-    $response = $this->actingAs($user)->post(route('developers.update', $developer), [
+    $response = $this->actingAs($user)->post(route('users.update', $otherUser), [
         'name'          => 'Updated Name',
         'email'         => 'updated@example.com',
-        'role'          => 'Tech Lead',
+        'job_title'     => JobTitle::BackendDeveloper->value,
         'contract_type' => ContractType::Fixed->value,
         'seniority'     => Seniority::Lead->value,
     ]);
 
     $response
-        ->assertRedirect(route('developers.index', absolute: false))
+        ->assertRedirect(route('users.index', absolute: false))
         ->assertSessionHas('inertia.flash_data', [
             'toast' => [
                 'type'    => 'success',
-                'message' => 'Desenvolvedor atualizado.',
+                'message' => 'Usuário atualizado.',
             ],
         ]);
 
     $this->assertDatabaseHas('users', [
-        'id'    => $developer->user_id,
-        'name'  => 'Updated Name',
-        'email' => 'updated@example.com',
-    ]);
-
-    $this->assertDatabaseHas('developers', [
-        'id'            => $developer->id,
-        'role'          => 'Tech Lead',
+        'id'            => $otherUser->id,
+        'name'          => 'Updated Name',
+        'email'         => 'updated@example.com',
+        'job_title'     => JobTitle::BackendDeveloper->value,
         'contract_type' => ContractType::Fixed->value,
         'seniority'     => Seniority::Lead->value,
     ]);
 });
 
-test('authenticated users can deactivate developers and their users', function () {
+test('authenticated users can deactivate users', function () {
     $user          = User::factory()->admin()->create();
-    $developer     = Developer::factory()->create();
-    $developerUser = $developer->user;
+    $otherUser     = User::factory()->create();
 
-    $response = $this->actingAs($user)->delete(route('developers.destroy', $developer));
+    $response = $this->actingAs($user)->delete(route('users.destroy', $otherUser));
 
     $response
-        ->assertRedirect(route('developers.index', absolute: false))
+        ->assertRedirect(route('users.index', absolute: false))
         ->assertSessionHas('inertia.flash_data', [
             'toast' => [
                 'type'    => 'success',
-                'message' => 'Desenvolvedor inativado.',
+                'message' => 'Usuário inativado.',
             ],
         ]);
-    $this->assertSoftDeleted($developer);
-    $this->assertSoftDeleted($developerUser);
+
+    $this->assertSoftDeleted($otherUser);
 });
 
-test('authenticated users can activate developers and their users', function () {
+test('authenticated users can activate users', function () {
     $user          = User::factory()->admin()->create();
-    $developer     = Developer::factory()->create();
-    $developerUser = $developer->user;
+    $otherUser     = User::factory()->trashed()->create();
 
-    $developer->delete();
-    $developerUser->delete();
-
-    $response = $this->actingAs($user)->post(route('developers.activate', $developer));
+    $response = $this->actingAs($user)->post(route('users.activate', $otherUser));
 
     $response
-        ->assertRedirect(route('developers.index', absolute: false))
+        ->assertRedirect(route('users.index', absolute: false))
         ->assertSessionHas('inertia.flash_data', [
             'toast' => [
                 'type'    => 'success',
-                'message' => 'Desenvolvedor ativado.',
+                'message' => 'Usuário ativado.',
             ],
         ]);
-    $this->assertNotSoftDeleted($developer);
-    $this->assertNotSoftDeleted($developerUser);
+
+    $this->assertNotSoftDeleted($otherUser);
 });
 
-test('soft deleted developer users cannot authenticate', function () {
+test('soft deleted user users cannot authenticate', function () {
     $user          = User::factory()->admin()->create();
-    $developer     = Developer::factory()->create();
-    $developerUser = $developer->user;
+    $otherUser     = User::factory()->create();
 
-    $this->actingAs($user)->delete(route('developers.destroy', $developer));
+    $this->actingAs($user)->delete(route('users.destroy', $otherUser));
     auth()->logout();
 
     $this->post(route('login.store'), [
-        'email'    => $developerUser->email,
+        'email'    => $otherUser->email,
         'password' => 'password',
     ]);
 

@@ -30,7 +30,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
-import { index as developers } from '@/routes/developers';
+import { index as users } from '@/routes/users';
 import { index as roles } from '@/routes/roles';
 import type { Auth, NavGroup, NavItem } from '@/types';
 
@@ -91,10 +91,10 @@ const mainNavGroups: NavGroup[] = [
                 icon: FileText,
             },
             {
-                title: 'Desenvolvedores',
-                href: developers(),
+                title: 'Usuários',
+                href: users(),
                 icon: Users,
-                permission: 'developers.view',
+                permission: 'users.view',
             },
         ],
     },

@@ -1,21 +1,4 @@
-export type Developer = {
-    id: number;
-    name: string;
-    email: string;
-    avatar_url: string | null;
-    role: string;
-    contract_type: number;
-    contract_type_label: string;
-    seniority: number;
-    seniority_label: string;
-    is_active: boolean;
-    status_label: string;
-    can: {
-        update: boolean;
-        delete: boolean;
-        restore: boolean;
-    };
-};
+import type { User } from '@/types';
 
 export type SelectOption = {
     value: number;
@@ -27,8 +10,9 @@ export type StatusOption = {
     label: string;
 };
 
-export type DeveloperFilterValues = {
+export type UserFilterValues = {
     search: string;
+    job_title: string;
     contract_type: string;
     seniority: string;
     status: string;
@@ -49,7 +33,7 @@ export type PaginationMeta = {
     links: PaginationLinkData[];
 };
 
-export type PaginatedDevelopers = {
-    data: Developer[];
+export type PaginatedUsers = {
+    data: User[];
     meta: PaginationMeta;
 };

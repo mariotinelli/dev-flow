@@ -5,8 +5,21 @@ export type User = {
     avatar?: string;
     email_verified_at: string | null;
     two_factor_enabled?: boolean;
+    avatar_url: string | null;
+    role: string;
+    contract_type: number;
+    contract_type_label: string;
+    seniority: number;
+    seniority_label: string;
+    is_active: boolean;
+    status_label: string;
     created_at: string;
     updated_at: string;
+    can: {
+        update: boolean;
+        delete: boolean;
+        restore: boolean;
+    };
     [key: string]: unknown;
 };
 

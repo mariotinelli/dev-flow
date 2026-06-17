@@ -4,8 +4,8 @@ declare(strict_types = 1);
 
 namespace App\Http\Middleware;
 
-use App\Enums\Permissions\DeveloperPermissions;
 use App\Enums\Permissions\RolePermissions;
+use App\Enums\Permissions\UserPermissions;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -45,8 +45,8 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user'        => $request->user(),
                 'permissions' => $request->user() ? [
-                    RolePermissions::View->value      => $request->user()->can(RolePermissions::View->value),
-                    DeveloperPermissions::View->value => $request->user()->can(DeveloperPermissions::View->value),
+                    RolePermissions::View->value => $request->user()->can(RolePermissions::View->value),
+                    UserPermissions::View->value => $request->user()->can(UserPermissions::View->value),
                 ] : [],
             ],
             'sidebarOpen' => !$request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',

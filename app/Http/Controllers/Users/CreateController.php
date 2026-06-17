@@ -2,12 +2,13 @@
 
 declare(strict_types = 1);
 
-namespace App\Http\Controllers\Developers;
+namespace App\Http\Controllers\Users;
 
 use App\Enums\ContractType;
+use App\Enums\JobTitle;
 use App\Enums\Seniority;
 use App\Http\Controllers\Controller;
-use App\Models\Developer;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -19,9 +20,10 @@ class CreateController extends Controller
      */
     public function __invoke(Request $request): Response
     {
-        $this->authorize('create', Developer::class);
+        $this->authorize('create', User::class);
 
-        return Inertia::render('developers/Create', [
+        return Inertia::render('users/Create', [
+            'jobTitles'     => JobTitle::options(),
             'contractTypes' => ContractType::options(),
             'seniorities'   => Seniority::options(),
         ]);

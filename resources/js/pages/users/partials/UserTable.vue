@@ -5,12 +5,12 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { getInitials } from '@/composables/useInitials';
-import { edit } from '@/routes/developers';
-import type { Developer } from '@/types';
-import DeveloperStatusAction from './DeveloperStatusAction.vue';
+import { edit } from '@/routes/users';
+import type { User } from '@/types';
+import UserStatusAction from './UserStatusAction.vue';
 
 defineProps<{
-    developers: Developer[];
+    users: User[];
 }>();
 </script>
 
@@ -21,8 +21,8 @@ defineProps<{
         <Table class="min-w-3xl">
             <TableHeader class="bg-muted/50 text-xs tracking-wide text-muted-foreground uppercase">
                 <TableRow>
-                    <TableHead class="px-4 py-3"> Desenvolvedor </TableHead>
-                    <TableHead class="px-4 py-3">Cargo/Função</TableHead>
+                    <TableHead class="px-4 py-3">Nome</TableHead>
+                    <TableHead class="px-4 py-3">Cargo</TableHead>
                     <TableHead class="px-4 py-3">Contrato</TableHead>
                     <TableHead class="px-4 py-3">Senioridade</TableHead>
                     <TableHead class="px-4 py-3">Status</TableHead>
@@ -30,58 +30,58 @@ defineProps<{
                 </TableRow>
             </TableHeader>
             <TableBody>
-                <TableRow v-for="developer in developers" :key="developer.id">
+                <TableRow v-for="user in users" :key="user.id">
                     <TableCell class="px-4 py-4">
                         <div class="flex min-w-0 items-center gap-3">
                             <Avatar class="size-10">
                                 <AvatarImage
-                                    v-if="developer.avatar_url"
-                                    :src="developer.avatar_url"
-                                    :alt="developer.name"
+                                    v-if="user.avatar_url"
+                                    :src="user.avatar_url"
+                                    :alt="user.name"
                                 />
                                 <AvatarFallback>
-                                    {{ getInitials(developer.name) }}
+                                    {{ getInitials(user.name) }}
                                 </AvatarFallback>
                             </Avatar>
 
                             <div class="min-w-0">
                                 <p class="truncate font-medium">
-                                    {{ developer.name }}
+                                    {{ user.name }}
                                 </p>
                                 <p class="truncate text-muted-foreground">
-                                    {{ developer.email }}
+                                    {{ user.email }}
                                 </p>
                             </div>
                         </div>
                     </TableCell>
                     <TableCell class="px-4 py-4 text-muted-foreground">
-                        {{ developer.role }}
+                        {{ user.job_title_label }}
                     </TableCell>
                     <TableCell class="px-4 py-4">
                         <Badge variant="secondary">
-                            {{ developer.contract_type_label }}
+                            {{ user.contract_type_label }}
                         </Badge>
                     </TableCell>
                     <TableCell class="px-4 py-4">
                         <Badge variant="outline">
-                            {{ developer.seniority_label }}
+                            {{ user.seniority_label }}
                         </Badge>
                     </TableCell>
                     <TableCell class="px-4 py-4">
-                        <Badge :variant="developer.is_active ? 'secondary' : 'outline'">
-                            {{ developer.status_label }}
+                        <Badge :variant="user.is_active ? 'secondary' : 'outline'">
+                            {{ user.status_label }}
                         </Badge>
                     </TableCell>
                     <TableCell class="px-4 py-4">
-                        <div v-if="developer.is_active" class="flex items-center justify-end gap-2">
-                            <Button v-if="developer.can.update" variant="outline" size="sm" as-child>
-                                <Link :href="edit(developer.id)">Editar</Link>
+                        <div v-if="user.is_active" class="flex items-center justify-end gap-2">
+                            <Button v-if="user.can.update" variant="outline" size="sm" as-child>
+                                <Link :href="edit(user.id)">Editar</Link>
                             </Button>
 
-                            <DeveloperStatusAction :developer="developer" />
+                            <UserStatusAction :user="user" />
                         </div>
                         <div v-else class="flex items-center justify-end">
-                            <DeveloperStatusAction :developer="developer" />
+                            <UserStatusAction :user="user" />
                         </div>
                     </TableCell>
                 </TableRow>

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3';
 import { ref } from 'vue';
-import ActivateController from '@/actions/App/Http/Controllers/Developers/ActivateController';
-import DestroyController from '@/actions/App/Http/Controllers/Developers/DestroyController';
+import ActivateController from '@/actions/App/Http/Controllers/Users/ActivateController';
+import DestroyController from '@/actions/App/Http/Controllers/Users/DestroyController';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -15,21 +15,21 @@ import {
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import type { Developer } from '@/types';
+import type { User } from '@/types';
 
 const props = defineProps<{
-    developer: Developer;
+    user: User;
 }>();
 
 const isOpen = ref(false);
 
-const canChangeStatus = props.developer.is_active ? props.developer.can.delete : props.developer.can.restore;
+const canChangeStatus = props.user.is_active ? props.user.can.delete : props.user.can.restore;
 
 function updateStatus(): void {
     isOpen.value = false;
 
-    if (props.developer.is_active) {
-        router.delete(DestroyController.url(props.developer.id), {
+    if (props.user.is_active) {
+        router.delete(DestroyController.url(props.user.id), {
             preserveScroll: true,
         });
 
@@ -37,7 +37,7 @@ function updateStatus(): void {
     }
 
     router.post(
-        ActivateController.url(props.developer.id),
+        ActivateController.url(props.user.id),
         {},
         {
             preserveScroll: true,
@@ -49,8 +49,8 @@ function updateStatus(): void {
 <template>
     <AlertDialog v-model:open="isOpen">
         <AlertDialogTrigger v-if="canChangeStatus" as-child>
-            <Button type="button" :variant="developer.is_active ? 'destructive' : 'default'" size="sm">
-                {{ developer.is_active ? 'Inativar' : 'Ativar' }}
+            <Button type="button" :variant="user.is_active ? 'destructive' : 'default'" size="sm">
+                {{ user.is_active ? 'Inativar' : 'Ativar' }}
             </Button>
         </AlertDialogTrigger>
 
@@ -58,14 +58,14 @@ function updateStatus(): void {
             <div class="space-y-6">
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                        {{ developer.is_active ? 'Inativar desenvolvedor?' : 'Ativar desenvolvedor?' }}
+                        {{ user.is_active ? 'Inativar usuário?' : 'Ativar usuário?' }}
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        <template v-if="developer.is_active">
-                            O acesso de {{ developer.name }} será inativado e ele não poderá mais autenticar no sistema.
+                        <template v-if="user.is_active">
+                            O acesso de {{ user.name }} será inativado e ele não poderá mais autenticar no sistema.
                         </template>
                         <template v-else>
-                            O acesso de {{ developer.name }} será reativado e ele poderá autenticar novamente no
+                            O acesso de {{ user.name }} será reativado e ele poderá autenticar novamente no
                             sistema.
                         </template>
                     </AlertDialogDescription>
@@ -75,13 +75,13 @@ function updateStatus(): void {
                     <AlertDialogCancel> Cancelar </AlertDialogCancel>
                     <AlertDialogAction
                         :class="
-                            developer.is_active
+                            user.is_active
                                 ? 'bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40'
                                 : ''
                         "
                         @click="updateStatus"
                     >
-                        {{ developer.is_active ? 'Confirmar inativação' : 'Confirmar ativação' }}
+                        {{ user.is_active ? 'Confirmar inativação' : 'Confirmar ativação' }}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </div>

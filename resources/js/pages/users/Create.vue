@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import { Form, Head, Link } from '@inertiajs/vue3';
-import StoreController from '@/actions/App/Http/Controllers/Developers/StoreController';
+import StoreController from '@/actions/App/Http/Controllers/Users/StoreController';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { index } from '@/routes/developers';
+import { index } from '@/routes/users';
 import type { SelectOption } from '@/types';
 
 defineProps<{
+    jobTitles: SelectOption[];
     contractTypes: SelectOption[];
     seniorities: SelectOption[];
 }>();
@@ -19,7 +20,7 @@ defineOptions({
     layout: {
         breadcrumbs: [
             {
-                title: 'Desenvolvedores',
+                title: 'Usuários',
                 href: index(),
             },
             {
@@ -67,10 +68,23 @@ defineOptions({
             </div>
 
             <div class="grid gap-6 md:grid-cols-3">
-                <div class="grid gap-2 md:col-span-1">
-                    <Label for="role">Cargo/Função</Label>
-                    <Input id="role" name="role" required placeholder="Desenvolvedor backend" />
-                    <InputError :message="errors.role" />
+                <div class="grid gap-2">
+                    <Label for="job_title">Cargo</Label>
+                    <Select name="job_title" required>
+                        <SelectTrigger id="job_title" class="w-full">
+                            <SelectValue placeholder="Selecione" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem
+                                v-for="jobTitle in jobTitles"
+                                :key="jobTitle.value"
+                                :value="jobTitle.value"
+                            >
+                                {{ jobTitle.label }}
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <InputError :message="errors.job_title" />
                 </div>
 
                 <div class="grid gap-2">
@@ -116,7 +130,7 @@ defineOptions({
                 <Button variant="outline" as-child>
                     <Link :href="index()">Cancelar</Link>
                 </Button>
-                <Button type="submit" :disabled="processing">Salvar e enviar link</Button>
+                <Button type="submit" :disabled="processing">Salvar</Button>
             </div>
         </Form>
     </div>

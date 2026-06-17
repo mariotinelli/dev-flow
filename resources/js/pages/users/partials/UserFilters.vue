@@ -4,15 +4,16 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import type { DeveloperFilterValues, SelectOption, StatusOption } from '@/types';
+import type { UserFilterValues, SelectOption, StatusOption } from '@/types';
 
 defineProps<{
+    jobTitles: SelectOption[];
     contractTypes: SelectOption[];
     seniorities: SelectOption[];
     statuses: StatusOption[];
 }>();
 
-const filters = defineModel<DeveloperFilterValues>('filters', {
+const filters = defineModel<UserFilterValues>('filters', {
     required: true,
 });
 
@@ -28,13 +29,13 @@ const emit = defineEmits<{
         @submit.prevent="emit('submit')"
     >
         <div class="grid gap-2">
-            <Label for="developer-search">Pesquisar</Label>
+            <Label for="user-search">Pesquisar</Label>
             <div class="relative">
                 <Search
                     class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
                 />
                 <Input
-                    id="developer-search"
+                    id="user-search"
                     v-model="filters.search"
                     class="pl-9"
                     placeholder="Nome, e-mail ou cargo"
@@ -75,6 +76,25 @@ const emit = defineEmits<{
                         :value="String(seniority.value)"
                     >
                         {{ seniority.label }}
+                    </SelectItem>
+                </SelectContent>
+            </Select>
+        </div>
+
+        <div class="grid gap-2">
+            <Label for="job_title-filter">Cargo</Label>
+            <Select v-model="filters.job_title">
+                <SelectTrigger id="job_title-filter" class="w-full">
+                    <SelectValue placeholder="Todas" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="all">Todas</SelectItem>
+                    <SelectItem
+                        v-for="jobTitle in jobTitles"
+                        :key="jobTitle.value"
+                        :value="String(jobTitle.value)"
+                    >
+                        {{ jobTitle.label }}
                     </SelectItem>
                 </SelectContent>
             </Select>

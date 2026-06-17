@@ -5,20 +5,21 @@ declare(strict_types = 1);
 namespace App\Http\Requests;
 
 use App\Enums\ContractType;
+use App\Enums\JobTitle;
 use App\Enums\Seniority;
-use App\Models\Developer;
+use App\Models\User;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class UpdateDeveloperRequest extends FormRequest
+class StoreUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return $this->user()?->can('update', $this->route('developer')) ?? false;
+        return $this->user()?->can('create', User::class) ?? false;
     }
 
     /**
@@ -28,22 +29,11 @@ class UpdateDeveloperRequest extends FormRequest
      */
     public function rules(): array
     {
-        $developer = $this->route('developer');
-
-        assert($developer instanceof Developer);
-
         return [
-            'name'  => ['required', 'string', 'max:255'],
-            'email' => [
-                'required',
-                'string',
-                'lowercase',
-                'email',
-                'max:255',
-                Rule::unique('users', 'email')->ignore($developer->user_id),
-            ],
+            'name'          => ['required', 'string', 'max:255'],
+            'email'         => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique('users', 'email')],
             'avatar'        => ['nullable', 'image', 'max:2048'],
-            'role'          => ['required', 'string', 'max:255'],
+            'job_title'     => ['required', 'string',  Rule::in(JobTitle::values())],
             'contract_type' => ['required', 'integer', Rule::in(ContractType::values())],
             'seniority'     => ['required', 'integer', Rule::in(Seniority::values())],
         ];

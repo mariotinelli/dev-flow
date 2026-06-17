@@ -3,7 +3,7 @@
 declare(strict_types = 1);
 
 use App\Enums\Permission;
-use App\Enums\Permissions\DeveloperPermissions;
+use App\Enums\Permissions\UserPermissions;
 use App\Models\User;
 use Database\Seeders\PermissionSeeder;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -60,8 +60,8 @@ test('admin users can create roles with selected permissions', function () {
     $response = $this->actingAs($user)->post(route('roles.store'), [
         'name'        => 'tech-manager',
         'permissions' => [
-            DeveloperPermissions::View->value,
-            DeveloperPermissions::Create->value,
+            UserPermissions::View->value,
+            UserPermissions::Create->value,
         ],
     ]);
 
@@ -78,8 +78,8 @@ test('admin users can create roles with selected permissions', function () {
 
     expect($role->permissions()->pluck('name')->all())
         ->toEqualCanonicalizing([
-            DeveloperPermissions::View->value,
-            DeveloperPermissions::Create->value,
+            UserPermissions::View->value,
+            UserPermissions::Create->value,
         ]);
 });
 
@@ -107,12 +107,12 @@ test('admin role cannot be edited or deleted', function () {
 test('admin users can update editable roles', function () {
     $user = User::factory()->admin()->create();
     $role = Role::create(['name' => 'viewer']);
-    $role->givePermissionTo(DeveloperPermissions::View->value);
+    $role->givePermissionTo(UserPermissions::View->value);
 
     $this->actingAs($user)
         ->post(route('roles.update', $role), [
             'name'        => 'developer-manager',
-            'permissions' => [DeveloperPermissions::Update->value],
+            'permissions' => [UserPermissions::Update->value],
         ])
         ->assertRedirect(route('roles.index', absolute: false));
 
@@ -120,7 +120,7 @@ test('admin users can update editable roles', function () {
 
     expect($role->name)->toBe('developer-manager')
         ->and($role->permissions()->pluck('name')->all())
-        ->toEqualCanonicalizing([DeveloperPermissions::Update->value]);
+        ->toEqualCanonicalizing([UserPermissions::Update->value]);
 });
 
 test('admin users can delete editable roles', function () {

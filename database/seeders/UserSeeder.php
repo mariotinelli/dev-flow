@@ -4,16 +4,16 @@ declare(strict_types = 1);
 
 namespace Database\Seeders;
 
-use App\Models\Developer;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class DeveloperSeeder extends Seeder
+class UserSeeder extends Seeder
 {
     use WithoutModelEvents;
 
     public function run(): void
     {
-        Developer::factory()->count(20)->create();
+        User::factory()->count(20)->create();
     }
 }

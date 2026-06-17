@@ -4,20 +4,21 @@ import { LayoutGrid, List, Plus } from '@lucide/vue';
 import { reactive, ref } from 'vue';
 import Heading from '@/components/Heading.vue';
 import { Button } from '@/components/ui/button';
-import { create, index } from '@/routes/developers';
-import type { DeveloperFilterValues, PaginatedDevelopers, SelectOption, StatusOption } from '@/types';
-import DeveloperEmptyState from './partials/DeveloperEmptyState.vue';
-import DeveloperFilters from './partials/DeveloperFilters.vue';
-import DeveloperGrid from './partials/DeveloperGrid.vue';
-import DeveloperPagination from './partials/DeveloperPagination.vue';
-import DeveloperTable from './partials/DeveloperTable.vue';
+import { create, index } from '@/routes/users';
+import type { UserFilterValues, PaginatedUsers, SelectOption, StatusOption } from '@/types';
+import UserEmptyState from './partials/UserEmptyState.vue';
+import UserFilters from './partials/UserFilters.vue';
+import UserGrid from './partials/UserGrid.vue';
+import UserPagination from './partials/UserPagination.vue';
+import UserTable from './partials/UserTable.vue';
 
 const props = defineProps<{
-    developers: PaginatedDevelopers;
+    users: PaginatedUsers;
     can: {
         create: boolean;
     };
-    filters: DeveloperFilterValues;
+    filters: UserFilterValues;
+    jobTitles: SelectOption[];
     contractTypes: SelectOption[];
     seniorities: SelectOption[];
     statuses: StatusOption[];
@@ -33,7 +34,7 @@ defineOptions({
     layout: {
         breadcrumbs: [
             {
-                title: 'Desenvolvedores',
+                title: 'Usuários',
                 href: index(),
             },
         ],
@@ -41,7 +42,7 @@ defineOptions({
 });
 
 const viewMode = ref<'grid' | 'list'>('grid');
-const filterForm = reactive<DeveloperFilterValues>({ ...props.filters });
+const filterForm = reactive<UserFilterValues>({ ...props.filters });
 
 function submitFilters(): void {
     const query = Object.fromEntries(
@@ -59,6 +60,7 @@ function submitFilters(): void {
 
 function clearFilters(): void {
     filterForm.search = '';
+    filterForm.job_title = 'all';
     filterForm.contract_type = 'all';
     filterForm.seniority = 'all';
     filterForm.status = BaseStatus.All;
@@ -77,10 +79,10 @@ function clearFilters(): void {
 
 <template>
     <div class="flex h-full flex-1 flex-col gap-6">
-        <Head title="Desenvolvedores" />
+        <Head title="Usuários" />
 
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <Heading title="Desenvolvedores" description="Gerencie os membros técnicos que podem acessar o sistema." />
+            <Heading title="Usuários" description="Gerencie os usuários que podem acessar o sistema." />
 
             <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
                 <div
@@ -114,14 +116,15 @@ function clearFilters(): void {
                 <Button v-if="can.create" as-child>
                     <Link :href="create()">
                         <Plus class="size-4" />
-                        Novo desenvolvedor
+                        Novo usuário
                     </Link>
                 </Button>
             </div>
         </div>
 
-        <DeveloperFilters
+        <UserFilters
             v-model:filters="filterForm"
+            :job-titles="jobTitles"
             :contract-types="contractTypes"
             :seniorities="seniorities"
             :statuses="statuses"
@@ -129,10 +132,10 @@ function clearFilters(): void {
             @clear="clearFilters"
         />
 
-        <DeveloperEmptyState v-if="developers.data.length === 0" />
-        <DeveloperGrid v-else-if="viewMode === 'grid'" :developers="developers.data" />
-        <DeveloperTable v-else :developers="developers.data" />
+        <UserEmptyState v-if="users.data.length === 0" />
+        <UserGrid v-else-if="viewMode === 'grid'" :users="users.data" />
+        <UserTable v-else :users="users.data" />
 
-        <DeveloperPagination :meta="developers.meta" />
+        <UserPagination :meta="users.meta" />
     </div>
 </template>
