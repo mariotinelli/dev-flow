@@ -39,10 +39,7 @@ defineOptions({
     <div class="flex h-full flex-1 flex-col gap-6">
         <Head :title="`Editar ${user.name}`" />
 
-        <Heading
-            title="Editar usuário"
-            description="Atualize os dados de acesso e perfil técnico do usuário."
-        />
+        <Heading title="Editar usuário" description="Atualize os dados de acesso e perfil técnico do usuário." />
 
         <Form
             v-bind="UpdateController.form(user.id)"
@@ -101,11 +98,7 @@ defineOptions({
                             <SelectValue placeholder="Selecione" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem
-                                v-for="jobTitle in jobTitles"
-                                :key="jobTitle.value"
-                                :value="jobTitle.value"
-                            >
+                            <SelectItem v-for="jobTitle in jobTitles" :key="jobTitle.value" :value="jobTitle.value">
                                 {{ jobTitle.label }}
                             </SelectItem>
                         </SelectContent>

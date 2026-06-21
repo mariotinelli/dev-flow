@@ -1,8 +1,14 @@
 <?php
 
-use Illuminate\Foundation\Inspiring;
-use Illuminate\Support\Facades\Artisan;
+declare(strict_types = 1);
 
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote');
+use Illuminate\Support\Facades\Schedule;
+
+if (class_exists('Laravel\Telescope\TelescopeServiceProvider')) {
+    Schedule::command('telescope:prune')
+        ->daily()
+        ->onOneServer()
+        ->withoutOverlapping();
+}
+
+Schedule::command('queue:prune-failed', ['--hours' => 48])->weekly();

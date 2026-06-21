@@ -92,9 +92,7 @@ function destroyRole(): void {
                         <TableCell class="px-4 py-4 text-muted-foreground">
                             {{ role.permissions_count }} permissões
                         </TableCell>
-                        <TableCell class="px-4 py-4 text-muted-foreground">
-                            {{ role.users_count }} usuários
-                        </TableCell>
+                        <TableCell class="px-4 py-4 text-muted-foreground"> {{ role.users_count }} usuários </TableCell>
                         <TableCell class="px-4 py-4">
                             <Badge :variant="role.is_protected || role.is_in_use ? 'secondary' : 'outline'">
                                 {{ role.is_protected ? 'Protegida' : role.is_in_use ? 'Em uso' : 'Editável' }}
@@ -126,10 +124,7 @@ function destroyRole(): void {
                                         </AlertDialogHeader>
                                         <AlertDialogFooter>
                                             <AlertDialogCancel @click="roleToDelete = null">Cancelar</AlertDialogCancel>
-                                            <AlertDialogAction
-                                                class="bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40"
-                                                @click="destroyRole"
-                                            >
+                                            <AlertDialogAction variant="destructive" @click="destroyRole">
                                                 Confirmar exclusão
                                             </AlertDialogAction>
                                         </AlertDialogFooter>

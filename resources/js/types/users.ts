@@ -12,6 +12,7 @@ export type StatusOption = {
 
 export type UserFilterValues = {
     search: string;
+    role: string;
     job_title: string;
     contract_type: string;
     seniority: string;

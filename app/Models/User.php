@@ -4,13 +4,15 @@ declare(strict_types = 1);
 
 namespace App\Models;
 
+use App\Enums\BaseStatus;
 use App\Enums\ContractType;
 use App\Enums\JobTitle;
 use App\Enums\Seniority;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -64,5 +66,26 @@ class User extends Authenticatable implements PasskeyUser
             'password'                => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
         ];
+    }
+
+    #[Scope]
+    public function withoutAdmin(Builder $query): void
+    {
+        $query->withoutRole('admin');
+    }
+
+    #[Scope]
+    public function filters(Builder $query, array $filters): void
+    {
+        $query->when($filters['search'] ?? null, fn ($query, string $search) => $query->whereAny(['name', 'email'], 'like', "%{$search}%"))
+            ->when($filters['role'] ?? null, fn ($query, mixed $role) => $query->whereRelation('roles', 'roles.id', (int) $role))
+            ->when($filters['job_title'] ?? null, fn ($query, mixed $jobTitle) => $query->where('job_title', (int) $jobTitle))
+            ->when($filters['contract_type'] ?? null, fn ($query, mixed $contractType) => $query->where('contract_type', (int) $contractType))
+            ->when($filters['seniority'] ?? null, fn ($query, mixed $seniority) => $query->where('seniority', (int) $seniority))
+            ->when($filters['status'] ?? null, fn ($query, string $status) => match ($status) {
+                BaseStatus::Active->value   => $query->whereNull('deleted_at'),
+                BaseStatus::Inactive->value => $query->whereNotNull('deleted_at'),
+                default                     => null,
+            });
     }
 }

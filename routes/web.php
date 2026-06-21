@@ -2,8 +2,8 @@
 
 declare(strict_types = 1);
 
-use App\Http\Controllers\Users;
 use App\Http\Controllers\Roles;
+use App\Http\Controllers\Users;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');

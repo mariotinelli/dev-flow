@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { index } from '@/routes/users';
 import type { SelectOption } from '@/types';
+import ImageUpload from '@/components/ui/image-upload/ImageUpload.vue';
 
 defineProps<{
     jobTitles: SelectOption[];
@@ -34,11 +35,11 @@ defineOptions({
 
 <template>
     <div class="flex h-full flex-1 flex-col gap-6">
-        <Head title="Novo desenvolvedor" />
+        <Head title="Novo usuário" />
 
         <Heading
-            title="Novo desenvolvedor"
-            description="Crie o acesso e um link será enviado para o desenvolvedor definir sua senha."
+            title="Novo usuário"
+            description="Crie o acesso e um link será enviado para o usuário definir sua senha."
         />
 
         <Form
@@ -63,7 +64,7 @@ defineOptions({
 
             <div class="grid gap-2">
                 <Label for="avatar">Avatar</Label>
-                <Input id="avatar" type="file" name="avatar" accept="image/*" />
+                <ImageUpload id="avatar" name="avatar" accept="image/*" />
                 <InputError :message="errors.avatar" />
             </div>
 
@@ -75,11 +76,7 @@ defineOptions({
                             <SelectValue placeholder="Selecione" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem
-                                v-for="jobTitle in jobTitles"
-                                :key="jobTitle.value"
-                                :value="jobTitle.value"
-                            >
+                            <SelectItem v-for="jobTitle in jobTitles" :key="jobTitle.value" :value="jobTitle.value">
                                 {{ jobTitle.label }}
                             </SelectItem>
                         </SelectContent>

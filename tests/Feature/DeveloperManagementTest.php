@@ -11,6 +11,7 @@ use Database\Seeders\PermissionSeeder;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Notification;
 use Inertia\Testing\AssertableInertia as Assert;
+use Spatie\Permission\Models\Role;
 
 beforeEach(function () {
     $this->seed(PermissionSeeder::class);
@@ -38,24 +39,28 @@ test('authenticated users can view users', function () {
 
 test('authenticated users can filter users', function () {
     $user = User::factory()->admin()->create();
+    $role = Role::create(['name' => 'tech-lead']);
 
     $matchingUser = User::factory()->create([
-        'name'  => 'Ada Lovelace',
-        'email' => 'ada@example.com',
+        'name'          => 'Ada Lovelace',
+        'email'         => 'ada@example.com',
         'job_title'     => JobTitle::AIEngineer,
         'contract_type' => ContractType::Fixed,
         'seniority'     => Seniority::Lead,
     ]);
+    $matchingUser->assignRole($role);
 
-    User::factory()->create([
+    $otherUser = User::factory()->create([
         'job_title'     => JobTitle::QAEngineer,
         'contract_type' => ContractType::Freelance,
         'seniority'     => Seniority::Junior,
     ]);
+    $otherUser->assignRole(Role::create(['name' => 'qa']));
 
     $this->actingAs($user)
         ->get(route('users.index', [
             'search'        => 'ada',
+            'role'          => $role->id,
             'job_title'     => JobTitle::AIEngineer->value,
             'contract_type' => ContractType::Fixed->value,
             'seniority'     => Seniority::Lead->value,
@@ -69,6 +74,7 @@ test('authenticated users can filter users', function () {
                 ->where('users.data.0.id', $matchingUser->id)
                 ->where('users.data.0.status_label', 'Ativo')
                 ->where('filters.search', 'ada')
+                ->where('filters.role', (string) $role->id)
                 ->where('filters.job_title', (string) JobTitle::AIEngineer->value)
                 ->where('filters.contract_type', (string) ContractType::Fixed->value)
                 ->where('filters.seniority', (string) Seniority::Lead->value)
@@ -217,8 +223,8 @@ test('authenticated users can update developers', function () {
 });
 
 test('authenticated users can deactivate users', function () {
-    $user          = User::factory()->admin()->create();
-    $otherUser     = User::factory()->create();
+    $user      = User::factory()->admin()->create();
+    $otherUser = User::factory()->create();
 
     $response = $this->actingAs($user)->delete(route('users.destroy', $otherUser));
 
@@ -235,8 +241,8 @@ test('authenticated users can deactivate users', function () {
 });
 
 test('authenticated users can activate users', function () {
-    $user          = User::factory()->admin()->create();
-    $otherUser     = User::factory()->trashed()->create();
+    $user      = User::factory()->admin()->create();
+    $otherUser = User::factory()->trashed()->create();
 
     $response = $this->actingAs($user)->post(route('users.activate', $otherUser));
 
@@ -253,8 +259,8 @@ test('authenticated users can activate users', function () {
 });
 
 test('soft deleted user users cannot authenticate', function () {
-    $user          = User::factory()->admin()->create();
-    $otherUser     = User::factory()->create();
+    $user      = User::factory()->admin()->create();
+    $otherUser = User::factory()->create();
 
     $this->actingAs($user)->delete(route('users.destroy', $otherUser));
     auth()->logout();

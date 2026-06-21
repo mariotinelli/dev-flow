@@ -41,11 +41,14 @@ defineProps<{
 
         <div class="space-y-3">
             <div>
-                <p class="text-xs font-medium tracking-wide text-muted-foreground uppercase">Cargo/Função</p>
+                <p class="text-xs font-medium tracking-wide text-muted-foreground uppercase">Perfil</p>
                 <p class="text-sm">{{ user.role }}</p>
             </div>
 
             <div class="flex flex-wrap gap-2">
+                <Badge>
+                    {{ user.job_title_label }}
+                </Badge>
                 <Badge variant="secondary">
                     {{ user.contract_type_label }}
                 </Badge>

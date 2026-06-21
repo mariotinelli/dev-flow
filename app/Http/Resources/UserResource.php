@@ -30,6 +30,7 @@ class UserResource extends JsonResource
             'contract_type_label' => $this->contract_type->label(),
             'seniority'           => $this->seniority->value,
             'seniority_label'     => $this->seniority->label(),
+            'role'                => str($this->roles()->first()?->name ?? '')->lower()->replace('_', ' ')->ucfirst(),
             'is_active'           => !$this->trashed(),
             'status_label'        => $this->trashed() ? 'Inativo' : 'Ativo',
             'can'                 => [
