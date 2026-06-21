@@ -1,33 +1,28 @@
 <script setup lang="ts">
-import type { PaginationNextProps } from "reka-ui"
+import type { PrimitiveProps } from "reka-ui"
 import type { HTMLAttributes } from "vue"
-import type { ButtonVariants } from '@/components/ui/button'
-import { ChevronRightIcon } from "@lucide/vue"
-import { reactiveOmit } from "@vueuse/core"
-import { PaginationNext, useForwardProps } from "reka-ui"
+import { ChevronRight } from "@lucide/vue"
+import { Primitive } from "reka-ui"
+import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { buttonVariants } from '@/components/ui/button'
 
-const props = withDefaults(defineProps<PaginationNextProps & {
-  size?: ButtonVariants["size"]
+const props = withDefaults(defineProps<PrimitiveProps & {
   class?: HTMLAttributes["class"]
 }>(), {
-  size: "default",
+  as: "a",
 })
-
-const delegatedProps = reactiveOmit(props, "class", "size")
-const forwarded = useForwardProps(delegatedProps)
 </script>
 
 <template>
-  <PaginationNext
+  <Primitive
     data-slot="pagination-next"
-    :class="cn(buttonVariants({ variant: 'ghost', size }), 'gap-1 px-2.5 sm:pr-2.5', props.class)"
-    v-bind="forwarded"
+    :as="as"
+    :as-child="asChild"
+    :class="cn(buttonVariants({ variant: 'ghost', size: 'default' }), 'gap-1 px-2.5 sm:pr-2.5', props.class)"
   >
     <slot>
-      <span class="hidden sm:block">Next</span>
-      <ChevronRightIcon />
+      <span>Próxima</span>
+      <ChevronRight class="size-4" />
     </slot>
-  </PaginationNext>
+  </Primitive>
 </template>

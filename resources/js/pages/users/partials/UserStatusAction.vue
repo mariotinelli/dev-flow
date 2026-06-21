@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import ActivateController from '@/actions/App/Http/Controllers/Users/ActivateController';
 import DestroyController from '@/actions/App/Http/Controllers/Users/DestroyController';
 import {
@@ -23,7 +23,7 @@ const props = defineProps<{
 
 const isOpen = ref(false);
 
-const canChangeStatus = props.user.is_active ? props.user.can.delete : props.user.can.restore;
+const canChangeStatus = computed(() => (props.user.is_active ? props.user.can.delete : props.user.can.restore));
 
 function updateStatus(): void {
     isOpen.value = false;

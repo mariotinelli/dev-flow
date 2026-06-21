@@ -6,19 +6,14 @@ import type { ButtonVariants } from "@/components/ui/button"
 import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
-const props = withDefaults(
-  defineProps<
-    PrimitiveProps & {
-      class?: HTMLAttributes["class"]
-      isActive?: boolean
-      size?: ButtonVariants["size"]
-    }
-  >(),
-  {
-    as: "a",
-    size: "icon",
-  },
-)
+const props = withDefaults(defineProps<PrimitiveProps & {
+  class?: HTMLAttributes["class"]
+  isActive?: boolean
+  size?: ButtonVariants["size"]
+}>(), {
+  as: "a",
+  size: "icon",
+})
 </script>
 
 <template>
@@ -27,12 +22,7 @@ const props = withDefaults(
     :as="as"
     :as-child="asChild"
     :aria-current="isActive ? 'page' : undefined"
-    :class="
-      cn(
-        buttonVariants({ variant: isActive ? 'outline' : 'ghost', size }),
-        props.class,
-      )
-    "
+    :class="cn(buttonVariants({ variant: isActive ? 'outline' : 'ghost', size }), props.class)"
   >
     <slot />
   </Primitive>
