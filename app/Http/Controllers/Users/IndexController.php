@@ -33,7 +33,8 @@ class IndexController extends Controller
             'status'        => ['nullable', 'string', Rule::in(BaseStatus::values())],
         ]);
 
-        $users = User::withTrashed()
+        $users = User::query()
+            ->withoutRole('admin')
             ->when($filters['search'] ?? null, function ($query, string $search): void {
                 $query->whereAny(['role', 'name', 'email'], 'like', "%{$search}%");
             })
