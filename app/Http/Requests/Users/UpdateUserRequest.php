@@ -44,7 +44,7 @@ class UpdateUserRequest extends FormRequest
                 Rule::unique('users', 'email')->ignore($user->id),
             ],
             'avatar'        => ['nullable', 'image', 'max:2048'],
-            'job_title'     => ['required', 'string',  Rule::in(JobTitle::values())],
+            'job_title'     => ['required', 'integer',  Rule::in(JobTitle::values())],
             'contract_type' => ['required', 'integer', Rule::in(ContractType::values())],
             'seniority'     => ['required', 'integer', Rule::in(Seniority::values())],
         ];

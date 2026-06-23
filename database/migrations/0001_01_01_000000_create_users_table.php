@@ -19,9 +19,9 @@ return new class () extends Migration {
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('avatar_path')->nullable();
-            $table->unsignedTinyInteger('job_title');
-            $table->unsignedTinyInteger('contract_type');
-            $table->unsignedTinyInteger('seniority');
+            $table->unsignedTinyInteger('job_title')->nullable();
+            $table->unsignedTinyInteger('contract_type')->nullable();
+            $table->unsignedTinyInteger('seniority')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
