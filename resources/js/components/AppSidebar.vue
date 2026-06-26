@@ -39,21 +39,21 @@ const projects = [
     {
         value: 'devflow',
         label: 'DevFlow',
-        description: 'Sprint 12',
+        description: 'Ciclo 12',
         badge: 'DF',
         badgeClass: 'bg-emerald-500/15 text-emerald-700 ring-emerald-500/20 dark:text-emerald-300',
     },
     {
         value: 'portal-cliente',
         label: 'Portal Cliente',
-        description: 'Sprint 8',
+        description: 'Ciclo 8',
         badge: 'PC',
         badgeClass: 'bg-sky-500/15 text-sky-700 ring-sky-500/20 dark:text-sky-300',
     },
     {
         value: 'app-interno',
         label: 'App Interno',
-        description: 'Sprint 5',
+        description: 'Ciclo 5',
         badge: 'AI',
         badgeClass: 'bg-violet-500/15 text-violet-700 ring-violet-500/20 dark:text-violet-300',
     },
@@ -85,12 +85,12 @@ const mainNavGroups: NavGroup[] = [
         title: 'Trabalho',
         items: [
             {
-                title: 'Sprint',
+                title: 'Ciclo',
                 href: dashboard(),
                 icon: Zap,
             },
             {
-                title: 'Backlog',
+                title: 'Pendências',
                 href: dashboard(),
                 icon: ListChecks,
             },
@@ -107,7 +107,7 @@ const mainNavGroups: NavGroup[] = [
         ],
     },
     {
-        title: 'Membros & Docs',
+        title: 'Membros e documentos',
         items: [
             {
                 title: 'Documentação',

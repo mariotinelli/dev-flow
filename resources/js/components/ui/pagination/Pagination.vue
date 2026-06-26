@@ -11,7 +11,7 @@ const props = defineProps<{
     <nav
         data-slot="pagination"
         role="navigation"
-        aria-label="pagination"
+        aria-label="paginação"
         :class="cn('mx-auto flex w-full justify-center', props.class)"
     >
         <slot />

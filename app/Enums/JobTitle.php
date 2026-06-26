@@ -22,18 +22,18 @@ enum JobTitle: int
     public function label(): string
     {
         return match ($this) {
-            self::BackendDeveloper   => 'Backend Developer',
-            self::FrontendDeveloper  => 'Frontend Developer',
-            self::FullStackDeveloper => 'Full Stack Developer',
-            self::MobileDeveloper    => 'Mobile Developer',
-            self::QAEngineer         => 'QA Engineer',
-            self::DevOpsEngineer     => 'DevOps Engineer',
-            self::SoftwareArchitect  => 'Software Architect',
-            self::ProductManager     => 'Product Manager',
-            self::ProductOwner       => 'Product Owner',
-            self::UIUXDesigner       => 'UI/UX Designer',
-            self::DataEngineer       => 'Data Engineer',
-            self::AIEngineer         => 'AI Engineer',
+            self::BackendDeveloper   => 'Desenvolvedor back-end',
+            self::FrontendDeveloper  => 'Desenvolvedor front-end',
+            self::FullStackDeveloper => 'Desenvolvedor full stack',
+            self::MobileDeveloper    => 'Desenvolvedor Mobile',
+            self::QAEngineer         => 'Engenheiro de QA',
+            self::DevOpsEngineer     => 'Engenheiro DevOps',
+            self::SoftwareArchitect  => 'Arquiteto de Software',
+            self::ProductManager     => 'Gerente de Produto',
+            self::ProductOwner       => 'Dono do produto',
+            self::UIUXDesigner       => 'Designer UI/UX',
+            self::DataEngineer       => 'Engenheiro de Dados',
+            self::AIEngineer         => 'Engenheiro de IA',
         };
     }
 

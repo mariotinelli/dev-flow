@@ -17,7 +17,7 @@ const getDefaultPasskeyName = () => {
 
     const os = ['iPhone', 'iPad', 'Android', 'Mac', 'Windows'].find((os) => new RegExp(os).test(ua));
 
-    return [browser, os].filter(Boolean).join(' on ') || '';
+    return [browser, os].filter(Boolean).join(' em ') || '';
 };
 
 const name = ref(getDefaultPasskeyName());
@@ -48,31 +48,33 @@ const handleCancel = () => {
 </script>
 
 <template>
-    <div v-if="!isSupported" class="text-sm text-muted-foreground">Passkeys are not supported in this browser.</div>
+    <div v-if="!isSupported" class="text-sm text-muted-foreground">
+        Chaves de acesso não são suportadas neste navegador.
+    </div>
 
-    <Button v-else-if="!showForm" variant="outline" @click="showForm = true"> Add passkey </Button>
+    <Button v-else-if="!showForm" variant="outline" @click="showForm = true"> Adicionar chave de acesso </Button>
 
     <form novalidate v-else @submit="handleSubmit" class="space-y-4 rounded-lg border border-border bg-muted/50 p-4">
         <div class="grid gap-2">
-            <Label for="passkey-name" required>Passkey name</Label>
+            <Label for="passkey-name" required>Nome da chave de acesso</Label>
             <Input
                 id="passkey-name"
                 type="text"
                 v-model="name"
-                placeholder="e.g., MacBook Pro, iPhone"
+                placeholder="ex.: MacBook Pro, iPhone"
                 class="mt-1 block w-full border-foreground/20"
                 autofocus
             />
-            <p class="text-xs text-muted-foreground">A name helps you identify this passkey later.</p>
+            <p class="text-xs text-muted-foreground">Um nome ajuda você a identificar esta chave de acesso depois.</p>
         </div>
 
         <InputError v-if="error" :message="error" />
 
         <div class="flex gap-2">
             <Button type="submit" :disabled="isLoading || !name.trim()">
-                {{ isLoading ? 'Registering...' : 'Register passkey' }}
+                {{ isLoading ? 'Registrando...' : 'Registrar chave de acesso' }}
             </Button>
-            <Button type="button" variant="ghost" @click="handleCancel"> Cancel </Button>
+            <Button type="button" variant="ghost" @click="handleCancel"> Cancelar </Button>
         </div>
     </form>
 </template>

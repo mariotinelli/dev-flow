@@ -10,8 +10,8 @@ import { update } from '@/routes/password';
 
 defineOptions({
     layout: {
-        title: 'Reset password',
-        description: 'Please enter your new password below',
+        title: 'Redefinir senha',
+        description: 'Informe sua nova senha abaixo',
     },
 });
 
@@ -24,7 +24,7 @@ defineProps<{
 </script>
 
 <template>
-    <Head title="Reset password" />
+    <Head title="Redefinir senha" />
 
     <Form
         novalidate
@@ -35,7 +35,7 @@ defineProps<{
     >
         <div class="grid gap-6">
             <div class="grid gap-2">
-                <Label for="email">Email</Label>
+                <Label for="email">E-mail</Label>
                 <Input
                     id="email"
                     type="email"
@@ -49,27 +49,27 @@ defineProps<{
             </div>
 
             <div class="grid gap-2">
-                <Label for="password">Password</Label>
+                <Label for="password">Senha</Label>
                 <PasswordInput
                     id="password"
                     name="password"
                     autocomplete="new-password"
                     class="mt-1 block w-full"
                     autofocus
-                    placeholder="Password"
+                    placeholder="Senha"
                     :passwordrules="passwordRules"
                 />
                 <InputError :message="errors.password" />
             </div>
 
             <div class="grid gap-2">
-                <Label for="password_confirmation"> Confirm password </Label>
+                <Label for="password_confirmation"> Confirmar senha </Label>
                 <PasswordInput
                     id="password_confirmation"
                     name="password_confirmation"
                     autocomplete="new-password"
                     class="mt-1 block w-full"
-                    placeholder="Confirm password"
+                    placeholder="Confirmar senha"
                     :passwordrules="passwordRules"
                 />
                 <InputError :message="errors.password_confirmation" />
@@ -77,7 +77,7 @@ defineProps<{
 
             <Button type="submit" class="mt-4 w-full" :disabled="processing" data-test="reset-password-button">
                 <Spinner v-if="processing" />
-                Reset password
+                Redefinir senha
             </Button>
         </div>
     </Form>
