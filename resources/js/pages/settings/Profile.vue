@@ -37,7 +37,7 @@ const user = computed(() => page.props.auth.user);
 
         <Form novalidate v-bind="ProfileController.update.form()" class="space-y-6" v-slot="{ errors, processing }">
             <div class="grid gap-2">
-                <Label for="name">Name</Label>
+                <Label for="name" required>Name</Label>
                 <Input
                     id="name"
                     class="mt-1 block w-full"
@@ -51,7 +51,7 @@ const user = computed(() => page.props.auth.user);
             </div>
 
             <div class="grid gap-2">
-                <Label for="email">Email address</Label>
+                <Label for="email" required>Email address</Label>
                 <Input
                     id="email"
                     type="email"

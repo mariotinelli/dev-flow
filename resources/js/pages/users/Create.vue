@@ -66,19 +66,19 @@ defineOptions({
 
                 <div class="grid gap-6 md:grid-cols-2">
                     <div class="grid gap-2">
-                        <Label for="name">Nome</Label>
+                        <Label for="name" required>Nome</Label>
                         <Input id="name" name="name" required autocomplete="name" />
                         <InputError :message="errors.name" />
                     </div>
 
                     <div class="grid gap-2">
-                        <Label for="email">E-mail</Label>
+                        <Label for="email" required>E-mail</Label>
                         <Input id="email" type="email" name="email" required autocomplete="email" />
                         <InputError :message="errors.email" />
                     </div>
 
                     <div class="grid gap-2">
-                        <Label for="job_title">Cargo</Label>
+                        <Label for="job_title" required>Cargo</Label>
                         <Select name="job_title" required>
                             <SelectTrigger id="job_title" class="w-full">
                                 <SelectValue placeholder="Selecione" />
@@ -93,7 +93,7 @@ defineOptions({
                     </div>
 
                     <div class="grid gap-2">
-                        <Label for="contract_type">Contrato</Label>
+                        <Label for="contract_type" required>Contrato</Label>
                         <Select name="contract_type" required>
                             <SelectTrigger id="contract_type" class="w-full">
                                 <SelectValue placeholder="Selecione" />
@@ -112,7 +112,7 @@ defineOptions({
                     </div>
 
                     <div class="grid gap-2">
-                        <Label for="seniority">Senioridade</Label>
+                        <Label for="seniority" required>Senioridade</Label>
                         <Select name="seniority" required>
                             <SelectTrigger id="seniority" class="w-full">
                                 <SelectValue placeholder="Selecione" />
@@ -131,7 +131,7 @@ defineOptions({
                     </div>
 
                     <div class="grid gap-2">
-                        <Label for="role_id">Perfil</Label>
+                        <Label for="role_id" required>Perfil</Label>
                         <input type="hidden" name="role_id" :value="selectedRoleId" />
 
                         <Popover v-model:open="roleOpen">

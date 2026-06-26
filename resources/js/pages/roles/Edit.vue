@@ -58,7 +58,7 @@ defineOptions({
             v-slot="{ errors, processing }"
         >
             <div class="grid gap-2">
-                <Label for="name">Nome</Label>
+                <Label for="name" required>Nome</Label>
                 <Input id="name" name="name" required :default-value="role.name" />
                 <InputError :message="errors.name" />
             </div>
