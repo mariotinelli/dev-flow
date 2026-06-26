@@ -34,12 +34,34 @@ import type { Auth, NavGroup } from '@/types';
 const page = usePage<{ auth: Auth }>();
 
 const projects = [
-    { value: 'devflow', label: 'DevFlow', badge: 'DF' },
-    { value: 'portal-cliente', label: 'Portal Cliente', badge: 'PC' },
-    { value: 'app-interno', label: 'App Interno', badge: 'AI' },
+    {
+        value: 'devflow',
+        label: 'DevFlow',
+        description: 'Sprint 12',
+        badge: 'DF',
+        badgeClass: 'bg-emerald-500/15 text-emerald-700 ring-emerald-500/20 dark:text-emerald-300',
+    },
+    {
+        value: 'portal-cliente',
+        label: 'Portal Cliente',
+        description: 'Sprint 8',
+        badge: 'PC',
+        badgeClass: 'bg-sky-500/15 text-sky-700 ring-sky-500/20 dark:text-sky-300',
+    },
+    {
+        value: 'app-interno',
+        label: 'App Interno',
+        description: 'Sprint 5',
+        badge: 'AI',
+        badgeClass: 'bg-violet-500/15 text-violet-700 ring-violet-500/20 dark:text-violet-300',
+    },
 ];
 
 const selectedProject = ref(projects[0].value);
+
+const currentProject = computed(
+    () => projects.find((project) => project.value === selectedProject.value) ?? projects[0],
+);
 
 const mainNavGroups: NavGroup[] = [
     {
@@ -161,27 +183,45 @@ const visibleMainNavGroups = computed<NavGroup[]>(() =>
         </SidebarHeader>
 
         <div class="border-y border-sidebar-border/70 px-3 py-4 group-data-[collapsible=icon]:hidden">
-            <div class="mb-2 px-1 text-xs font-medium text-sidebar-foreground/70">Projeto Atual</div>
+            <div class="mb-2 flex items-center justify-between px-1">
+                <span class="text-xs font-medium text-sidebar-foreground/70">Projeto Atual</span>
+                <span
+                    class="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-700 dark:text-emerald-300"
+                >
+                    Ativo
+                </span>
+            </div>
             <Select v-model="selectedProject">
                 <SelectTrigger
-                    class="h-auto w-full justify-start gap-3 rounded-xl border-sidebar-border/80 bg-sidebar-accent/50 px-3 py-2.5 text-sidebar-foreground shadow-none hover:bg-sidebar-accent"
+                    class="group h-auto! w-full justify-start gap-3 overflow-hidden rounded-2xl border-sidebar-border/80 bg-linear-to-br from-sidebar-accent/90 to-sidebar-accent/35 px-2 py-2! text-sidebar-foreground shadow-none ring-1 ring-sidebar-border/40 transition hover:border-sidebar-ring/40 hover:bg-sidebar-accent hover:ring-sidebar-ring/25"
                 >
                     <span
-                        class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-sidebar-primary text-xs font-semibold text-sidebar-primary-foreground"
+                        class="flex size-10 shrink-0 items-center justify-center rounded-xl text-xs font-semibold ring-1"
+                        :class="currentProject.badgeClass"
                     >
-                        {{ projects.find((project) => project.value === selectedProject)?.badge }}
+                        {{ currentProject.badge }}
                     </span>
-                    <SelectValue placeholder="Selecione um projeto" />
+                    <span class="grid min-w-0 flex-1 text-left">
+                        <span class="truncate text-sm leading-tight font-semibold">{{ currentProject.label }}</span>
+                        <span class="truncate text-xs text-sidebar-foreground/60">{{
+                            currentProject.description
+                        }}</span>
+                    </span>
+                    <SelectValue class="sr-only" placeholder="Selecione um projeto" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent class="w-64 rounded-xl p-1.5">
                     <SelectItem v-for="project in projects" :key="project.value" :value="project.value">
-                        <span class="flex items-center gap-2">
+                        <span class="flex items-center gap-3 py-1">
                             <span
-                                class="flex size-6 items-center justify-center rounded-md bg-muted text-xs font-semibold text-muted-foreground"
+                                class="flex size-8 items-center justify-center rounded-lg text-xs font-semibold ring-1"
+                                :class="project.badgeClass"
                             >
                                 {{ project.badge }}
                             </span>
-                            {{ project.label }}
+                            <span class="grid min-w-0">
+                                <span class="truncate font-medium">{{ project.label }}</span>
+                                <span class="truncate text-xs text-muted-foreground">{{ project.description }}</span>
+                            </span>
                         </span>
                     </SelectItem>
                 </SelectContent>
