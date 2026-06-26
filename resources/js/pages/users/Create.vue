@@ -4,12 +4,12 @@ import StoreController from '@/actions/App/Http/Controllers/Users/StoreControlle
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
+import ImageUpload from '@/components/ui/image-upload/ImageUpload.vue';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { index } from '@/routes/users';
 import type { SelectOption } from '@/types';
-import ImageUpload from '@/components/ui/image-upload/ImageUpload.vue';
 
 defineProps<{
     jobTitles: SelectOption[];

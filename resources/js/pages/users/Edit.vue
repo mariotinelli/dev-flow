@@ -9,8 +9,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { getInitials } from '@/composables/useInitials';
-import type { User, SelectOption } from '@/types';
 import { index } from '@/routes/users';
+import type { SelectOption, User } from '@/types';
 
 defineProps<{
     user: User;

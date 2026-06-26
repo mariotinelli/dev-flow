@@ -2,6 +2,7 @@
 
 declare(strict_types = 1);
 
+use App\Enums\Permissions\RolePermissions;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
 
@@ -16,6 +17,21 @@ test('admin role cannot be deleted', function () {
     $this->assertDatabaseHas('roles', [
         'id'   => $adminRole->id,
         'name' => 'admin',
+    ]);
+});
+
+test('users without permission cannot delete roles', function () {
+    $role = Role::create(['name' => 'viewer']);
+    $user = User::factory()->withRole($role->name)->create();
+
+    $targetRole = Role::create(['name' => 'temporary']);
+
+    $this->actingAs($user)
+        ->delete(route('roles.destroy', $role))
+        ->assertForbidden();
+
+    $this->assertDatabaseHas('roles', [
+        'id' => $targetRole->id,
     ]);
 });
 

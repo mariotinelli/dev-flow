@@ -5,7 +5,6 @@ import {
     BookOpen,
     Bot,
     FileText,
-    FolderGit2,
     FolderKanban,
     LayoutGrid,
     ListChecks,
@@ -15,26 +14,32 @@ import {
     Users,
     Zap,
 } from '@lucide/vue';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
-import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
-import NavUser from '@/components/NavUser.vue';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
     Sidebar,
     SidebarContent,
-    SidebarFooter,
     SidebarHeader,
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
-import { index as users } from '@/routes/users';
 import { index as roles } from '@/routes/roles';
-import type { Auth, NavGroup, NavItem } from '@/types';
+import { index as users } from '@/routes/users';
+import type { Auth, NavGroup } from '@/types';
 
 const page = usePage<{ auth: Auth }>();
+
+const projects = [
+    { value: 'devflow', label: 'DevFlow', badge: 'DF' },
+    { value: 'portal-cliente', label: 'Portal Cliente', badge: 'PC' },
+    { value: 'app-interno', label: 'App Interno', badge: 'AI' },
+];
+
+const selectedProject = ref(projects[0].value);
 
 const mainNavGroups: NavGroup[] = [
     {
@@ -44,11 +49,6 @@ const mainNavGroups: NavGroup[] = [
                 title: 'Painel',
                 href: dashboard(),
                 icon: LayoutGrid,
-            },
-            {
-                title: 'Projetos',
-                href: dashboard(),
-                icon: FolderKanban,
             },
             {
                 title: 'Tarefas',
@@ -90,12 +90,6 @@ const mainNavGroups: NavGroup[] = [
                 href: dashboard(),
                 icon: FileText,
             },
-            {
-                title: 'Usuários',
-                href: users(),
-                icon: Users,
-                permission: 'users.view',
-            },
         ],
     },
     {
@@ -116,6 +110,17 @@ const mainNavGroups: NavGroup[] = [
     {
         title: 'Sistema',
         items: [
+            {
+                title: 'Projetos',
+                href: dashboard(),
+                icon: FolderKanban,
+            },
+            {
+                title: 'Usuários',
+                href: users(),
+                icon: Users,
+                permission: 'users.view',
+            },
             {
                 title: 'Perfis',
                 href: roles(),
@@ -139,19 +144,6 @@ const visibleMainNavGroups = computed<NavGroup[]>(() =>
         }))
         .filter((group) => group.items.length > 0),
 );
-
-const footerNavItems: NavItem[] = [
-    {
-        title: 'Repositório',
-        href: 'https://github.com/laravel/vue-starter-kit',
-        icon: FolderGit2,
-    },
-    {
-        title: 'Documentação',
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
-    },
-];
 </script>
 
 <template>
@@ -168,14 +160,37 @@ const footerNavItems: NavItem[] = [
             </SidebarMenu>
         </SidebarHeader>
 
+        <div class="border-y border-sidebar-border/70 px-3 py-4 group-data-[collapsible=icon]:hidden">
+            <div class="mb-2 px-1 text-xs font-medium text-sidebar-foreground/70">Projeto Atual</div>
+            <Select v-model="selectedProject">
+                <SelectTrigger
+                    class="h-auto w-full justify-start gap-3 rounded-xl border-sidebar-border/80 bg-sidebar-accent/50 px-3 py-2.5 text-sidebar-foreground shadow-none hover:bg-sidebar-accent"
+                >
+                    <span
+                        class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-sidebar-primary text-xs font-semibold text-sidebar-primary-foreground"
+                    >
+                        {{ projects.find((project) => project.value === selectedProject)?.badge }}
+                    </span>
+                    <SelectValue placeholder="Selecione um projeto" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem v-for="project in projects" :key="project.value" :value="project.value">
+                        <span class="flex items-center gap-2">
+                            <span
+                                class="flex size-6 items-center justify-center rounded-md bg-muted text-xs font-semibold text-muted-foreground"
+                            >
+                                {{ project.badge }}
+                            </span>
+                            {{ project.label }}
+                        </span>
+                    </SelectItem>
+                </SelectContent>
+            </Select>
+        </div>
+
         <SidebarContent>
             <NavMain :groups="visibleMainNavGroups" />
         </SidebarContent>
-
-        <SidebarFooter>
-            <NavFooter :items="footerNavItems" />
-            <NavUser />
-        </SidebarFooter>
     </Sidebar>
     <slot />
 </template>
