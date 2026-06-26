@@ -44,6 +44,7 @@ defineOptions({
         />
 
         <Form
+            novalidate
             v-bind="SecurityController.update.form()"
             :options="{
                 preserveScroll: true,

@@ -3,6 +3,10 @@ import { ImageUp, X } from '@lucide/vue';
 import { ref } from 'vue';
 import { Button } from '@/components/ui/button';
 
+defineOptions({
+    inheritAttrs: false,
+});
+
 const preview = ref<string | null>(null);
 
 function handleFile(event: Event) {
@@ -19,11 +23,11 @@ function clearImage() {
 </script>
 
 <template>
-    <div class="space-y-2">
+    <div class="flex h-full flex-col gap-2">
         <label
-            class="group relative flex min-h-40 cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed bg-muted/30 p-6 text-center transition hover:bg-muted/50"
+            class="group relative flex min-h-40 flex-1 cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed bg-muted/30 p-6 text-center transition hover:bg-muted/50"
         >
-            <input type="file" accept="image/*" class="sr-only" @change="handleFile" />
+            <input v-bind="$attrs" type="file" class="sr-only" @change="handleFile" />
 
             <template v-if="!preview">
                 <div class="mb-3 rounded-full bg-background p-3 shadow-sm">

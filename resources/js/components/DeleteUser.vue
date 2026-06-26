@@ -35,6 +35,7 @@ const passwordInput = useTemplateRef('passwordInput');
                 </DialogTrigger>
                 <DialogContent>
                     <Form
+                        novalidate
                         v-bind="ProfileController.destroy.form()"
                         reset-on-success
                         @error="() => passwordInput?.focus()"

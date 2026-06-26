@@ -35,7 +35,7 @@ const user = computed(() => page.props.auth.user);
     <div class="flex flex-col space-y-6">
         <Heading variant="small" title="Profile" description="Update your name and email address" />
 
-        <Form v-bind="ProfileController.update.form()" class="space-y-6" v-slot="{ errors, processing }">
+        <Form novalidate v-bind="ProfileController.update.form()" class="space-y-6" v-slot="{ errors, processing }">
             <div class="grid gap-2">
                 <Label for="name">Name</Label>
                 <Input

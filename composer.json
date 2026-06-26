@@ -11,6 +11,7 @@
     "require": {
         "php": "^8.3",
         "inertiajs/inertia-laravel": "^3.0",
+        "laravel-lang/common": "^6.8",
         "laravel/chisel": "^0.1.0",
         "laravel/fortify": "^1.37.2",
         "laravel/framework": "^13.7",
@@ -56,7 +57,7 @@
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-            "npx concurrently -c \"#93c5fd,#c4b5fd,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"npm run dev\" --names='server,queue,vite'"
+            "npx concurrently -c \"#c4b5fd,#fdba74\" \"php artisan queue:work --tries=1 --queue=high_priority,low_priority,long_timeout\" \"npm run dev\" --names='queue,vite'"
         ],
         "lint": [
             "pint --parallel"

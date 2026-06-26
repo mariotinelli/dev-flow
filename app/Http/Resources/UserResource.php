@@ -15,10 +15,12 @@ class UserResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @return array{id: int, name: string, email: string, avatar_url: string|null, role: string, contract_type: int, contract_type_label: string, seniority: int, seniority_label: string, is_active: bool, status_label: string, can: array{update: bool, delete: bool, restore: bool}}
+     * @return array{id: int, name: string, email: string, avatar_url: string|null, job_title: int, job_title_label: string, role_id: int|null, role: string, contract_type: int, contract_type_label: string, seniority: int, seniority_label: string, is_active: bool, status_label: string, can: array{update: bool, delete: bool, restore: bool}}
      */
     public function toArray(Request $request): array
     {
+        $role = $this->roles()->first();
+
         return [
             'id'                  => $this->id,
             'name'                => $this->name,
@@ -30,7 +32,8 @@ class UserResource extends JsonResource
             'contract_type_label' => $this->contract_type->label(),
             'seniority'           => $this->seniority->value,
             'seniority_label'     => $this->seniority->label(),
-            'role'                => str($this->roles()->first()?->name ?? '')->lower()->replace('_', ' ')->ucfirst(),
+            'role_id'             => $role?->id,
+            'role'                => str($role?->name ?? '')->lower()->replace('_', ' ')->ucfirst(),
             'is_active'           => !$this->trashed(),
             'status_label'        => $this->trashed() ? 'Inativo' : 'Ativo',
             'can'                 => [

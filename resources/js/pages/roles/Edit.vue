@@ -51,6 +51,7 @@ defineOptions({
         <Heading title="Editar perfil" description="Atualize o nome e as permissões atribuídas a este perfil." />
 
         <Form
+            novalidate
             v-bind="UpdateController.form(role.id)"
             :transform="(data) => ({ ...data, permissions: selectedPermissions })"
             class="w-full space-y-6 rounded-xl border border-sidebar-border/70 bg-card p-6 dark:border-sidebar-border"

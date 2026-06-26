@@ -36,6 +36,7 @@ defineProps<{
     <PasskeyVerify />
 
     <Form
+        novalidate
         v-bind="store.form()"
         :reset-on-success="['password']"
         v-slot="{ errors, processing }"

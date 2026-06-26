@@ -17,10 +17,12 @@ import {
 import { computed, ref } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavMain from '@/components/NavMain.vue';
+import NavUser from '@/components/NavUser.vue';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
     Sidebar,
     SidebarContent,
+    SidebarFooter,
     SidebarHeader,
     SidebarMenu,
     SidebarMenuButton,
@@ -231,6 +233,10 @@ const visibleMainNavGroups = computed<NavGroup[]>(() =>
         <SidebarContent>
             <NavMain :groups="visibleMainNavGroups" />
         </SidebarContent>
+
+        <SidebarFooter>
+            <NavUser />
+        </SidebarFooter>
     </Sidebar>
     <slot />
 </template>

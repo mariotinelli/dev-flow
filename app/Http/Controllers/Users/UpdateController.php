@@ -11,6 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use Spatie\Permission\Models\Role;
 
 class UpdateController extends Controller
 {
@@ -40,6 +41,8 @@ class UpdateController extends Controller
                 'contract_type' => $validated['contract_type'],
                 'seniority'     => $validated['seniority'],
             ]);
+
+            $user->syncRoles([Role::findById($validated['role_id'])]);
         });
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Usuário atualizado.']);

@@ -49,6 +49,7 @@ onMounted(async () => {
                 </Button>
 
                 <Form
+                    novalidate
                     v-if="isRecoveryCodesVisible && recoveryCodesList.length"
                     v-bind="regenerateRecoveryCodes.form()"
                     method="post"

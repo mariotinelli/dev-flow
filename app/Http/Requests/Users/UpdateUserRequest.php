@@ -47,6 +47,7 @@ class UpdateUserRequest extends FormRequest
             'job_title'     => ['required', 'integer',  Rule::in(JobTitle::values())],
             'contract_type' => ['required', 'integer', Rule::in(ContractType::values())],
             'seniority'     => ['required', 'integer', Rule::in(Seniority::values())],
+            'role_id'       => ['required', 'integer', Rule::exists('roles', 'id')->where('guard_name', 'web')->whereNot('name', 'admin')],
         ];
     }
 }

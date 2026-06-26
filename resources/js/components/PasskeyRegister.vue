@@ -52,7 +52,7 @@ const handleCancel = () => {
 
     <Button v-else-if="!showForm" variant="outline" @click="showForm = true"> Add passkey </Button>
 
-    <form v-else @submit="handleSubmit" class="space-y-4 rounded-lg border border-border bg-muted/50 p-4">
+    <form novalidate v-else @submit="handleSubmit" class="space-y-4 rounded-lg border border-border bg-muted/50 p-4">
         <div class="grid gap-2">
             <Label for="passkey-name">Passkey name</Label>
             <Input

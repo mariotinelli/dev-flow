@@ -6,6 +6,9 @@ export type User = {
     email_verified_at: string | null;
     two_factor_enabled?: boolean;
     avatar_url: string | null;
+    job_title: number;
+    job_title_label: string;
+    role_id: number | null;
     role: string;
     contract_type: number;
     contract_type_label: string;

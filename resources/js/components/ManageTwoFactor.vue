@@ -43,7 +43,13 @@ onUnmounted(() => clearTwoFactorAuthData());
 
             <div>
                 <Button v-if="hasSetupData" @click="showSetupModal = true"> <ShieldCheck />Continue setup </Button>
-                <Form v-else v-bind="enable.form()" @success="showSetupModal = true" #default="{ processing }">
+                <Form
+                    novalidate
+                    v-else
+                    v-bind="enable.form()"
+                    @success="showSetupModal = true"
+                    #default="{ processing }"
+                >
                     <Button type="submit" :disabled="processing"> Enable 2FA </Button>
                 </Form>
             </div>
@@ -56,7 +62,7 @@ onUnmounted(() => clearTwoFactorAuthData());
             </p>
 
             <div class="relative inline">
-                <Form v-bind="disable.form()" #default="{ processing }">
+                <Form novalidate v-bind="disable.form()" #default="{ processing }">
                     <Button variant="destructive" type="submit" :disabled="processing"> Disable 2FA </Button>
                 </Form>
             </div>

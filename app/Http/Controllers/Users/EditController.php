@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Http\Controllers\Users;
 
+use App\Actions\GetSelectOptions;
 use App\Enums\ContractType;
 use App\Enums\JobTitle;
 use App\Enums\Seniority;
@@ -13,6 +14,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Spatie\Permission\Models\Role;
 
 class EditController extends Controller
 {
@@ -28,6 +30,7 @@ class EditController extends Controller
             'jobTitles'     => JobTitle::options(),
             'contractTypes' => ContractType::options(),
             'seniorities'   => Seniority::options(),
+            'roles'         => app(GetSelectOptions::class)->handle(Role::query()->whereNot('name', 'admin'), 'id', 'name'),
         ]);
     }
 }

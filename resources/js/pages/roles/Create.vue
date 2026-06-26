@@ -53,6 +53,7 @@ defineOptions({
         />
 
         <Form
+            novalidate
             v-bind="StoreController.form()"
             :transform="(data) => ({ ...data, permissions: selectedPermissions })"
             class="w-full space-y-6 rounded-xl border border-sidebar-border/70 bg-card p-6 dark:border-sidebar-border"

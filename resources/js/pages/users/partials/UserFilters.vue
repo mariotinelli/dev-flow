@@ -31,6 +31,7 @@ const emit = defineEmits<{
 
 <template>
     <form
+        novalidate
         class="flex flex-col gap-5 rounded-xl border border-sidebar-border/70 bg-card p-5 shadow-xs dark:border-sidebar-border"
         @submit.prevent="emit('submit')"
     >
