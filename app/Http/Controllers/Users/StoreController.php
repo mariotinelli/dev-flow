@@ -6,11 +6,12 @@ namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\StoreUserRequest;
-use App\Jobs\SendPasswordSetupLink;
 use App\Models\User;
+use App\Notifications\UserPasswordSetupNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
@@ -40,7 +41,7 @@ class StoreController extends Controller
             return $user;
         });
 
-        SendPasswordSetupLink::dispatch($user->email);
+        $user->notify(new UserPasswordSetupNotification(Password::broker()->createToken($user)));
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Usuário cadastrado.']);
 

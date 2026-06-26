@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Form, Head } from '@inertiajs/vue3';
-import { ref } from 'vue';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
 import { Button } from '@/components/ui/button';
@@ -16,13 +15,12 @@ defineOptions({
     },
 });
 
-const props = defineProps<{
+defineProps<{
     token: string;
     email: string;
+    setup?: boolean;
     passwordRules: string;
 }>();
-
-const inputEmail = ref(props.email);
 </script>
 
 <template>
@@ -31,7 +29,7 @@ const inputEmail = ref(props.email);
     <Form
         novalidate
         v-bind="update.form()"
-        :transform="(data) => ({ ...data, token, email })"
+        :transform="(data) => ({ ...data, token, email, setup })"
         :reset-on-success="['password', 'password_confirmation']"
         v-slot="{ errors, processing }"
     >
@@ -43,9 +41,9 @@ const inputEmail = ref(props.email);
                     type="email"
                     name="email"
                     autocomplete="email"
-                    v-model="inputEmail"
+                    :model-value="email"
                     class="mt-1 block w-full"
-                    readonly
+                    disabled
                 />
                 <InputError :message="errors.email" class="mt-2" />
             </div>

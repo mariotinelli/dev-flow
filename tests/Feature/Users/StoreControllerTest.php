@@ -4,17 +4,14 @@ declare(strict_types = 1);
 
 use App\Enums\ContractType;
 use App\Enums\JobTitle;
-use App\Enums\QueuePriority;
 use App\Enums\Seniority;
-use App\Jobs\SendPasswordSetupLink;
 use App\Models\User;
+use App\Notifications\UserPasswordSetupNotification;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Queue;
 use Spatie\Permission\Models\Role;
 
 test('authenticated users can create users and send a password setup link', function () {
     Notification::fake();
-    Queue::fake();
 
     $user = User::factory()->admin()->create();
     $role = Role::create(['name' => 'developer']);
@@ -38,13 +35,7 @@ test('authenticated users can create users and send a password setup link', func
         'seniority'     => Seniority::Senior->value,
     ]);
 
-    Notification::assertNothingSent();
-
-    Queue::assertPushedOn(
-        QueuePriority::LowPriority,
-        SendPasswordSetupLink::class,
-        fn (SendPasswordSetupLink $job): bool => $job->email === $createdUser->email,
-    );
+    Notification::assertSentTo($createdUser, UserPasswordSetupNotification::class);
 
     expect($createdUser->hasRole($role))->toBeTrue();
 });
