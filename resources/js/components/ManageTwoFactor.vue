@@ -31,33 +31,41 @@ onUnmounted(() => clearTwoFactorAuthData());
     <div v-if="canManageTwoFactor" class="space-y-6">
         <Heading
             variant="small"
-            title="Two-factor authentication"
-            description="Manage your two-factor authentication settings"
+            title="Autenticação de dois fatores"
+            description="Gerencie suas configurações de autenticação de dois fatores"
         />
 
         <div v-if="!twoFactorEnabled" class="flex flex-col items-start justify-start space-y-4">
             <p class="text-sm text-muted-foreground">
-                When you enable two-factor authentication, you will be prompted for a secure pin during login. This pin
-                can be retrieved from a TOTP-supported application on your phone.
+                Ao ativar a autenticação de dois fatores, você precisará informar um PIN seguro durante o login. Esse
+                PIN pode ser obtido em um aplicativo compatível com TOTP no seu celular.
             </p>
 
             <div>
-                <Button v-if="hasSetupData" @click="showSetupModal = true"> <ShieldCheck />Continue setup </Button>
-                <Form v-else v-bind="enable.form()" @success="showSetupModal = true" #default="{ processing }">
-                    <Button type="submit" :disabled="processing"> Enable 2FA </Button>
+                <Button v-if="hasSetupData" @click="showSetupModal = true">
+                    <ShieldCheck />Continuar configuração
+                </Button>
+                <Form
+                    novalidate
+                    v-else
+                    v-bind="enable.form()"
+                    @success="showSetupModal = true"
+                    #default="{ processing }"
+                >
+                    <Button type="submit" :disabled="processing"> Ativar 2FA </Button>
                 </Form>
             </div>
         </div>
 
         <div v-else class="flex flex-col items-start justify-start space-y-4">
             <p class="text-sm text-muted-foreground">
-                You will be prompted for a secure, random pin during login, which you can retrieve from the
-                TOTP-supported application on your phone.
+                Você precisará informar um PIN seguro e aleatório durante o login, que pode ser obtido no aplicativo
+                compatível com TOTP no seu celular.
             </p>
 
             <div class="relative inline">
-                <Form v-bind="disable.form()" #default="{ processing }">
-                    <Button variant="destructive" type="submit" :disabled="processing"> Disable 2FA </Button>
+                <Form novalidate v-bind="disable.form()" #default="{ processing }">
+                    <Button variant="destructive" type="submit" :disabled="processing"> Desativar 2FA </Button>
                 </Form>
             </div>
 

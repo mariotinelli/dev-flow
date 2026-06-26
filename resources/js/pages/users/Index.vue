@@ -22,6 +22,7 @@ const props = defineProps<{
     contractTypes: SelectOption[];
     seniorities: SelectOption[];
     statuses: StatusOption[];
+    roles: SelectOption[];
 }>();
 
 enum BaseStatus {
@@ -60,6 +61,7 @@ function submitFilters(): void {
 
 function clearFilters(): void {
     filterForm.search = '';
+    filterForm.role = 'all';
     filterForm.job_title = 'all';
     filterForm.contract_type = 'all';
     filterForm.seniority = 'all';
@@ -128,6 +130,7 @@ function clearFilters(): void {
             :contract-types="contractTypes"
             :seniorities="seniorities"
             :statuses="statuses"
+            :roles="roles"
             @submit="submitFilters"
             @clear="clearFilters"
         />

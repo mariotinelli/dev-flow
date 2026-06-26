@@ -1,6 +1,9 @@
 <?php
 
+declare(strict_types = 1);
+
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
 
 /*
@@ -44,7 +47,13 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
-{
-    // ..
-}
+TestResponse::macro('assertToast', function (string $type, string $message): TestResponse {
+    $this->assertSessionHas('inertia.flash_data');
+
+    $flashData = session('inertia.flash_data');
+
+    expect(data_get($flashData, 'toast.type'))->toBe($type);
+    expect(data_get($flashData, 'toast.message'))->toBe($message);
+
+    return $this;
+});

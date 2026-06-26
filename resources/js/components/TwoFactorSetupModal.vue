@@ -187,6 +187,7 @@ watch(
 
                 <template v-else>
                     <Form
+                        novalidate
                         v-bind="confirm.form()"
                         error-bag="confirmTwoFactorAuthentication"
                         reset-on-error

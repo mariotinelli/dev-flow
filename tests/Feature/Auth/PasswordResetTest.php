@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Notification;
@@ -22,7 +24,23 @@ test('reset password link can be requested', function () {
 
     $this->post(route('password.email'), ['email' => $user->email]);
 
-    Notification::assertSentTo($user, ResetPassword::class);
+    Notification::assertSentTo($user, ResetPassword::class, function (ResetPassword $notification) use ($user) {
+        $mail = $notification->toMail($user);
+
+        expect(__('Hello!'))->toBe('Olá!')
+            ->and(__('Regards,'))->toBe('Atenciosamente,')
+            ->and($mail->subject)->toBe('Redefina sua senha')
+            ->and($mail->introLines)->toContain(
+                'Você está recebendo este e-mail porque recebemos uma solicitação de redefinição de senha para a sua conta.',
+            )
+            ->and($mail->outroLines)->toContain(
+                'Este link de redefinição de senha expirará em 60 minutos.',
+                'Se você não solicitou a redefinição de senha, nenhuma ação adicional é necessária.',
+            )
+            ->and($mail->actionText)->toBe('Redefinir senha');
+
+        return true;
+    });
 });
 
 test('reset password screen can be rendered', function () {
@@ -50,9 +68,9 @@ test('password can be reset with valid token', function () {
 
     Notification::assertSentTo($user, ResetPassword::class, function ($notification) use ($user) {
         $response = $this->post(route('password.update'), [
-            'token' => $notification->token,
-            'email' => $user->email,
-            'password' => 'password',
+            'token'                 => $notification->token,
+            'email'                 => $user->email,
+            'password'              => 'password',
             'password_confirmation' => 'password',
         ]);
 
@@ -68,9 +86,9 @@ test('password cannot be reset with invalid token', function () {
     $user = User::factory()->create();
 
     $response = $this->post(route('password.update'), [
-        'token' => 'invalid-token',
-        'email' => $user->email,
-        'password' => 'newpassword123',
+        'token'                 => 'invalid-token',
+        'email'                 => $user->email,
+        'password'              => 'newpassword123',
         'password_confirmation' => 'newpassword123',
     ]);
 

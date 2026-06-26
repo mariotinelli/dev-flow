@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import ActivateController from '@/actions/App/Http/Controllers/Users/ActivateController';
 import DestroyController from '@/actions/App/Http/Controllers/Users/DestroyController';
 import {
@@ -23,7 +23,7 @@ const props = defineProps<{
 
 const isOpen = ref(false);
 
-const canChangeStatus = props.user.is_active ? props.user.can.delete : props.user.can.restore;
+const canChangeStatus = computed(() => (props.user.is_active ? props.user.can.delete : props.user.can.restore));
 
 function updateStatus(): void {
     isOpen.value = false;
@@ -49,7 +49,7 @@ function updateStatus(): void {
 <template>
     <AlertDialog v-model:open="isOpen">
         <AlertDialogTrigger v-if="canChangeStatus" as-child>
-            <Button type="button" :variant="user.is_active ? 'destructive' : 'default'" size="sm">
+            <Button type="button" :variant="user.is_active ? 'destructive' : 'success'" size="sm">
                 {{ user.is_active ? 'Inativar' : 'Ativar' }}
             </Button>
         </AlertDialogTrigger>
@@ -65,22 +65,14 @@ function updateStatus(): void {
                             O acesso de {{ user.name }} será inativado e ele não poderá mais autenticar no sistema.
                         </template>
                         <template v-else>
-                            O acesso de {{ user.name }} será reativado e ele poderá autenticar novamente no
-                            sistema.
+                            O acesso de {{ user.name }} será reativado e ele poderá autenticar novamente no sistema.
                         </template>
                     </AlertDialogDescription>
                 </AlertDialogHeader>
 
                 <AlertDialogFooter>
                     <AlertDialogCancel> Cancelar </AlertDialogCancel>
-                    <AlertDialogAction
-                        :class="
-                            user.is_active
-                                ? 'bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40'
-                                : ''
-                        "
-                        @click="updateStatus"
-                    >
+                    <AlertDialogAction :variant="user.is_active ? 'destructive' : 'success'" @click="updateStatus">
                         {{ user.is_active ? 'Confirmar inativação' : 'Confirmar ativação' }}
                     </AlertDialogAction>
                 </AlertDialogFooter>

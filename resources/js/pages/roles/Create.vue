@@ -53,13 +53,14 @@ defineOptions({
         />
 
         <Form
+            novalidate
             v-bind="StoreController.form()"
             :transform="(data) => ({ ...data, permissions: selectedPermissions })"
             class="w-full space-y-6 rounded-xl border border-sidebar-border/70 bg-card p-6 dark:border-sidebar-border"
             v-slot="{ errors, processing }"
         >
             <div class="grid gap-2">
-                <Label for="name">Nome</Label>
+                <Label for="name" required>Nome</Label>
                 <Input id="name" name="name" required placeholder="gestor-tecnico" />
                 <p class="text-xs text-muted-foreground">
                     O perfil admin é protegido e não pode ser criado ou alterado.

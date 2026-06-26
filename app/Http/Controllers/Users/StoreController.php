@@ -5,13 +5,16 @@ declare(strict_types = 1);
 namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\Users\StoreUserRequest;
 use App\Models\User;
+use App\Notifications\UserPasswordSetupNotification;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
+use Spatie\Permission\Models\Role;
 
 class StoreController extends Controller
 {
@@ -22,17 +25,23 @@ class StoreController extends Controller
     {
         $validated = $request->validated();
 
-        $user = User::create([
-            'name'          => $validated['name'],
-            'email'         => $validated['email'],
-            'password'      => Hash::make(Str::password(32)),
-            'avatar_path'   => $request->file('avatar')?->store('users/avatars', 'public'),
-            'job_title'     => $validated['job_title'],
-            'contract_type' => $validated['contract_type'],
-            'seniority'     => $validated['seniority'],
-        ]);
+        $user = DB::transaction(function () use ($request, $validated): User {
+            $user = User::create([
+                'name'          => $validated['name'],
+                'email'         => $validated['email'],
+                'password'      => Hash::make(Str::password(32)),
+                'avatar_path'   => $request->file('avatar')?->store('users/avatars', 'public'),
+                'job_title'     => $validated['job_title'],
+                'contract_type' => $validated['contract_type'],
+                'seniority'     => $validated['seniority'],
+            ]);
 
-        Password::sendResetLink(['email' => $user->email]);
+            $user->syncRoles([Role::findById($validated['role_id'])]);
+
+            return $user;
+        });
+
+        $user->notify(new UserPasswordSetupNotification(Password::broker()->createToken($user)));
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Usuário cadastrado.']);
 

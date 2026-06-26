@@ -5,7 +5,6 @@ import {
     BookOpen,
     Bot,
     FileText,
-    FolderGit2,
     FolderKanban,
     LayoutGrid,
     ListChecks,
@@ -15,11 +14,11 @@ import {
     Users,
     Zap,
 } from '@lucide/vue';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
-import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
     Sidebar,
     SidebarContent,
@@ -30,11 +29,41 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
-import { index as users } from '@/routes/users';
 import { index as roles } from '@/routes/roles';
-import type { Auth, NavGroup, NavItem } from '@/types';
+import { index as users } from '@/routes/users';
+import type { Auth, NavGroup } from '@/types';
 
 const page = usePage<{ auth: Auth }>();
+
+const projects = [
+    {
+        value: 'devflow',
+        label: 'DevFlow',
+        description: 'Ciclo 12',
+        badge: 'DF',
+        badgeClass: 'bg-emerald-500/15 text-emerald-700 ring-emerald-500/20 dark:text-emerald-300',
+    },
+    {
+        value: 'portal-cliente',
+        label: 'Portal Cliente',
+        description: 'Ciclo 8',
+        badge: 'PC',
+        badgeClass: 'bg-sky-500/15 text-sky-700 ring-sky-500/20 dark:text-sky-300',
+    },
+    {
+        value: 'app-interno',
+        label: 'App Interno',
+        description: 'Ciclo 5',
+        badge: 'AI',
+        badgeClass: 'bg-violet-500/15 text-violet-700 ring-violet-500/20 dark:text-violet-300',
+    },
+];
+
+const selectedProject = ref(projects[0].value);
+
+const currentProject = computed(
+    () => projects.find((project) => project.value === selectedProject.value) ?? projects[0],
+);
 
 const mainNavGroups: NavGroup[] = [
     {
@@ -44,11 +73,6 @@ const mainNavGroups: NavGroup[] = [
                 title: 'Painel',
                 href: dashboard(),
                 icon: LayoutGrid,
-            },
-            {
-                title: 'Projetos',
-                href: dashboard(),
-                icon: FolderKanban,
             },
             {
                 title: 'Tarefas',
@@ -61,12 +85,12 @@ const mainNavGroups: NavGroup[] = [
         title: 'Trabalho',
         items: [
             {
-                title: 'Sprint',
+                title: 'Ciclo',
                 href: dashboard(),
                 icon: Zap,
             },
             {
-                title: 'Backlog',
+                title: 'Pendências',
                 href: dashboard(),
                 icon: ListChecks,
             },
@@ -83,18 +107,12 @@ const mainNavGroups: NavGroup[] = [
         ],
     },
     {
-        title: 'Membros & Docs',
+        title: 'Membros e documentos',
         items: [
             {
                 title: 'Documentação',
                 href: dashboard(),
                 icon: FileText,
-            },
-            {
-                title: 'Usuários',
-                href: users(),
-                icon: Users,
-                permission: 'users.view',
             },
         ],
     },
@@ -116,6 +134,17 @@ const mainNavGroups: NavGroup[] = [
     {
         title: 'Sistema',
         items: [
+            {
+                title: 'Projetos',
+                href: dashboard(),
+                icon: FolderKanban,
+            },
+            {
+                title: 'Usuários',
+                href: users(),
+                icon: Users,
+                permission: 'users.view',
+            },
             {
                 title: 'Perfis',
                 href: roles(),
@@ -139,19 +168,6 @@ const visibleMainNavGroups = computed<NavGroup[]>(() =>
         }))
         .filter((group) => group.items.length > 0),
 );
-
-const footerNavItems: NavItem[] = [
-    {
-        title: 'Repositório',
-        href: 'https://github.com/laravel/vue-starter-kit',
-        icon: FolderGit2,
-    },
-    {
-        title: 'Documentação',
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
-    },
-];
 </script>
 
 <template>
@@ -168,12 +184,57 @@ const footerNavItems: NavItem[] = [
             </SidebarMenu>
         </SidebarHeader>
 
+        <div class="border-y border-sidebar-border/70 px-3 py-4 group-data-[collapsible=icon]:hidden">
+            <div class="mb-2 flex items-center justify-between px-1">
+                <span class="text-xs font-medium text-sidebar-foreground/70">Projeto Atual</span>
+                <span
+                    class="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-700 dark:text-emerald-300"
+                >
+                    Ativo
+                </span>
+            </div>
+            <Select v-model="selectedProject">
+                <SelectTrigger
+                    class="group h-auto! w-full justify-start gap-3 overflow-hidden rounded-2xl border-sidebar-border/80 bg-linear-to-br from-sidebar-accent/90 to-sidebar-accent/35 px-2 py-2! text-sidebar-foreground shadow-none ring-1 ring-sidebar-border/40 transition hover:border-sidebar-ring/40 hover:bg-sidebar-accent hover:ring-sidebar-ring/25"
+                >
+                    <span
+                        class="flex size-10 shrink-0 items-center justify-center rounded-xl text-xs font-semibold ring-1"
+                        :class="currentProject.badgeClass"
+                    >
+                        {{ currentProject.badge }}
+                    </span>
+                    <span class="grid min-w-0 flex-1 text-left">
+                        <span class="truncate text-sm leading-tight font-semibold">{{ currentProject.label }}</span>
+                        <span class="truncate text-xs text-sidebar-foreground/60">{{
+                            currentProject.description
+                        }}</span>
+                    </span>
+                    <SelectValue class="sr-only" placeholder="Selecione um projeto" />
+                </SelectTrigger>
+                <SelectContent class="w-64 rounded-xl p-1.5">
+                    <SelectItem v-for="project in projects" :key="project.value" :value="project.value">
+                        <span class="flex items-center gap-3 py-1">
+                            <span
+                                class="flex size-8 items-center justify-center rounded-lg text-xs font-semibold ring-1"
+                                :class="project.badgeClass"
+                            >
+                                {{ project.badge }}
+                            </span>
+                            <span class="grid min-w-0">
+                                <span class="truncate font-medium">{{ project.label }}</span>
+                                <span class="truncate text-xs text-muted-foreground">{{ project.description }}</span>
+                            </span>
+                        </span>
+                    </SelectItem>
+                </SelectContent>
+            </Select>
+        </div>
+
         <SidebarContent>
             <NavMain :groups="visibleMainNavGroups" />
         </SidebarContent>
 
         <SidebarFooter>
-            <NavFooter :items="footerNavItems" />
             <NavUser />
         </SidebarFooter>
     </Sidebar>

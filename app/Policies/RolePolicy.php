@@ -6,7 +6,6 @@ namespace App\Policies;
 
 use App\Enums\Permissions\RolePermissions;
 use App\Models\User;
-use App\Policies\Traits\CheckIsAdmin;
 use Spatie\Permission\Models\Role;
 
 class RolePolicy

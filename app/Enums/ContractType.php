@@ -12,7 +12,7 @@ enum ContractType: int
     public function label(): string
     {
         return match ($this) {
-            self::Freelance => 'Freelance',
+            self::Freelance => 'Autônomo',
             self::Fixed     => 'Contrato fixo',
         };
     }

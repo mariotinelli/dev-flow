@@ -22,6 +22,7 @@ defineProps<{
             <TableHeader class="bg-muted/50 text-xs tracking-wide text-muted-foreground uppercase">
                 <TableRow>
                     <TableHead class="px-4 py-3">Nome</TableHead>
+                    <TableHead class="px-4 py-3">Perfil</TableHead>
                     <TableHead class="px-4 py-3">Cargo</TableHead>
                     <TableHead class="px-4 py-3">Contrato</TableHead>
                     <TableHead class="px-4 py-3">Senioridade</TableHead>
@@ -34,11 +35,7 @@ defineProps<{
                     <TableCell class="px-4 py-4">
                         <div class="flex min-w-0 items-center gap-3">
                             <Avatar class="size-10">
-                                <AvatarImage
-                                    v-if="user.avatar_url"
-                                    :src="user.avatar_url"
-                                    :alt="user.name"
-                                />
+                                <AvatarImage v-if="user.avatar_url" :src="user.avatar_url" :alt="user.name" />
                                 <AvatarFallback>
                                     {{ getInitials(user.name) }}
                                 </AvatarFallback>
@@ -53,6 +50,9 @@ defineProps<{
                                 </p>
                             </div>
                         </div>
+                    </TableCell>
+                    <TableCell class="px-4 py-4 text-muted-foreground">
+                        {{ user.role }}
                     </TableCell>
                     <TableCell class="px-4 py-4 text-muted-foreground">
                         {{ user.job_title_label }}

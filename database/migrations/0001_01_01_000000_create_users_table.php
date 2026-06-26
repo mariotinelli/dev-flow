@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     /**
      * Run the migrations.
      */
@@ -18,9 +19,9 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('avatar_path')->nullable();
-            $table->unsignedTinyInteger('job_title');
-            $table->unsignedTinyInteger('contract_type');
-            $table->unsignedTinyInteger('seniority');
+            $table->unsignedTinyInteger('job_title')->nullable();
+            $table->unsignedTinyInteger('contract_type')->nullable();
+            $table->unsignedTinyInteger('seniority')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

@@ -11,6 +11,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
 
 /**
  * @extends Factory<User>
@@ -67,8 +68,28 @@ class UserFactory extends Factory
         ]);
     }
 
+    public function withRandomRole(): static
+    {
+        return $this->afterCreating(function (User $user): void {
+            $role = Role::query()->inRandomOrder()->first();
+
+            if ($role) {
+                $user->assignRole($role);
+            }
+        });
+    }
+
+    public function withRole(string $role): static
+    {
+        return $this->afterCreating(function (User $user) use ($role): void {
+            if (Role::findByName($role)->exists()) {
+                $user->assignRole($role);
+            }
+        });
+    }
+
     public function admin(): static
     {
-        return $this->afterCreating(fn (User $user): User => $user->assignRole('admin'));
+        return $this->withRole('admin');
     }
 }

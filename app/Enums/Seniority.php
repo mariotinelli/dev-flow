@@ -17,7 +17,7 @@ enum Seniority: int
             self::Junior => 'Júnior',
             self::Mid    => 'Pleno',
             self::Senior => 'Sênior',
-            self::Lead   => 'Tech Lead',
+            self::Lead   => 'Líder técnico',
         };
     }
 
