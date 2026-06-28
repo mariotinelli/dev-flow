@@ -2,21 +2,18 @@
 
 declare(strict_types = 1);
 
-use App\Enums\ProjectStatus;
-use App\Enums\ProjectVisibility;
 use App\Models\Project;
 use App\Models\User;
 
 test('authenticated users can update projects', function () {
     $user    = User::factory()->admin()->create();
-    $project = Project::factory()->create(['status' => ProjectStatus::Paused]);
+    $project = Project::factory()->create();
 
     $this->actingAs($user)->post(route('projects.update', $project), [
         'name'        => 'Updated Project',
         'key'         => 'UPD',
         'description' => 'Updated description.',
         'color'       => '#2563EB',
-        'visibility'  => ProjectVisibility::Public->value,
         'starts_at'   => '2026-07-01',
         'due_at'      => '2026-08-01',
     ])
@@ -27,9 +24,7 @@ test('authenticated users can update projects', function () {
 
     expect($project->name)->toBe('Updated Project')
         ->and($project->key)->toBe('UPD')
-        ->and($project->slug)->toBe('updated-project')
-        ->and($project->status)->toBe(ProjectStatus::Paused)
-        ->and($project->visibility)->toBe(ProjectVisibility::Public);
+        ->and($project->slug)->toBe('updated-project');
 });
 
 test('project update validates uniqueness', function () {
@@ -40,9 +35,8 @@ test('project update validates uniqueness', function () {
     ]);
 
     $this->actingAs($user)->post(route('projects.update', $project), [
-        'name'       => 'Updated Project',
-        'key'        => $other->key,
-        'visibility' => ProjectVisibility::Private->value,
+        'name' => 'Updated Project',
+        'key'  => $other->key,
     ])
         ->assertSessionHasErrors([
             'key',

@@ -5,16 +5,11 @@ declare(strict_types = 1);
 namespace App\Models;
 
 use App\Enums\BaseStatus;
-use App\Enums\ProjectStatus;
-use App\Enums\ProjectVisibility;
 use Database\Factories\ProjectFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
@@ -27,17 +22,12 @@ use Spatie\Sluggable\SlugOptions;
  * @property string $key
  * @property string $slug
  * @property string|null $description
- * @property int|null $parent_project_id
  * @property string|null $color
- * @property ProjectStatus $status
- * @property ProjectVisibility $visibility
  * @property Carbon|null $starts_at
  * @property Carbon|null $due_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
- * @property-read Project|null $parent
- * @property-read Collection<int, Project> $children
  */
 class Project extends Model
 {
@@ -47,13 +37,6 @@ class Project extends Model
     use SoftDeletes;
 
     /**
-     * @var array<string, mixed>
-     */
-    protected $attributes = [
-        'status' => ProjectStatus::Active->value,
-    ];
-
-    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -61,21 +44,9 @@ class Project extends Model
     protected function casts(): array
     {
         return [
-            'status'     => ProjectStatus::class,
-            'visibility' => ProjectVisibility::class,
-            'starts_at'  => 'date',
-            'due_at'     => 'date',
+            'starts_at' => 'date',
+            'due_at'    => 'date',
         ];
-    }
-
-    public function parent(): BelongsTo
-    {
-        return $this->belongsTo(self::class, 'parent_project_id');
-    }
-
-    public function children(): HasMany
-    {
-        return $this->hasMany(self::class, 'parent_project_id');
     }
 
     public function getSlugOptions(): SlugOptions
@@ -116,8 +87,6 @@ class Project extends Model
     public function filters(Builder $query, array $filters): void
     {
         $query->when($filters['search'] ?? null, fn (Builder $query, string $search) => $query->whereAny(['name', 'key', 'slug'], 'like', "%{$search}%"))
-            ->when($filters['status'] ?? null, fn (Builder $query, mixed $status) => $query->where('status', (int) $status))
-            ->when($filters['visibility'] ?? null, fn (Builder $query, mixed $visibility) => $query->where('visibility', (int) $visibility))
             ->when($filters['deleted_status'] ?? null, fn (Builder $query, string $deletedStatus) => match ($deletedStatus) {
                 BaseStatus::Active->value   => $query->whereNull('deleted_at'),
                 BaseStatus::Inactive->value => $query->whereNotNull('deleted_at'),

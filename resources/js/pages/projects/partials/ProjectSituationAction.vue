@@ -23,9 +23,11 @@ const props = defineProps<{
 
 const isOpen = ref(false);
 
-const canChangeStatus = computed(() => (props.project.is_active ? props.project.can.delete : props.project.can.restore));
+const canChangeSituation = computed(() =>
+    props.project.is_active ? props.project.can.delete : props.project.can.restore,
+);
 
-function updateStatus(): void {
+function updateSituation(): void {
     isOpen.value = false;
 
     if (props.project.is_active) {
@@ -48,7 +50,7 @@ function updateStatus(): void {
 
 <template>
     <AlertDialog v-model:open="isOpen">
-        <AlertDialogTrigger v-if="canChangeStatus" as-child>
+        <AlertDialogTrigger v-if="canChangeSituation" as-child>
             <Button type="button" :variant="project.is_active ? 'destructive' : 'success'" size="sm">
                 {{ project.is_active ? 'Inativar' : 'Ativar' }}
             </Button>
@@ -70,7 +72,10 @@ function updateStatus(): void {
 
                 <AlertDialogFooter>
                     <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                    <AlertDialogAction :variant="project.is_active ? 'destructive' : 'success'" @click="updateStatus">
+                    <AlertDialogAction
+                        :variant="project.is_active ? 'destructive' : 'success'"
+                        @click="updateSituation"
+                    >
                         {{ project.is_active ? 'Confirmar inativação' : 'Confirmar ativação' }}
                     </AlertDialogAction>
                 </AlertDialogFooter>

@@ -4,7 +4,6 @@ declare(strict_types = 1);
 
 namespace App\Http\Controllers\Projects;
 
-use App\Enums\ProjectVisibility;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProjectResource;
 use App\Models\Project;
@@ -22,8 +21,7 @@ class EditController extends Controller
         $this->authorize('update', $project);
 
         return Inertia::render('projects/Edit', [
-            'project'      => (new ProjectResource($project))->resolve($request),
-            'visibilities' => ProjectVisibility::options(),
+            'project' => (new ProjectResource($project))->resolve($request),
         ]);
     }
 }

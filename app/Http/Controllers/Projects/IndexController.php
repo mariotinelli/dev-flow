@@ -5,8 +5,6 @@ declare(strict_types = 1);
 namespace App\Http\Controllers\Projects;
 
 use App\Enums\BaseStatus;
-use App\Enums\ProjectStatus;
-use App\Enums\ProjectVisibility;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Projects\IndexProjectRequest;
 use App\Http\Resources\ProjectResource;
@@ -37,12 +35,8 @@ class IndexController extends Controller
             ],
             'filters' => [
                 'search'         => $filters['search'] ?? '',
-                'status'         => isset($filters['status']) ? (string) $filters['status'] : 'all',
-                'visibility'     => isset($filters['visibility']) ? (string) $filters['visibility'] : 'all',
                 'deleted_status' => $filters['deleted_status'] ?? 'all',
             ],
-            'statuses'        => ProjectStatus::options(),
-            'visibilities'    => ProjectVisibility::options(),
             'deletedStatuses' => BaseStatus::options(),
         ]);
     }

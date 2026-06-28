@@ -5,8 +5,6 @@ declare(strict_types = 1);
 namespace App\Http\Requests\Projects;
 
 use App\Enums\BaseStatus;
-use App\Enums\ProjectStatus;
-use App\Enums\ProjectVisibility;
 use App\Models\Project;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -31,8 +29,6 @@ class IndexProjectRequest extends FormRequest
     {
         return [
             'search'         => ['nullable', 'string', 'max:255'],
-            'status'         => ['nullable', 'integer', Rule::in(ProjectStatus::values())],
-            'visibility'     => ['nullable', 'integer', Rule::in(ProjectVisibility::values())],
             'deleted_status' => ['nullable', 'string', Rule::in(BaseStatus::values())],
         ];
     }

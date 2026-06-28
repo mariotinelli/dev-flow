@@ -4,17 +4,12 @@ import { ref } from 'vue';
 import StoreController from '@/actions/App/Http/Controllers/Projects/StoreController';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
+import RichEditor from '@/components/RichEditor.vue';
 import { Button } from '@/components/ui/button';
 import { ColorInput } from '@/components/ui/color-input';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { index } from '@/routes/projects';
-import type { ProjectVisibilityOption } from '@/types';
-
-defineProps<{
-    visibilities: ProjectVisibilityOption[];
-}>();
 
 const name = ref('');
 const key = ref('');
@@ -66,7 +61,7 @@ defineOptions({
     <div class="flex h-full flex-1 flex-col gap-6">
         <Head title="Novo projeto" />
 
-        <Heading title="Novo projeto" description="Cadastre uma iniciativa com visibilidade e hierarquia." />
+        <Heading title="Novo projeto" />
 
         <Form
             novalidate
@@ -108,12 +103,7 @@ defineOptions({
 
                     <div class="grid gap-2 md:col-span-2">
                         <Label for="description">Descrição</Label>
-                        <textarea
-                            id="description"
-                            name="description"
-                            rows="4"
-                            class="flex min-h-24 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50"
-                        />
+                        <RichEditor id="description" name="description" :rows="8" />
                         <InputError :message="errors.description" />
                     </div>
                 </div>
@@ -123,25 +113,6 @@ defineOptions({
                         <Label for="color" required>Cor</Label>
                         <ColorInput id="color" name="color" required default-value="#2563eb" />
                         <InputError :message="errors.color" />
-                    </div>
-
-                    <div class="grid gap-2">
-                        <Label for="visibility" required>Visibilidade</Label>
-                        <Select name="visibility" required>
-                            <SelectTrigger id="visibility" class="w-full"
-                                ><SelectValue placeholder="Selecione"
-                            /></SelectTrigger>
-                            <SelectContent>
-                                <SelectItem
-                                    v-for="visibility in visibilities"
-                                    :key="visibility.value"
-                                    :value="visibility.value"
-                                >
-                                    {{ visibility.label }}
-                                </SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <InputError :message="errors.visibility" />
                     </div>
 
                     <div class="grid gap-2">

@@ -5,13 +5,7 @@ import { reactive, ref } from 'vue';
 import Heading from '@/components/Heading.vue';
 import { Button } from '@/components/ui/button';
 import { create, index } from '@/routes/projects';
-import type {
-    PaginatedProjects,
-    ProjectDeletedStatusOption,
-    ProjectFilterValues,
-    ProjectStatusOption,
-    ProjectVisibilityOption,
-} from '@/types';
+import type { PaginatedProjects, ProjectDeletedStatusOption, ProjectFilterValues } from '@/types';
 import ProjectEmptyState from './partials/ProjectEmptyState.vue';
 import ProjectFilters from './partials/ProjectFilters.vue';
 import ProjectGrid from './partials/ProjectGrid.vue';
@@ -24,8 +18,6 @@ const props = defineProps<{
         create: boolean;
     };
     filters: ProjectFilterValues;
-    statuses: ProjectStatusOption[];
-    visibilities: ProjectVisibilityOption[];
     deletedStatuses: ProjectDeletedStatusOption[];
 }>();
 
@@ -55,8 +47,6 @@ function submitFilters(): void {
 
 function clearFilters(): void {
     filterForm.search = '';
-    filterForm.status = 'all';
-    filterForm.visibility = 'all';
     filterForm.deleted_status = 'all';
 
     router.get(
@@ -76,10 +66,7 @@ function clearFilters(): void {
         <Head title="Projetos" />
 
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <Heading
-                title="Projetos"
-                description="Gerencie iniciativas, hierarquias, status e visibilidade do trabalho."
-            />
+            <Heading title="Projetos" description="Gerencie iniciativas e prazos do trabalho." />
 
             <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
                 <div
@@ -118,8 +105,6 @@ function clearFilters(): void {
 
         <ProjectFilters
             v-model:filters="filterForm"
-            :statuses="statuses"
-            :visibilities="visibilities"
             :deleted-statuses="deletedStatuses"
             @submit="submitFilters"
             @clear="clearFilters"

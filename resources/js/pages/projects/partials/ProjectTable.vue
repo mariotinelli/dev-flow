@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { edit } from '@/routes/projects';
 import type { Project } from '@/types';
-import ProjectStatusAction from './ProjectStatusAction.vue';
+import ProjectSituationAction from './ProjectSituationAction.vue';
 
 defineProps<{
     projects: Project[];
@@ -20,8 +20,7 @@ defineProps<{
             <TableHeader class="bg-muted/50 text-xs tracking-wide text-muted-foreground uppercase">
                 <TableRow>
                     <TableHead class="px-4 py-3">Projeto</TableHead>
-                    <TableHead class="px-4 py-3">Status</TableHead>
-                    <TableHead class="px-4 py-3">Visibilidade</TableHead>
+                    <TableHead class="px-4 py-3">Início</TableHead>
                     <TableHead class="px-4 py-3">Prazo</TableHead>
                     <TableHead class="px-4 py-3">Situação</TableHead>
                     <TableHead class="px-4 py-3 text-right">Ações</TableHead>
@@ -38,16 +37,10 @@ defineProps<{
                             <div class="min-w-0">
                                 <p class="truncate font-medium">{{ project.name }}</p>
                                 <p class="truncate text-muted-foreground">Identificador: {{ project.key }}</p>
-                                <p class="truncate text-xs text-muted-foreground">Slug: {{ project.slug }}</p>
                             </div>
                         </div>
                     </TableCell>
-                    <TableCell class="px-4 py-4"
-                        ><Badge>{{ project.status_label }}</Badge></TableCell
-                    >
-                    <TableCell class="px-4 py-4"
-                        ><Badge variant="secondary">{{ project.visibility_label }}</Badge></TableCell
-                    >
+                    <TableCell class="px-4 py-4 text-muted-foreground">{{ project.starts_at ?? 'Sem data' }}</TableCell>
                     <TableCell class="px-4 py-4 text-muted-foreground">{{ project.due_at ?? 'Sem prazo' }}</TableCell>
                     <TableCell class="px-4 py-4">
                         <Badge :variant="project.is_active ? 'secondary' : 'outline'">
@@ -60,7 +53,7 @@ defineProps<{
                                 <Link :href="edit(project.id)">Editar</Link>
                             </Button>
 
-                            <ProjectStatusAction :project="project" />
+                            <ProjectSituationAction :project="project" />
                         </div>
                     </TableCell>
                 </TableRow>

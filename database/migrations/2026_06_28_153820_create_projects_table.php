@@ -18,10 +18,7 @@ return new class () extends Migration {
             $table->string('key', 10)->unique();
             $table->string('slug', 170)->unique();
             $table->text('description')->nullable();
-            $table->foreignId('parent_project_id')->nullable()->constrained('projects')->nullOnDelete();
             $table->string('color', 7)->nullable();
-            $table->unsignedTinyInteger('status')->index();
-            $table->unsignedTinyInteger('visibility')->index();
             $table->date('starts_at')->nullable()->index();
             $table->date('due_at')->nullable()->index();
             $table->timestamps();

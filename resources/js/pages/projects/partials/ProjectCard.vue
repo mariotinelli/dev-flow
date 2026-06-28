@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { edit } from '@/routes/projects';
 import type { Project } from '@/types';
-import ProjectStatusAction from './ProjectStatusAction.vue';
+import ProjectSituationAction from './ProjectSituationAction.vue';
 
 defineProps<{
     project: Project;
@@ -36,17 +36,6 @@ defineProps<{
             </Badge>
         </div>
 
-        <p v-if="project.description" class="line-clamp-2 text-sm text-muted-foreground">
-            {{ project.description }}
-        </p>
-
-        <p class="truncate text-xs text-muted-foreground">Slug: {{ project.slug }}</p>
-
-        <div class="flex flex-wrap gap-2">
-            <Badge>{{ project.status_label }}</Badge>
-            <Badge variant="secondary">{{ project.visibility_label }}</Badge>
-        </div>
-
         <div class="grid gap-2 text-sm text-muted-foreground sm:grid-cols-2">
             <div class="flex items-center gap-2">
                 <CalendarDays class="size-4" />
@@ -58,12 +47,20 @@ defineProps<{
             </div>
         </div>
 
+        <div class="rounded-lg border bg-muted/30 p-3 text-sm text-muted-foreground">
+            {{
+                project.is_active
+                    ? 'Projeto disponível para atualizações.'
+                    : 'Projeto arquivado e disponível para restauração.'
+            }}
+        </div>
+
         <div class="mt-auto flex items-center justify-end gap-2 border-t pt-4">
             <Button v-if="project.is_active && project.can.update" variant="outline" size="sm" as-child>
                 <Link :href="edit(project.id)">Editar</Link>
             </Button>
 
-            <ProjectStatusAction :project="project" />
+            <ProjectSituationAction :project="project" />
         </div>
     </article>
 </template>

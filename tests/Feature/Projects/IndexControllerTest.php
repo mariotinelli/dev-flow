@@ -3,8 +3,6 @@
 declare(strict_types = 1);
 
 use App\Enums\BaseStatus;
-use App\Enums\ProjectStatus;
-use App\Enums\ProjectVisibility;
 use App\Models\Project;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -35,23 +33,17 @@ test('authenticated users can filter projects', function () {
     $user = User::factory()->admin()->create();
 
     $matchingProject = Project::factory()->create([
-        'name'       => 'Dev Flow Platform',
-        'key'        => 'DFLOW',
-        'status'     => ProjectStatus::Active,
-        'visibility' => ProjectVisibility::Internal,
+        'name' => 'Dev Flow Platform',
+        'key'  => 'DFLOW',
     ]);
 
     Project::factory()->create([
-        'name'       => 'Website',
-        'status'     => ProjectStatus::Paused,
-        'visibility' => ProjectVisibility::Public,
+        'name' => 'Website',
     ]);
 
     $this->actingAs($user)
         ->get(route('projects.index', [
             'search'         => 'flow',
-            'status'         => ProjectStatus::Active->value,
-            'visibility'     => ProjectVisibility::Internal->value,
             'deleted_status' => BaseStatus::Active->value,
         ]))
         ->assertOk()
@@ -60,8 +52,6 @@ test('authenticated users can filter projects', function () {
             ->has('projects.data', 1)
             ->where('projects.data.0.id', $matchingProject->id)
             ->where('filters.search', 'flow')
-            ->where('filters.status', (string) ProjectStatus::Active->value)
-            ->where('filters.visibility', (string) ProjectVisibility::Internal->value)
             ->where('filters.deleted_status', BaseStatus::Active->value));
 });
 
@@ -70,13 +60,9 @@ test('project filters only accept valid values', function () {
 
     $this->actingAs($user)
         ->get(route('projects.index', [
-            'status'         => 999,
-            'visibility'     => 999,
             'deleted_status' => 'archived',
         ]))
         ->assertSessionHasErrors([
-            'status',
-            'visibility',
             'deleted_status',
         ]);
 });
@@ -84,16 +70,12 @@ test('project filters only accept valid values', function () {
 test('projects list is paginated and keeps filters in pagination links', function () {
     $user = User::factory()->admin()->create();
 
-    Project::factory()->count(13)->create([
-        'status'     => ProjectStatus::Active,
-        'visibility' => ProjectVisibility::Internal,
-    ]);
+    Project::factory()->count(13)->create();
 
     $this->actingAs($user)
         ->get(route('projects.index', [
-            'status'     => ProjectStatus::Active->value,
-            'visibility' => ProjectVisibility::Internal->value,
-            'page'       => 2,
+            'deleted_status' => BaseStatus::Active->value,
+            'page'           => 2,
         ]))
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page
@@ -102,5 +84,5 @@ test('projects list is paginated and keeps filters in pagination links', functio
             ->where('projects.meta.current_page', 2)
             ->where('projects.meta.last_page', 2)
             ->where('projects.meta.total', 13)
-            ->where('projects.meta.links.0.url', fn (?string $url): bool => $url !== null && str_contains($url, 'visibility=' . ProjectVisibility::Internal->value)));
+            ->where('projects.meta.links.0.url', fn (?string $url): bool => $url !== null && str_contains($url, 'deleted_status=' . BaseStatus::Active->value)));
 });

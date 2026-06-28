@@ -4,7 +4,6 @@ declare(strict_types = 1);
 
 namespace App\Http\Requests\Projects;
 
-use App\Enums\ProjectVisibility;
 use App\Models\Project;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -41,7 +40,6 @@ class StoreProjectRequest extends FormRequest
             'key'         => ['required', 'string', 'max:10', Rule::unique('projects', 'key')],
             'description' => ['nullable', 'string'],
             'color'       => ['required', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
-            'visibility'  => ['required', 'integer', Rule::in(ProjectVisibility::values())],
             'starts_at'   => ['nullable', 'date'],
             'due_at'      => ['nullable', 'date', 'after_or_equal:starts_at'],
         ];

@@ -2,8 +2,6 @@
 
 declare(strict_types = 1);
 
-use App\Enums\ProjectStatus;
-use App\Enums\ProjectVisibility;
 use App\Models\Project;
 use Illuminate\Database\QueryException;
 
@@ -13,8 +11,6 @@ test('projects can be created with the expected fields', function () {
         'key'         => 'DFLOW',
         'description' => 'Internal project management platform.',
         'color'       => '#1F8A70',
-        'status'      => ProjectStatus::Active,
-        'visibility'  => ProjectVisibility::Internal,
         'starts_at'   => '2026-07-01',
         'due_at'      => '2026-12-31',
     ]);
@@ -29,30 +25,14 @@ test('projects can be created with the expected fields', function () {
         ->color->toBe('#1F8A70');
 });
 
-test('project attributes are cast to enums and dates', function () {
+test('project date attributes are cast to dates', function () {
     $project = Project::factory()->create([
-        'status'     => ProjectStatus::Paused,
-        'visibility' => ProjectVisibility::Private,
-        'starts_at'  => '2026-07-01',
-        'due_at'     => '2026-12-31',
+        'starts_at' => '2026-07-01',
+        'due_at'    => '2026-12-31',
     ])->refresh();
 
-    expect($project->status)->toBe(ProjectStatus::Paused)
-        ->and($project->visibility)->toBe(ProjectVisibility::Private)
-        ->and($project->starts_at?->toDateString())->toBe('2026-07-01')
+    expect($project->starts_at?->toDateString())->toBe('2026-07-01')
         ->and($project->due_at?->toDateString())->toBe('2026-12-31');
-});
-
-test('projects may have parent and child projects', function () {
-    $parent = Project::factory()->create();
-    $child  = Project::factory()->create(['parent_project_id' => $parent->id]);
-
-    $child->load('parent');
-    $parent->load('children');
-
-    expect($child->parent->is($parent))->toBeTrue()
-        ->and($parent->children)->toHaveCount(1)
-        ->and($parent->children->first()->is($child))->toBeTrue();
 });
 
 test('projects are soft deleted', function () {
@@ -73,16 +53,6 @@ test('project keys must be unique', function () {
     expect(fn () => Project::factory()->create([
         'key' => 'DFLOW',
     ]))->toThrow(QueryException::class);
-});
-
-test('project status defaults to active', function () {
-    $project = Project::query()->create([
-        'name'       => 'Busca Certa',
-        'key'        => 'BC-001',
-        'visibility' => ProjectVisibility::Internal,
-    ])->refresh();
-
-    expect($project->status)->toBe(ProjectStatus::Active);
 });
 
 test('project keys can be generated from project names', function (string $name, string $key) {
