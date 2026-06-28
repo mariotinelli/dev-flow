@@ -75,6 +75,26 @@ test('authenticated users can filter users', function () {
         );
 });
 
+test('user filters only accept valid values', function () {
+    $user = User::factory()->admin()->create();
+
+    $this->actingAs($user)
+        ->get(route('users.index', [
+            'role'          => 999,
+            'job_title'     => 999,
+            'contract_type' => 999,
+            'seniority'     => 999,
+            'status'        => 'archived',
+        ]))
+        ->assertSessionHasErrors([
+            'role',
+            'job_title',
+            'contract_type',
+            'seniority',
+            'status',
+        ]);
+});
+
 test('user status is based on deleted at', function () {
     $user      = User::factory()->admin()->create();
     $otherUser = User::factory()->trashed()->create();

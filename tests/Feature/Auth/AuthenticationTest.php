@@ -55,6 +55,17 @@ test('users can not authenticate with invalid password', function () {
     $this->assertGuest();
 });
 
+test('soft deleted users cannot authenticate', function () {
+    $user = User::factory()->trashed()->create();
+
+    $this->post(route('login.store'), [
+        'email'    => $user->email,
+        'password' => 'password',
+    ]);
+
+    $this->assertGuest();
+});
+
 test('users can logout', function () {
     $user = User::factory()->create();
 
