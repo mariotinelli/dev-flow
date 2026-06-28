@@ -29,6 +29,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import { index as projectsIndex } from '@/routes/projects';
 import { index as roles } from '@/routes/roles';
 import { index as users } from '@/routes/users';
 import type { Auth, NavGroup } from '@/types';
@@ -136,8 +137,9 @@ const mainNavGroups: NavGroup[] = [
         items: [
             {
                 title: 'Projetos',
-                href: dashboard(),
+                href: projectsIndex(),
                 icon: FolderKanban,
+                permission: 'projects.view',
             },
             {
                 title: 'Usuários',

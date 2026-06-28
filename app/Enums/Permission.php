@@ -4,18 +4,20 @@ declare(strict_types = 1);
 
 namespace App\Enums;
 
+use App\Enums\Permissions\ProjectPermissions;
 use App\Enums\Permissions\RolePermissions;
 use App\Enums\Permissions\UserPermissions;
 
 final class Permission
 {
     /**
-     * @return list<RolePermissions|UserPermissions>
+     * @return list<RolePermissions|ProjectPermissions|UserPermissions>
      */
     public static function cases(): array
     {
         return [
             ...RolePermissions::cases(),
+            ...ProjectPermissions::cases(),
             ...UserPermissions::cases(),
         ];
     }
@@ -25,7 +27,7 @@ final class Permission
      */
     public static function values(): array
     {
-        return array_map(fn (RolePermissions | UserPermissions $permission): string => $permission->value, self::cases());
+        return array_map(fn (RolePermissions | ProjectPermissions | UserPermissions $permission): string => $permission->value, self::cases());
     }
 
     /**

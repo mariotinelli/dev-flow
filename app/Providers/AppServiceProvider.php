@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace App\Providers;
 
+use App\Models\Project;
+use App\Policies\ProjectPolicy;
 use App\Policies\RolePolicy;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
@@ -66,5 +68,6 @@ class AppServiceProvider extends ServiceProvider
     protected function configureGates(): void
     {
         Gate::policy(Role::class, RolePolicy::class);
+        Gate::policy(Project::class, ProjectPolicy::class);
     }
 }

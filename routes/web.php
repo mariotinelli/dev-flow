@@ -2,6 +2,7 @@
 
 declare(strict_types = 1);
 
+use App\Http\Controllers\Projects;
 use App\Http\Controllers\Roles;
 use App\Http\Controllers\Users;
 use Illuminate\Support\Facades\Route;
@@ -28,6 +29,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('{role}/editar', Roles\EditController::class)->name('edit');
         Route::post('{role}', Roles\UpdateController::class)->name('update');
         Route::delete('{role}', Roles\DestroyController::class)->name('destroy');
+    });
+
+    Route::prefix('projetos')->name('projects.')->group(function () {
+        Route::get('/', Projects\IndexController::class)->name('index');
+        Route::get('cadastrar', Projects\CreateController::class)->name('create');
+        Route::post('/', Projects\StoreController::class)->name('store');
+        Route::get('{project}/editar', Projects\EditController::class)->name('edit');
+        Route::post('{project}', Projects\UpdateController::class)->name('update');
+        Route::post('{project}/ativar', Projects\ActivateController::class)->withTrashed()->name('activate');
+        Route::delete('{project}', Projects\DestroyController::class)->name('destroy');
     });
 });
 
