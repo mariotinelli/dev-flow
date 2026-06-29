@@ -19,10 +19,7 @@ class SelectController extends Controller
     {
         $user = $request->user();
 
-        abort_unless(
-            $user->hasRole('admin') || $project->members()->where('user_id', $user->id)->exists(),
-            403,
-        );
+        abort_unless($user->hasRole('admin') || $user->isMemberOf($project), 403);
 
         CurrentProject::select($request, $project);
 

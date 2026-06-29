@@ -109,4 +109,9 @@ class User extends Authenticatable implements PasskeyUser
                 default                     => null,
             });
     }
+
+    public function isMemberOf(Project $project): bool
+    {
+        return $this->projects()->whereKey($project)->exists();
+    }
 }
