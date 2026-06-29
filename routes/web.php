@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-use App\Http\Controllers\ProjectRoles;
+use App\Http\Controllers\ProjectSettings;
 use App\Http\Controllers\Projects;
 use App\Http\Controllers\Roles;
 use App\Http\Controllers\Users;
@@ -37,14 +37,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::inertia('loom', 'project-settings/Loom')->name('loom');
 
         Route::prefix('papeis')->name('roles.')->group(function () {
-            Route::get('/', ProjectRoles\IndexController::class)->name('index');
-            Route::get('cadastrar', ProjectRoles\CreateController::class)->name('create');
-            Route::post('copiar', ProjectRoles\CopyController::class)->name('copy');
-            Route::post('/', ProjectRoles\StoreController::class)->name('store');
-            Route::get('{projectRole}/editar', ProjectRoles\EditController::class)->name('edit');
-            Route::post('{projectRole}', ProjectRoles\UpdateController::class)->name('update');
-            Route::post('{projectRole}/ativar', ProjectRoles\ActivateController::class)->withTrashed()->name('activate');
-            Route::delete('{projectRole}', ProjectRoles\DestroyController::class)->name('destroy');
+            Route::get('/', ProjectSettings\ProjectRoles\IndexController::class)->name('index');
+            Route::get('cadastrar', ProjectSettings\ProjectRoles\CreateController::class)->name('create');
+            Route::post('copiar', ProjectSettings\ProjectRoles\CopyController::class)->name('copy');
+            Route::post('/', ProjectSettings\ProjectRoles\StoreController::class)->name('store');
+            Route::get('{projectRole}/editar', ProjectSettings\ProjectRoles\EditController::class)->name('edit');
+            Route::post('{projectRole}', ProjectSettings\ProjectRoles\UpdateController::class)->name('update');
+            Route::post('{projectRole}/ativar', ProjectSettings\ProjectRoles\ActivateController::class)->withTrashed()->name('activate');
+            Route::delete('{projectRole}', ProjectSettings\ProjectRoles\DestroyController::class)->name('destroy');
         });
     });
 

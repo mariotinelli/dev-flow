@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Form, Head, Link } from '@inertiajs/vue3';
 import { ChevronsUpDown } from '@lucide/vue';
-import UpdateController from '@/actions/App/Http/Controllers/ProjectRoles/UpdateController';
+import UpdateController from '@/actions/App/Http/Controllers/ProjectSettings/ProjectRoles/UpdateController';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';

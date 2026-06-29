@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Form, Head, Link } from '@inertiajs/vue3';
 import { ChevronsUpDown } from '@lucide/vue';
-import StoreController from '@/actions/App/Http/Controllers/ProjectRoles/StoreController';
+import StoreController from '@/actions/App/Http/Controllers/ProjectSettings/ProjectRoles/StoreController';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
@@ -121,7 +121,7 @@ defineOptions({
                 <Button variant="outline" as-child>
                     <Link :href="index()">Cancelar</Link>
                 </Button>
-                <Button type="submit" :disabled="processing">Salvar papel</Button>
+                <Button type="submit" :disabled="processing">Salvar</Button>
             </div>
         </Form>
     </div>

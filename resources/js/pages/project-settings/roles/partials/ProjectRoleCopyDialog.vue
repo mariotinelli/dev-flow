@@ -2,7 +2,7 @@
 import { useForm } from '@inertiajs/vue3';
 import { ChevronsUpDown, Copy as CopyIcon } from '@lucide/vue';
 import { computed, ref } from 'vue';
-import CopyController from '@/actions/App/Http/Controllers/ProjectRoles/CopyController';
+import CopyController from '@/actions/App/Http/Controllers/ProjectSettings/ProjectRoles/CopyController';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';

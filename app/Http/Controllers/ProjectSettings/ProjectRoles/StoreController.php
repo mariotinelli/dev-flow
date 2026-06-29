@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace App\Http\Controllers\ProjectRoles;
+namespace App\Http\Controllers\ProjectSettings\ProjectRoles;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProjectRoles\StoreProjectRoleRequest;

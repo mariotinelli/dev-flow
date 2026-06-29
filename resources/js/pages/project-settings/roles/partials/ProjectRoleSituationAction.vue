@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
-import ActivateController from '@/actions/App/Http/Controllers/ProjectRoles/ActivateController';
-import DestroyController from '@/actions/App/Http/Controllers/ProjectRoles/DestroyController';
+import ActivateController from '@/actions/App/Http/Controllers/ProjectSettings/ProjectRoles/ActivateController';
+import DestroyController from '@/actions/App/Http/Controllers/ProjectSettings/ProjectRoles/DestroyController';
 import {
     AlertDialog,
     AlertDialogAction,

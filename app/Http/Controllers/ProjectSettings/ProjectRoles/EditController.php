@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace App\Http\Controllers\ProjectRoles;
+namespace App\Http\Controllers\ProjectSettings\ProjectRoles;
 
 use App\Enums\Permission;
 use App\Http\Controllers\Controller;
