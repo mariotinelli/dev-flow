@@ -29,6 +29,19 @@ export type User = {
 export type Auth = {
     user: User;
     permissions: Record<string, boolean>;
+    project_permissions: Record<string, boolean>;
+    projects: Array<{
+        id: number;
+        name: string;
+        key: string;
+        color: string | null;
+    }>;
+    current_project: {
+        id: number;
+        name: string;
+        key: string;
+        color: string | null;
+    } | null;
 };
 
 /* @chisel-passkeys */

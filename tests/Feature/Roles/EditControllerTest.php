@@ -66,6 +66,6 @@ test('admin users can view role edition with role data and permission groups', f
                     UserPermissions::View->value,
                     UserPermissions::Update->value,
                 ])
-                ->where('permissionGroups', Permission::groupedOptions()),
+                ->where('permissionGroups', Permission::systemGroupedOptions()),
         );
 });

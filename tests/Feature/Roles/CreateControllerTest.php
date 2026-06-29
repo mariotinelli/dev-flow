@@ -40,6 +40,6 @@ test('admin users can view role creation with permission groups', function () {
         ->assertInertia(
             fn (Assert $page) => $page
                 ->component('roles/Create')
-                ->where('permissionGroups', Permission::groupedOptions()),
+                ->where('permissionGroups', Permission::systemGroupedOptions()),
         );
 });

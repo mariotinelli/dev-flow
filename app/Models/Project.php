@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
@@ -55,6 +57,33 @@ class Project extends Model
             ->generateSlugsFrom('name')
             ->saveSlugsTo('slug')
             ->slugsShouldBeNoLongerThan(170);
+    }
+
+    /**
+     * @return HasMany<ProjectRole, $this>
+     */
+    public function projectRoles(): HasMany
+    {
+        return $this->hasMany(ProjectRole::class);
+    }
+
+    /**
+     * @return HasMany<ProjectMember, $this>
+     */
+    public function members(): HasMany
+    {
+        return $this->hasMany(ProjectMember::class);
+    }
+
+    /**
+     * @return BelongsToMany<User, $this>
+     */
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'project_members')
+            ->withPivot(['project_role_id', 'deleted_at'])
+            ->wherePivotNull('deleted_at')
+            ->withTimestamps();
     }
 
     public static function nextKeyForName(string $name): string

@@ -3,4 +3,5 @@ export * from './users';
 export * from './navigation';
 export * from './roles';
 export * from './projects';
+export * from './project-roles';
 export * from './ui';

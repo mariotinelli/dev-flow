@@ -28,10 +28,10 @@ class StoreRoleRequest extends FormRequest
                 'string',
                 'max:255',
                 new NotReservedRoleName(),
-                Rule::unique('roles', 'name')->where('guard_name', 'web')
+                Rule::unique('roles', 'name')->where('guard_name', 'web'),
             ],
             'permissions'   => ['array'],
-            'permissions.*' => ['string', Rule::in(Permission::values())],
+            'permissions.*' => ['string', Rule::in(Permission::systemValues())],
         ];
     }
 }

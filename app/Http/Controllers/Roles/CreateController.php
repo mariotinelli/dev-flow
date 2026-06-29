@@ -17,7 +17,7 @@ class CreateController extends Controller
         $this->authorize('create', Role::class);
 
         return Inertia::render('roles/Create', [
-            'permissionGroups' => Permission::groupedOptions(),
+            'permissionGroups' => Permission::systemGroupedOptions(),
         ]);
     }
 }

@@ -24,7 +24,7 @@ class EditController extends Controller
                 'name'        => $role->name,
                 'permissions' => $role->permissions->pluck('name')->values(),
             ],
-            'permissionGroups' => Permission::groupedOptions(),
+            'permissionGroups' => Permission::systemGroupedOptions(),
         ]);
     }
 }

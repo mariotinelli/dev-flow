@@ -16,6 +16,7 @@ import type { PaginationMeta } from '@/types';
 
 const props = defineProps<{
     meta: PaginationMeta;
+    itemLabel?: string;
 }>();
 
 const previousPageLink = computed(() => props.meta.links[0]);
@@ -25,7 +26,9 @@ const pageLinks = computed(() => props.meta.links.slice(1, -1));
 
 <template>
     <div v-if="meta.total > 0" class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <p class="text-sm text-muted-foreground">Exibindo {{ meta.from }}-{{ meta.to }} de {{ meta.total }} projetos</p>
+        <p class="text-sm text-muted-foreground">
+            Exibindo {{ meta.from }}-{{ meta.to }} de {{ meta.total }} {{ itemLabel ?? 'projetos' }}
+        </p>
 
         <Pagination v-if="meta.last_page > 1" class="sm:mx-0 sm:w-auto">
             <PaginationContent>

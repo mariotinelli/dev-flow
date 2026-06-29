@@ -28,7 +28,7 @@ class UpdateRoleRequest extends FormRequest
         return [
             'name'          => ['required', 'string', 'max:255', 'not_in:admin', Rule::unique('roles', 'name')->where('guard_name', 'web')->ignore($role->id)],
             'permissions'   => ['array'],
-            'permissions.*' => ['string', Rule::in(Permission::values())],
+            'permissions.*' => ['string', Rule::in(Permission::systemValues())],
         ];
     }
 }

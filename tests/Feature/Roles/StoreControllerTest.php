@@ -2,6 +2,7 @@
 
 declare(strict_types = 1);
 
+use App\Enums\Permissions\Projects\TaskPermissions;
 use App\Enums\Permissions\RolePermissions;
 use App\Enums\Permissions\UserPermissions;
 use App\Models\User;
@@ -224,5 +225,20 @@ test('permissions must be valid system permissions', function () {
 
     $this->assertDatabaseMissing('roles', [
         'name' => 'invalid-system-permissions-role',
+    ]);
+});
+
+test('project scoped permissions cannot be assigned to system roles', function () {
+    $user = User::factory()->admin()->create();
+
+    $this->actingAs($user)
+        ->post(route('roles.store'), [
+            'name'        => 'project-scoped-system-role',
+            'permissions' => [TaskPermissions::View->value],
+        ])
+        ->assertSessionHasErrors(['permissions.0']);
+
+    $this->assertDatabaseMissing('roles', [
+        'name' => 'project-scoped-system-role',
     ]);
 });

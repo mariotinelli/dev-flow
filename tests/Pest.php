@@ -2,6 +2,11 @@
 
 declare(strict_types = 1);
 
+use App\Enums\Permissions\Projects\SettingPermissions;
+use App\Models\Project;
+use App\Models\ProjectMember;
+use App\Models\ProjectRole;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
@@ -57,3 +62,23 @@ TestResponse::macro('assertToast', function (string $type, string $message): Tes
 
     return $this;
 });
+
+/**
+ * @return array{0: User, 1: Project, 2: ProjectRole}
+ */
+function projectMemberWithSettingsPermission(): array
+{
+    $project = Project::factory()->create();
+    $role    = ProjectRole::factory()->for($project)->create();
+    $user    = User::factory()->create();
+
+    $role->syncPermissionNames([SettingPermissions::Manage->value]);
+
+    ProjectMember::factory()->create([
+        'project_id'      => $project->id,
+        'user_id'         => $user->id,
+        'project_role_id' => $role->id,
+    ]);
+
+    return [$user, $project, $role];
+}
