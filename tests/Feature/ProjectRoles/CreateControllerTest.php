@@ -8,14 +8,14 @@ use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
 
 test('guests are redirected from project role creation', function () {
-    $this->get(route('project-roles.create'))->assertRedirect(route('login'));
+    $this->get(route('project-settings.roles.create'))->assertRedirect(route('login'));
 });
 
 test('users without permission cannot view project role creation', function () {
     $user = User::factory()->create();
 
     $this->actingAs($user)
-        ->get(route('project-roles.create'))
+        ->get(route('project-settings.roles.create'))
         ->assertForbidden();
 });
 
@@ -23,7 +23,7 @@ test('project members with manage settings permission can view project role crea
     [$user] = projectMemberWithSettingsPermission();
 
     $this->actingAs($user)
-        ->get(route('project-roles.create'))
+        ->get(route('project-settings.roles.create'))
         ->assertOk();
 });
 
@@ -32,11 +32,11 @@ test('admin users can view project role creation with project permission groups'
     Project::factory()->create();
 
     $this->actingAs($user)
-        ->get(route('project-roles.create'))
+        ->get(route('project-settings.roles.create'))
         ->assertOk()
         ->assertInertia(
             fn (Assert $page) => $page
-                ->component('project-roles/Create')
+                ->component('project-settings/roles/Create')
                 ->where('permissionGroups', Permission::projectGroupedOptions()),
         );
 });

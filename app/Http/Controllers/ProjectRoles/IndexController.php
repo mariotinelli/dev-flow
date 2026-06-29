@@ -31,7 +31,7 @@ class IndexController extends Controller
             ->paginate(12)
             ->withQueryString();
 
-        return Inertia::render('project-settings/Roles', [
+        return Inertia::render('project-settings/roles/Index', [
             'projectRoles' => ProjectRoleResource::collection($projectRoles),
             'can'          => [
                 'create' => $request->user()->can('create', ProjectRole::class),

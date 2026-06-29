@@ -29,6 +29,6 @@ class StoreController extends Controller
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Papel do projeto cadastrado.']);
 
-        return to_route('project-roles.index');
+        return to_route('project-settings.roles.index');
     }
 }

@@ -20,14 +20,14 @@ test('admin role receives all system and project scoped permissions', function (
 });
 
 test('guests are redirected from project role management', function () {
-    $this->get(route('project-roles.index'))->assertRedirect(route('login'));
+    $this->get(route('project-settings.roles.index'))->assertRedirect(route('login'));
 });
 
 test('users without permission cannot view project roles', function () {
     $user = User::factory()->create();
 
     $this->actingAs($user)
-        ->get(route('project-roles.index'))
+        ->get(route('project-settings.roles.index'))
         ->assertForbidden();
 });
 
@@ -35,11 +35,11 @@ test('project members with manage settings permission can view project roles', f
     [$user] = projectMemberWithSettingsPermission();
 
     $this->actingAs($user)
-        ->get(route('project-roles.index'))
+        ->get(route('project-settings.roles.index'))
         ->assertOk()
         ->assertInertia(
             fn (Assert $page) => $page
-                ->component('project-settings/Roles')
+                ->component('project-settings/roles/Index')
                 ->where('can.create', true),
         );
 });
@@ -60,11 +60,11 @@ test('admin users can view project roles ordered with status and permissions', f
     ]);
 
     $this->actingAs($user)
-        ->get(route('project-roles.index'))
+        ->get(route('project-settings.roles.index'))
         ->assertOk()
         ->assertInertia(
             fn (Assert $page) => $page
-                ->component('project-settings/Roles')
+                ->component('project-settings/roles/Index')
                 ->where('projectRoles.data.0.name', 'developer')
                 ->where('projectRoles.data.0.permissions_count', 2)
                 ->where('projectRoles.data.0.is_active', true)
@@ -86,11 +86,11 @@ test('system role permissions do not appear in project role permission groups', 
     Project::factory()->create();
 
     $this->actingAs($user)
-        ->get(route('project-roles.create'))
+        ->get(route('project-settings.roles.create'))
         ->assertOk()
         ->assertInertia(
             fn (Assert $page) => $page
-                ->component('project-roles/Create')
+                ->component('project-settings/roles/Create')
                 ->where('permissionGroups', Permission::projectGroupedOptions())
                 ->missing('permissionGroups.Papéis do Projeto')
                 ->missing('permissionGroups.Perfis e permissões')

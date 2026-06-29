@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import Heading from '@/components/Heading.vue';
-import { index as projectRolesIndex } from '@/routes/project-roles';
+import { index as projectRolesIndex } from '@/routes/project-settings/roles';
 import { gitlab } from '@/routes/project-settings';
 
 defineOptions({

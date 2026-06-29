@@ -9,7 +9,7 @@ use App\Models\ProjectRole;
 use App\Models\User;
 
 test('guests are redirected when copying project roles', function () {
-    $this->post(route('project-roles.copy'), [
+    $this->post(route('project-settings.roles.copy'), [
         'source_project_id' => Project::factory()->create()->id,
     ])->assertRedirect(route('login'));
 });
@@ -32,10 +32,10 @@ test('admin users can copy project roles from another project', function () {
 
     $this->actingAs($user)
         ->withSession(['selected_project_id' => $targetProject->id])
-        ->post(route('project-roles.copy'), [
+        ->post(route('project-settings.roles.copy'), [
             'source_project_id' => $sourceProject->id,
         ])
-        ->assertRedirect(route('project-roles.index', absolute: false))
+        ->assertRedirect(route('project-settings.roles.index', absolute: false))
         ->assertToast('success', 'Papéis copiados para o projeto atual.');
 
     $targetDeveloper->refresh();
@@ -61,7 +61,7 @@ test('source project must have project roles to be copied', function () {
 
     $this->actingAs($user)
         ->withSession(['selected_project_id' => $targetProject->id])
-        ->post(route('project-roles.copy'), [
+        ->post(route('project-settings.roles.copy'), [
             'source_project_id' => $sourceProject->id,
         ])
         ->assertSessionHasErrors(['source_project_id']);

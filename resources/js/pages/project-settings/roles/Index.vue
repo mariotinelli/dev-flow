@@ -6,9 +6,15 @@ import Heading from '@/components/Heading.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { create, edit, index } from '@/routes/project-roles';
-import type { PaginatedProjectRoles, ProjectRoleDeletedStatusOption, ProjectRoleFilterValues } from '@/types';
-import ProjectPagination from '../projects/partials/ProjectPagination.vue';
+import { create, edit, index } from '@/routes/project-settings/roles';
+import type {
+    PaginatedProjectRoles,
+    ProjectRoleDeletedStatusOption,
+    ProjectRoleFilterValues,
+    ProjectRoleSourceProject,
+} from '@/types';
+import ProjectPagination from '../../projects/partials/ProjectPagination.vue';
+import ProjectRoleCopyDialog from './partials/ProjectRoleCopyDialog.vue';
 import ProjectRoleFilters from './partials/ProjectRoleFilters.vue';
 import ProjectRoleSituationAction from './partials/ProjectRoleSituationAction.vue';
 
@@ -19,13 +25,18 @@ const props = defineProps<{
     };
     filters: ProjectRoleFilterValues;
     deletedStatuses: ProjectRoleDeletedStatusOption[];
+    sourceProjects: ProjectRoleSourceProject[];
 }>();
 
 defineOptions({
     layout: {
         breadcrumbs: [
             {
-                title: 'Papéis do Projeto',
+                title: 'Configurações do Projeto',
+                href: index(),
+            },
+            {
+                title: 'Papéis',
                 href: index(),
             },
         ],
@@ -61,18 +72,23 @@ function clearFilters(): void {
 </script>
 
 <template>
-    <div class="flex h-full flex-1 flex-col gap-6">
-        <Head title="Papéis do Projeto" />
+    <Head title="Papéis do projeto" />
 
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div class="flex h-full flex-1 flex-col gap-6">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <Heading
-                title="Papéis do Projeto"
-                description="Gerencie papéis e permissões que podem ser aplicados dentro dos projetos."
+                variant="small"
+                title="Papéis"
+                description="Gerencie papéis e permissões disponíveis para membros do projeto."
             />
 
-            <Button v-if="can.create" as-child>
-                <Link :href="create()"><Plus class="size-4" /> Novo papel</Link>
-            </Button>
+            <div v-if="can.create" class="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <ProjectRoleCopyDialog :source-projects="sourceProjects" />
+
+                <Button as-child>
+                    <Link :href="create()"><Plus class="size-4" /> Novo papel</Link>
+                </Button>
+            </div>
         </div>
 
         <ProjectRoleFilters
@@ -97,7 +113,7 @@ function clearFilters(): void {
                 <TableBody>
                     <TableRow v-if="projectRoles.data.length === 0">
                         <TableCell colspan="4" class="px-4 py-10 text-center text-muted-foreground">
-                            Nenhum papel do projeto encontrado.
+                            Nenhum papel encontrado para o projeto selecionado.
                         </TableCell>
                     </TableRow>
                     <template v-else>

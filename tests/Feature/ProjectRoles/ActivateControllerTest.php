@@ -8,7 +8,7 @@ use App\Models\User;
 test('guests are redirected when activating project roles', function () {
     $projectRole = ProjectRole::factory()->trashed()->create();
 
-    $this->post(route('project-roles.activate', $projectRole))->assertRedirect(route('login'));
+    $this->post(route('project-settings.roles.activate', $projectRole))->assertRedirect(route('login'));
 
     $this->assertSoftDeleted($projectRole);
 });
@@ -18,7 +18,7 @@ test('users without permission cannot activate project roles', function () {
     $projectRole = ProjectRole::factory()->trashed()->create();
 
     $this->actingAs($user)
-        ->post(route('project-roles.activate', $projectRole))
+        ->post(route('project-settings.roles.activate', $projectRole))
         ->assertForbidden();
 });
 
@@ -27,8 +27,8 @@ test('project members with manage settings permission can activate project roles
     $projectRole      = ProjectRole::factory()->for($project)->trashed()->create();
 
     $this->actingAs($user)
-        ->post(route('project-roles.activate', $projectRole))
-        ->assertRedirect(route('project-roles.index', absolute: false))
+        ->post(route('project-settings.roles.activate', $projectRole))
+        ->assertRedirect(route('project-settings.roles.index', absolute: false))
         ->assertToast('success', 'Papel do projeto ativado.');
 
     expect($projectRole->refresh()->trashed())->toBeFalse();
@@ -39,8 +39,8 @@ test('admin users can activate project roles', function () {
     $projectRole = ProjectRole::factory()->trashed()->create();
 
     $this->actingAs($user)
-        ->post(route('project-roles.activate', $projectRole))
-        ->assertRedirect(route('project-roles.index', absolute: false));
+        ->post(route('project-settings.roles.activate', $projectRole))
+        ->assertRedirect(route('project-settings.roles.index', absolute: false));
 
     expect($projectRole->refresh()->trashed())->toBeFalse();
 });

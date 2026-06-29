@@ -19,7 +19,7 @@ class CreateController extends Controller
 
         abort_unless(CurrentProject::resolve(request()), 404);
 
-        return Inertia::render('project-roles/Create', [
+        return Inertia::render('project-settings/roles/Create', [
             'permissionGroups' => Permission::projectGroupedOptions(),
         ]);
     }

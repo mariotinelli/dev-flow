@@ -20,8 +20,6 @@ createInertiaApp({
                 return [AppLayout, SettingsLayout];
             case name.startsWith('project-settings/'):
                 return [AppLayout, ProjectSettingsLayout];
-            case name.startsWith('project-roles/'):
-                return [AppLayout, ProjectSettingsLayout];
             default:
                 return AppLayout;
         }

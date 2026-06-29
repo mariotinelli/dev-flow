@@ -5,8 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { toUrl } from '@/lib/utils';
-import { index as projectRolesIndex } from '@/routes/project-roles';
 import { gitlab, loom } from '@/routes/project-settings';
+import { index as projectRolesIndex } from '@/routes/project-settings/roles';
 import type { NavItem } from '@/types';
 
 const sidebarNavItems: NavItem[] = [

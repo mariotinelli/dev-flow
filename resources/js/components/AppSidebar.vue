@@ -29,7 +29,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
-import { index as projectRolesIndex } from '@/routes/project-roles';
+import { index as projectRolesIndex } from '@/routes/project-settings/roles';
 import { select } from '@/routes/projects';
 import { index as projectsIndex } from '@/routes/projects';
 import { index as roles } from '@/routes/roles';
@@ -44,8 +44,6 @@ const selectedProject = ref(page.props.auth.current_project ? String(page.props.
 const currentProject = computed(() =>
     projects.value.find((project) => String(project.id) === selectedProject.value) ?? page.props.auth.current_project,
 );
-
-console.log('currentProject', currentProject.value);
 
 function projectBadge(project: NonNullable<typeof currentProject.value>): string {
     return project.key.split('-')[0] || project.name.slice(0, 2).toUpperCase();

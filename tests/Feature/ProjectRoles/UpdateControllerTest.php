@@ -12,7 +12,7 @@ use App\Models\User;
 test('guests are redirected when updating project roles', function () {
     $projectRole = ProjectRole::factory()->create(['name' => 'guest-update-target']);
 
-    $this->post(route('project-roles.update', $projectRole), [
+    $this->post(route('project-settings.roles.update', $projectRole), [
         'name' => 'guest-updated-project-role',
     ])->assertRedirect(route('login'));
 
@@ -27,7 +27,7 @@ test('users without permission cannot update project roles', function () {
     $projectRole = ProjectRole::factory()->create(['name' => 'forbidden-update-target']);
 
     $this->actingAs($user)
-        ->post(route('project-roles.update', $projectRole), [
+        ->post(route('project-settings.roles.update', $projectRole), [
             'name' => 'forbidden-updated-project-role',
         ])
         ->assertForbidden();
@@ -38,11 +38,11 @@ test('project members with manage settings permission can update project roles',
     $projectRole      = ProjectRole::factory()->for($project)->create(['name' => 'permission-update-target']);
 
     $this->actingAs($user)
-        ->post(route('project-roles.update', $projectRole), [
+        ->post(route('project-settings.roles.update', $projectRole), [
             'name'        => 'permission-updated-project-role',
             'permissions' => [MemberPermissions::View->value],
         ])
-        ->assertRedirect(route('project-roles.index', absolute: false))
+        ->assertRedirect(route('project-settings.roles.index', absolute: false))
         ->assertToast('success', 'Papel do projeto atualizado.');
 
     $projectRole->refresh();
@@ -59,10 +59,10 @@ test('admin users can update project roles without permissions', function () {
     $projectRole->syncPermissionNames([TaskPermissions::View->value]);
 
     $this->actingAs($user)
-        ->post(route('project-roles.update', $projectRole), [
+        ->post(route('project-settings.roles.update', $projectRole), [
             'name' => 'empty-updated-project-role',
         ])
-        ->assertRedirect(route('project-roles.index', absolute: false));
+        ->assertRedirect(route('project-settings.roles.index', absolute: false));
 
     $projectRole->refresh();
 
@@ -78,7 +78,7 @@ test('project role name must be unique when updating', function () {
     ProjectRole::factory()->for($project)->create(['name' => 'existing-project-role']);
 
     $this->actingAs($user)
-        ->post(route('project-roles.update', $projectRole), [
+        ->post(route('project-settings.roles.update', $projectRole), [
             'name' => 'existing-project-role',
         ])
         ->assertSessionHasErrors(['name']);
@@ -89,7 +89,7 @@ test('permissions must be project scoped permissions when updating', function ()
     $projectRole = ProjectRole::factory()->create();
 
     $this->actingAs($user)
-        ->post(route('project-roles.update', $projectRole), [
+        ->post(route('project-settings.roles.update', $projectRole), [
             'name'        => 'invalid-update-permissions',
             'permissions' => [UserPermissions::View->value],
         ])

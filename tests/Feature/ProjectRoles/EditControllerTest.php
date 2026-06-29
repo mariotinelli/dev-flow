@@ -11,7 +11,7 @@ use Inertia\Testing\AssertableInertia as Assert;
 test('guests are redirected from project role edition', function () {
     $projectRole = ProjectRole::factory()->create();
 
-    $this->get(route('project-roles.edit', $projectRole))->assertRedirect(route('login'));
+    $this->get(route('project-settings.roles.edit', $projectRole))->assertRedirect(route('login'));
 });
 
 test('users without permission cannot view project role edition', function () {
@@ -19,7 +19,7 @@ test('users without permission cannot view project role edition', function () {
     $projectRole = ProjectRole::factory()->create();
 
     $this->actingAs($user)
-        ->get(route('project-roles.edit', $projectRole))
+        ->get(route('project-settings.roles.edit', $projectRole))
         ->assertForbidden();
 });
 
@@ -28,7 +28,7 @@ test('project members with manage settings permission can view project role edit
     $projectRole      = ProjectRole::factory()->for($project)->create();
 
     $this->actingAs($user)
-        ->get(route('project-roles.edit', $projectRole))
+        ->get(route('project-settings.roles.edit', $projectRole))
         ->assertOk();
 });
 
@@ -42,11 +42,11 @@ test('admin users can view project role edition with role data and permission gr
     ]);
 
     $this->actingAs($user)
-        ->get(route('project-roles.edit', $projectRole))
+        ->get(route('project-settings.roles.edit', $projectRole))
         ->assertOk()
         ->assertInertia(
             fn (Assert $page) => $page
-                ->component('project-roles/Edit')
+                ->component('project-settings/roles/Edit')
                 ->where('projectRole.id', $projectRole->id)
                 ->where('projectRole.name', 'project-manager')
                 ->where('projectRole.permissions', [

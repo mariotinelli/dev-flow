@@ -10,7 +10,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useRolePermissions } from '@/composables/useRolePermissions';
-import { index } from '@/routes/project-roles';
+import { index } from '@/routes/project-settings/roles';
 import type { EditableProjectRole, PermissionGroups } from '@/types';
 
 const props = defineProps<{

@@ -21,7 +21,7 @@ class EditController extends Controller
 
         $projectRole->load('permissions');
 
-        return Inertia::render('project-roles/Edit', [
+        return Inertia::render('project-settings/roles/Edit', [
             'projectRole' => [
                 'id'          => $projectRole->id,
                 'name'        => $projectRole->name,
