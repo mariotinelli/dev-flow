@@ -14,7 +14,9 @@ The single resource attached to a Project Documentation.
 
 For link documentations, the resource is a valid URL stored on the documentation record.
 
-For file and image documentations, the resource is represented by the existing `Media` entity and must not duplicate media metadata on the documentation record.
+For file and image documentations, the resource is represented by the existing `Media` entity and must not duplicate media metadata on the documentation record. The original uploaded filename is part of the resource metadata and must be preserved for downloads.
+
+Documentation Resources do not have an internal preview or detail page. Link resources open the stored external URL in a new browser tab. File and image resources are accessed through an authorized download route that forces download instead of preview.
 
 ### Documentation Author
 
@@ -74,7 +76,7 @@ Project member access to Project Documentations is controlled by these project p
 - `app\Enums\Permissions\Projects\DocumentPermissions::Update`
 - `app\Enums\Permissions\Projects\DocumentPermissions::Delete`
 
-`View` also grants permission to open, preview, or download the documentation resource.
+`View` also grants permission to open a link resource or download a file/image resource.
 
 ## Invariants
 
@@ -85,4 +87,7 @@ Project member access to Project Documentations is controlled by these project p
 - The documentation author is always the authenticated creator.
 - Non-administrators must never receive `AdministratorsOnly` documentations in frontend payloads.
 - Project permissions do not override `AdministratorsOnly` visibility.
-- Resource access must always be authorized by the application before returning a download or temporary storage URL.
+- Platform administrators can manage all Project Documentations, including `AdministratorsOnly` records, independent of project document permissions.
+- Resource access for file and image resources must always be authorized by the application before returning a download response.
+- File and image resources must be downloaded using their original uploaded filename.
+- Copying a resource link is only supported for `Link` documentations.

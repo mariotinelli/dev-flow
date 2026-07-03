@@ -38,8 +38,15 @@ class IndexController extends Controller
                 'search' => $filters['search'] ?? '',
                 'type'   => $filters['type'] ?? '',
             ],
-            'categories' => ProjectDocumentationCategory::options(),
-            'types'      => ProjectDocumentationType::options(),
+            'categories'   => ProjectDocumentationCategory::options(),
+            'types'        => ProjectDocumentationType::options(),
+            'visibilities' => collect(ProjectDocumentationVisibility::options())
+                ->when(
+                    !$request->user()->hasRole('admin'),
+                    fn ($options) => $options->reject(fn ($v) => $v['value'] === ProjectDocumentationVisibility::AdministratorsOnly->value),
+                )
+                ->values()
+                ->all(),
         ]);
     }
 }

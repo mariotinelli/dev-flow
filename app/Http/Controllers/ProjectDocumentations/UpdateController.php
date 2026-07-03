@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Http\Controllers\ProjectDocumentations;
 
+use App\Enums\ProjectDocumentationType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProjectDocumentations\UpdateProjectDocumentationRequest;
 use App\Models\ProjectDocumentation;
@@ -18,15 +19,38 @@ class UpdateController extends Controller
     {
         $validated = $request->validated();
 
-        if (isset($validated['file']) && $validated['file'] instanceof UploadedFile) {
+        $type = (int) ($validated['type'] ?? $projectDocumentation->type->value);
+
+        $previousFilePath = $projectDocumentation->file_path;
+        $previousType     = $projectDocumentation->type->value;
+
+        $typeChanged = $type !== $previousType;
+
+        if (in_array($type, [ProjectDocumentationType::File->value, ProjectDocumentationType::Image->value], true) && isset($validated['file']) && $validated['file'] instanceof UploadedFile) {
             $file = $validated['file'];
             unset($validated['file']);
 
-            if ($projectDocumentation->file_path) {
-                Storage::disk('s3')->delete($projectDocumentation->file_path);
+            $validated['file_path']          = $file->store('project-documentations', 's3');
+            $validated['file_original_name'] = $file->getClientOriginalName();
+
+            if ($previousFilePath && $previousFilePath !== $validated['file_path']) {
+                Storage::disk('s3')->delete($previousFilePath);
+            }
+        }
+
+        if ($typeChanged) {
+            if ($type === ProjectDocumentationType::Link->value) {
+                $validated['file_path']          = null;
+                $validated['file_original_name'] = null;
+
+                if ($previousFilePath) {
+                    Storage::disk('s3')->delete($previousFilePath);
+                }
             }
 
-            $validated['file_path'] = $file->store('project-documentations', 's3');
+            if (in_array($type, [ProjectDocumentationType::File->value, ProjectDocumentationType::Image->value], true)) {
+                $validated['url'] = null;
+            }
         }
 
         $projectDocumentation->update($validated);

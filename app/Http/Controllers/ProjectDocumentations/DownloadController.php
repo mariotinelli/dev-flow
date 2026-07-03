@@ -17,8 +17,12 @@ class DownloadController extends Controller
 
         abort_unless($projectDocumentation->file_path, 404);
 
+        $filename = $projectDocumentation->file_original_name ?? basename($projectDocumentation->file_path);
+
         return redirect()->away(
-            Storage::disk('s3')->temporaryUrl($projectDocumentation->file_path, now()->addMinutes(5)),
+            Storage::disk('s3')->temporaryUrl($projectDocumentation->file_path, now()->addMinutes(5), [
+                'ResponseContentDisposition' => 'attachment; filename="' . $filename . '"',
+            ]),
         );
     }
 }

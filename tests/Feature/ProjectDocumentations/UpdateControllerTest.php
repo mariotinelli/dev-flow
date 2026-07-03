@@ -5,6 +5,7 @@ declare(strict_types = 1);
 use App\Enums\Permissions\Projects\DocumentPermissions;
 use App\Enums\ProjectDocumentationCategory;
 use App\Enums\ProjectDocumentationType;
+use App\Enums\ProjectDocumentationVisibility;
 use App\Models\ProjectDocumentation;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -29,6 +30,7 @@ test('project members with update permission can update link project documentati
             'description' => 'Updated description.',
             'type'        => ProjectDocumentationType::Link->value,
             'category'    => ProjectDocumentationCategory::Architecture->value,
+            'visibility'  => ProjectDocumentationVisibility::ProjectMembers->value,
             'url'         => 'https://example.com/new',
         ])
         ->assertRedirect(route('project.documentations.index', absolute: false))
@@ -70,6 +72,7 @@ test('project members with update permission can replace file in file project do
             'description' => 'Updated description.',
             'type'        => ProjectDocumentationType::File->value,
             'category'    => ProjectDocumentationCategory::Requirements->value,
+            'visibility'  => ProjectDocumentationVisibility::ProjectMembers->value,
             'file'        => $newFile,
         ])
         ->assertRedirect(route('project.documentations.index', absolute: false))
@@ -103,10 +106,11 @@ test('project members can change type from link to file', function () {
     $this->actingAs($user)
         ->withSession(['selected_project_id' => $project->id])
         ->post(route('project.documentations.update', $projectDocumentation), [
-            'title'    => 'API Guide',
-            'type'     => ProjectDocumentationType::File->value,
-            'category' => ProjectDocumentationCategory::API->value,
-            'file'     => $file,
+            'title'      => 'API Guide',
+            'type'       => ProjectDocumentationType::File->value,
+            'category'   => ProjectDocumentationCategory::API->value,
+            'visibility' => ProjectDocumentationVisibility::ProjectMembers->value,
+            'file'       => $file,
         ])
         ->assertRedirect(route('project.documentations.index', absolute: false));
 
@@ -139,10 +143,11 @@ test('project members can change type from file to link', function () {
     $this->actingAs($user)
         ->withSession(['selected_project_id' => $project->id])
         ->post(route('project.documentations.update', $projectDocumentation), [
-            'title'    => 'Project spec',
-            'type'     => ProjectDocumentationType::Link->value,
-            'category' => ProjectDocumentationCategory::Requirements->value,
-            'url'      => 'https://example.com/new-link',
+            'title'      => 'Project spec',
+            'type'       => ProjectDocumentationType::Link->value,
+            'category'   => ProjectDocumentationCategory::Requirements->value,
+            'visibility' => ProjectDocumentationVisibility::ProjectMembers->value,
+            'url'        => 'https://example.com/new-link',
         ])
         ->assertRedirect(route('project.documentations.index', absolute: false));
 

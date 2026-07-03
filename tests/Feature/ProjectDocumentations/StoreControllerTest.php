@@ -5,6 +5,7 @@ declare(strict_types = 1);
 use App\Enums\Permissions\Projects\DocumentPermissions;
 use App\Enums\ProjectDocumentationCategory;
 use App\Enums\ProjectDocumentationType;
+use App\Enums\ProjectDocumentationVisibility;
 use App\Models\ProjectDocumentation;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -19,6 +20,7 @@ test('project members with create permission can create link project documentati
             'description' => 'Reference material for new API contributors.',
             'type'        => ProjectDocumentationType::Link->value,
             'category'    => ProjectDocumentationCategory::API->value,
+            'visibility'  => ProjectDocumentationVisibility::ProjectMembers->value,
             'url'         => 'https://example.com/api-guide',
         ])
         ->assertRedirect(route('project.documentations.index', absolute: false))
@@ -31,6 +33,7 @@ test('project members with create permission can create link project documentati
         'description' => 'Reference material for new API contributors.',
         'type'        => ProjectDocumentationType::Link->value,
         'category'    => ProjectDocumentationCategory::API->value,
+        'visibility'  => ProjectDocumentationVisibility::ProjectMembers->value,
         'url'         => 'https://example.com/api-guide',
     ]);
 });
@@ -49,6 +52,7 @@ test('project members with create permission can create file project documentati
             'description' => 'The full project specification.',
             'type'        => ProjectDocumentationType::File->value,
             'category'    => ProjectDocumentationCategory::Requirements->value,
+            'visibility'  => ProjectDocumentationVisibility::ProjectMembers->value,
             'file'        => $file,
         ])
         ->assertRedirect(route('project.documentations.index', absolute: false));
@@ -59,6 +63,7 @@ test('project members with create permission can create file project documentati
         'title'      => 'Project spec',
         'type'       => ProjectDocumentationType::File->value,
         'category'   => ProjectDocumentationCategory::Requirements->value,
+        'visibility' => ProjectDocumentationVisibility::ProjectMembers->value,
         'url'        => null,
     ]);
 

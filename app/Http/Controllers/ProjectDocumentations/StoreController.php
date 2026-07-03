@@ -17,7 +17,8 @@ class StoreController extends Controller
         $data = $request->validated();
 
         if ($request->hasFile('file')) {
-            $data['file_path'] = $request->file('file')->store('project-documentations', 's3');
+            $data['file_path']          = $request->file('file')->store('project-documentations', 's3');
+            $data['file_original_name'] = $request->file('file')->getClientOriginalName();
             unset($data['file']);
         }
 

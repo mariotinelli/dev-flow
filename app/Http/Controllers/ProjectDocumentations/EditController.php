@@ -5,6 +5,8 @@ declare(strict_types = 1);
 namespace App\Http\Controllers\ProjectDocumentations;
 
 use App\Enums\ProjectDocumentationCategory;
+use App\Enums\ProjectDocumentationType;
+use App\Enums\ProjectDocumentationVisibility;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProjectDocumentationResource;
 use App\Models\ProjectDocumentation;
@@ -22,6 +24,14 @@ class EditController extends Controller
         return Inertia::render('project-documentations/Edit', [
             'projectDocumentation' => ProjectDocumentationResource::make($projectDocumentation)->resolve(request()),
             'categories'           => ProjectDocumentationCategory::options(),
+            'types'                => ProjectDocumentationType::options(),
+            'visibilities'         => collect(ProjectDocumentationVisibility::options())
+                ->when(
+                    !request()->user()->hasRole('admin'),
+                    fn ($options) => $options->reject(fn ($v) => $v['value'] === ProjectDocumentationVisibility::AdministratorsOnly->value),
+                )
+                ->values()
+                ->all(),
         ]);
     }
 }

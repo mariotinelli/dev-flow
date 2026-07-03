@@ -19,6 +19,12 @@ export const buttonVariants = cva(
                 ghost: 'hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50',
                 link: 'text-primary underline-offset-4 hover:underline',
             },
+            tone: {
+                default: '',
+                destructive: '',
+                success: '',
+                primary: '',
+            },
             size: {
                 default: 'h-9 px-4 py-2 has-[>svg]:px-3',
                 sm: 'h-8 gap-1.5 rounded-md px-3 has-[>svg]:px-2.5',
@@ -28,8 +34,26 @@ export const buttonVariants = cva(
                 'icon-lg': 'size-10',
             },
         },
+        compoundVariants: [
+            {
+                variant: 'outline',
+                tone: 'destructive',
+                class: 'border-destructive/20 text-destructive hover:bg-destructive/10 dark:border-destructive/40 dark:hover:bg-destructive/20 hover:text-destructive',
+            },
+            {
+                variant: 'outline',
+                tone: 'success',
+                class: 'border-green-500/20 text-green-600 hover:bg-green-500/10 dark:border-green-500/40 dark:text-green-400 dark:hover:bg-green-500/20',
+            },
+            {
+                variant: 'outline',
+                tone: 'primary',
+                class: 'border-primary/20 text-primary hover:bg-primary/10 dark:border-primary/40 dark:text-primary dark:hover:bg-primary/20',
+            },
+        ],
         defaultVariants: {
             variant: 'default',
+            tone: 'default',
             size: 'default',
         },
     },

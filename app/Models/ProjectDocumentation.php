@@ -31,6 +31,7 @@ use Illuminate\Support\Carbon;
  * @property ProjectDocumentationVisibility $visibility
  * @property string|null $url
  * @property string|null $file_path
+ * @property string|null $file_original_name
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */

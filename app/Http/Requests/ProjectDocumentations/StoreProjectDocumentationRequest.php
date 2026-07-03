@@ -6,6 +6,7 @@ namespace App\Http\Requests\ProjectDocumentations;
 
 use App\Enums\ProjectDocumentationCategory;
 use App\Enums\ProjectDocumentationType;
+use App\Enums\ProjectDocumentationVisibility;
 use App\Models\ProjectDocumentation;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -30,6 +31,7 @@ class StoreProjectDocumentationRequest extends FormRequest
             'description' => ['nullable', 'string', 'max:65535'],
             'type'        => ['required', Rule::enum(ProjectDocumentationType::class)],
             'category'    => ['required', Rule::enum(ProjectDocumentationCategory::class)],
+            'visibility'  => ['required', Rule::enum(ProjectDocumentationVisibility::class)],
             'url'         => [
                 Rule::requiredIf(fn () => (int) $this->input('type') === ProjectDocumentationType::Link->value),
                 'url',

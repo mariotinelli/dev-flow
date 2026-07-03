@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { Head, Link, router } from '@inertiajs/vue3';
-import { LayoutGrid, List, Plus } from '@lucide/vue';
+import { Head, router } from '@inertiajs/vue3';
+import { ClipboardCopy, LayoutGrid, List, Pencil, Plus, Trash2 } from '@lucide/vue';
 import { reactive, ref } from 'vue';
 import Heading from '@/components/Heading.vue';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { index, show } from '@/routes/project/documentations';
+import { destroy, edit, index } from '@/routes/project/documentations';
 import type { PaginatedProjectDocumentations, ProjectDocumentationFilterValues } from '@/types';
 import ProjectPagination from '../projects/partials/ProjectPagination.vue';
 import ProjectDocumentationFilters from './partials/ProjectDocumentationFilters.vue';
@@ -20,6 +20,7 @@ const props = defineProps<{
     filters: ProjectDocumentationFilterValues;
     categories: Array<{ value: number; label: string }>;
     types: Array<{ value: number; label: string }>;
+    visibilities: Array<{ value: number; label: string }>;
 }>();
 
 defineOptions({
@@ -48,6 +49,10 @@ function submitFilters(): void {
         preserveState: true,
         replace: true,
     });
+}
+
+function copyLink(url: string): void {
+    navigator.clipboard.writeText(url);
 }
 
 function clearFilters(): void {
@@ -106,7 +111,7 @@ function clearFilters(): void {
                     </Button>
                 </div>
 
-                <ProjectDocumentationFormDialog v-if="can.create" :categories="categories">
+                <ProjectDocumentationFormDialog v-if="can.create" :categories="categories" :types="types" :visibilities="visibilities">
                     <template #trigger>
                         <Button><Plus class="size-4" /> Nova documentação</Button>
                     </template>
@@ -151,12 +156,18 @@ function clearFilters(): void {
                 <TableBody>
                     <TableRow v-for="projectDocumentation in projectDocumentations.data" :key="projectDocumentation.id">
                         <TableCell class="px-4 py-4 font-medium">
-                            <Link
+                            <a
+                                v-if="projectDocumentation.type === 3"
                                 class="hover:underline"
-                                :href="show({ projectDocumentation: projectDocumentation.id })"
+                                :href="projectDocumentation.url ?? undefined"
+                                target="_blank"
+                                rel="noreferrer"
                             >
                                 {{ projectDocumentation.title }}
-                            </Link>
+                            </a>
+                            <span v-else class="text-foreground">
+                                {{ projectDocumentation.title }}
+                            </span>
                         </TableCell>
                         <TableCell class="px-4 py-4 text-muted-foreground">
                             {{ projectDocumentation.type_label }}
@@ -171,9 +182,37 @@ function clearFilters(): void {
                             {{ projectDocumentation.created_at }}
                         </TableCell>
                         <TableCell class="px-4 py-4">
-                            <div class="flex items-center justify-end gap-2">
+                            <div class="flex items-center justify-end gap-1">
+                                <Button
+                                    v-if="projectDocumentation.type === 3"
+                                    variant="ghost"
+                                    size="sm"
+                                    title="Copiar link"
+                                    @click="copyLink(projectDocumentation.url ?? '')"
+                                >
+                                    <ClipboardCopy class="size-4" />
+                                </Button>
+                                <Button
+                                    v-if="projectDocumentation.can.update"
+                                    variant="ghost"
+                                    size="sm"
+                                    title="Editar"
+                                    class="bg-amber-100 text-amber-700 hover:bg-amber-200"
+                                    @click="router.visit(edit({ projectDocumentation: projectDocumentation.id }))"
+                                >
+                                    <Pencil class="size-4" />
+                                </Button>
+                                <Button
+                                    v-if="projectDocumentation.can.delete"
+                                    variant="destructive"
+                                    size="sm"
+                                    title="Excluir"
+                                    @click="router.delete(destroy({ projectDocumentation: projectDocumentation.id }))"
+                                >
+                                    <Trash2 class="size-4" />
+                                </Button>
                                 <span
-                                    v-if="!projectDocumentation.can.update && !projectDocumentation.can.delete"
+                                    v-if="projectDocumentation.type !== 3 && !projectDocumentation.can.update && !projectDocumentation.can.delete"
                                     class="text-sm text-muted-foreground"
                                 >
                                     Sem ações

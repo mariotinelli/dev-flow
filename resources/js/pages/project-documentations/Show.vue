@@ -6,7 +6,7 @@ import Heading from '@/components/Heading.vue';
 import { Button } from '@/components/ui/button';
 import { download } from '@/routes/project/documentations';
 
-const props = defineProps<{
+defineProps<{
     projectDocumentation: {
         id: number;
         title: string;
