@@ -29,11 +29,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(CurrentProject::class);
-
-        if ($this->app->environment('local')) {
-            $this->app->register(\Laravel\Telescope\TelescopeServiceProvider::class);
-            $this->app->register(TelescopeServiceProvider::class);
-        }
+        $this->configureTelescope();
     }
 
     /**
@@ -78,5 +74,13 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Project::class, ProjectPolicy::class);
         Gate::policy(ProjectMember::class, ProjectMemberPolicy::class);
         Gate::policy(ProjectRole::class, ProjectRolePolicy::class);
+    }
+
+    protected function configureTelescope(): void
+    {
+        if ($this->app->environment('local')) {
+            $this->app->register(\Laravel\Telescope\TelescopeServiceProvider::class);
+            $this->app->register(TelescopeServiceProvider::class);
+        }
     }
 }

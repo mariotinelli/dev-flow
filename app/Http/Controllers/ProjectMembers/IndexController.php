@@ -7,6 +7,7 @@ namespace App\Http\Controllers\ProjectMembers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProjectMembers\IndexProjectMemberRequest;
 use App\Http\Resources\ProjectMemberResource;
+use App\Models\Project;
 use App\Models\ProjectMember;
 use App\Models\ProjectRole;
 use App\Models\User;
@@ -43,26 +44,36 @@ class IndexController extends Controller
             'filters' => [
                 'search' => $filters['search'] ?? '',
             ],
-            'users' => User::query()
-                ->withTrashed()
-                ->whereKeyNot($request->user()->id)
-                ->whereDoesntHave('projectMembers', fn ($query) => $query->where('project_id', $project->id))
-                ->orderBy('name')
-                ->get()
-                ->map(fn (User $user): array => [
-                    'value' => $user->id,
-                    'label' => "{$user->name} ({$user->email})",
-                ])
-                ->values(),
-            'projectRoles' => ProjectRole::query()
-                ->whereBelongsTo($project)
-                ->orderBy('name')
-                ->get()
-                ->map(fn (ProjectRole $projectRole): array => [
-                    'value' => $projectRole->id,
-                    'label' => $projectRole->name,
-                ])
-                ->values(),
+            'users'        => $this->getUsers($request, $project),
+            'projectRoles' => $this->getProjectRoles($project),
         ]);
+    }
+
+    private function getUsers(IndexProjectMemberRequest $request, Project $project): array
+    {
+        return User::query()
+            ->withTrashed()
+            ->whereKeyNot($request->user()->id)
+            ->whereDoesntHave('projectMembers', fn ($query) => $query->where('project_id', $project->id))
+            ->orderBy('name')
+            ->get()
+            ->map(fn (User $user): array => [
+                'value' => $user->id,
+                'label' => "{$user->name} ({$user->email})",
+            ])
+            ->values();
+    }
+
+    private function getProjectRoles(Project $project): array
+    {
+        return ProjectRole::query()
+            ->whereBelongsTo($project)
+            ->orderBy('name')
+            ->get()
+            ->map(fn (ProjectRole $projectRole): array => [
+                'value' => $projectRole->id,
+                'label' => $projectRole->name,
+            ])
+            ->values();
     }
 }

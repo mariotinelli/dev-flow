@@ -24,7 +24,7 @@ class StoreController extends Controller
 
         abort_unless($project, 404);
 
-        ProjectMember::create([
+        ProjectMember::query()->create([
             'project_id'      => $project->id,
             'user_id'         => $validated['user_id'],
             'project_role_id' => $validated['project_role_id'],
