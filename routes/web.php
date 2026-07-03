@@ -62,6 +62,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::prefix('documentacoes')->name('documentations.')->group(function () {
             Route::get('/', ProjectDocumentations\IndexController::class)->name('index');
             Route::post('/', ProjectDocumentations\StoreController::class)->name('store');
+            Route::get('{projectDocumentation}/download', ProjectDocumentations\DownloadController::class)->name('download');
             Route::get('{projectDocumentation}', ProjectDocumentations\ShowController::class)->name('show');
         });
     });

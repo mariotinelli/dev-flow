@@ -14,8 +14,15 @@ class StoreController extends Controller
 {
     public function __invoke(StoreProjectDocumentationRequest $request): RedirectResponse
     {
+        $data = $request->validated();
+
+        if ($request->hasFile('file')) {
+            $data['file_path'] = $request->file('file')->store('project-documentations', 's3');
+            unset($data['file']);
+        }
+
         ProjectDocumentation::query()->create([
-            ...$request->validated(),
+            ...$data,
             'author_id' => $request->user()->id,
         ]);
 

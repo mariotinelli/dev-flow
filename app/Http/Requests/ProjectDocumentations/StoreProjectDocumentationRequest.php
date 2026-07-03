@@ -28,9 +28,22 @@ class StoreProjectDocumentationRequest extends FormRequest
         return [
             'title'       => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:65535'],
-            'type'        => ['required', Rule::enum(ProjectDocumentationType::class)->only([ProjectDocumentationType::Link])],
+            'type'        => ['required', Rule::enum(ProjectDocumentationType::class)],
             'category'    => ['required', Rule::enum(ProjectDocumentationCategory::class)],
-            'url'         => ['required', 'url', 'max:255'],
+            'url'         => [
+                Rule::requiredIf(fn () => (int) $this->input('type') === ProjectDocumentationType::Link->value),
+                'url',
+                'max:255',
+            ],
+            'file' => [
+                Rule::requiredIf(fn () => in_array((int) $this->input('type'), [
+                    ProjectDocumentationType::File->value,
+                    ProjectDocumentationType::Image->value,
+                ], true)),
+                'file',
+                'mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt,md,zip,rar,7z,json,xml,csv,jpg,jpeg,png,webp,gif',
+                'max:102400',
+            ],
         ];
     }
 }
