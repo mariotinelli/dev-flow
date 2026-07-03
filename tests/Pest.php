@@ -2,6 +2,7 @@
 
 declare(strict_types = 1);
 
+use App\Enums\Permissions\Projects\DocumentPermissions;
 use App\Enums\Permissions\Projects\MemberPermissions;
 use App\Enums\Permissions\Projects\SettingPermissions;
 use App\Models\Project;
@@ -94,6 +95,26 @@ function projectMemberWithMemberPermissions(MemberPermissions ...$permissions): 
     $user    = User::factory()->create();
 
     $role->syncPermissionNames(array_map(fn (MemberPermissions $permission): string => $permission->value, $permissions));
+
+    ProjectMember::factory()->create([
+        'project_id'      => $project->id,
+        'user_id'         => $user->id,
+        'project_role_id' => $role->id,
+    ]);
+
+    return [$user, $project, $role];
+}
+
+/**
+ * @return array{0: User, 1: Project, 2: ProjectRole}
+ */
+function projectMemberWithDocumentPermissions(DocumentPermissions ...$permissions): array
+{
+    $project = Project::factory()->create();
+    $role    = ProjectRole::factory()->for($project)->create();
+    $user    = User::factory()->create();
+
+    $role->syncPermissionNames(array_map(fn (DocumentPermissions $permission): string => $permission->value, $permissions));
 
     ProjectMember::factory()->create([
         'project_id'      => $project->id,

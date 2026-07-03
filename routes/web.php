@@ -2,6 +2,7 @@
 
 declare(strict_types = 1);
 
+use App\Http\Controllers\ProjectDocumentations;
 use App\Http\Controllers\ProjectMembers;
 use App\Http\Controllers\Projects;
 use App\Http\Controllers\ProjectSettings;
@@ -56,6 +57,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('/', ProjectMembers\StoreController::class)->name('store');
             Route::post('{projectMember}', ProjectMembers\UpdateController::class)->name('update');
             Route::delete('{projectMember}', ProjectMembers\DestroyController::class)->name('destroy');
+        });
+
+        Route::prefix('documentacoes')->name('documentations.')->group(function () {
+            Route::get('/', ProjectDocumentations\IndexController::class)->name('index');
+            Route::post('/', ProjectDocumentations\StoreController::class)->name('store');
+            Route::get('{projectDocumentation}', ProjectDocumentations\ShowController::class)->name('show');
         });
     });
 

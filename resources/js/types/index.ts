@@ -5,4 +5,5 @@ export * from './roles';
 export * from './projects';
 export * from './project-roles';
 export * from './project-members';
+export * from './project-documentations';
 export * from './ui';

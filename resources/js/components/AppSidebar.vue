@@ -33,6 +33,7 @@ import { index as projectMembersIndex } from '@/routes/project/members';
 import { index as projectRolesIndex } from '@/routes/project-settings/roles';
 import { select } from '@/routes/projects';
 import { index as projectsIndex } from '@/routes/projects';
+import { index as projectDocumentationsIndex } from '@/routes/project/documentations';
 import { index as roles } from '@/routes/roles';
 import { index as users } from '@/routes/users';
 import type { Auth, NavGroup } from '@/types';
@@ -123,7 +124,7 @@ const mainNavGroups: NavGroup[] = [
             },
             {
                 title: 'Documentação',
-                href: dashboard(),
+                href: projectDocumentationsIndex(),
                 icon: FileText,
                 permission: 'project.documents.view',
                 permissionScope: 'project',
