@@ -16,8 +16,6 @@ class DestroyController extends Controller
     {
         $this->authorize('delete', $projectMember);
 
-        abort_unless($projectMember->project_id === CurrentProject::resolve(request())?->id, 404);
-
         $projectMember->delete();
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Membro removido do projeto.']);

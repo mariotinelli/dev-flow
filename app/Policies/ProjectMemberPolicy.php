@@ -61,8 +61,8 @@ class ProjectMemberPolicy
         }
 
         return ProjectMember::query()
-            ->where('project_id', $project->id)
-            ->where('user_id', $user->id)
+            ->whereBelongsTo($project)
+            ->whereBelongsTo($user)
             ->whereHas('projectRole.permissions', fn ($query) => $query->where('name', $permission->value))
             ->exists();
     }
