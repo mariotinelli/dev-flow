@@ -7,13 +7,17 @@ namespace App\Enums\Permissions\Projects;
 enum MemberPermissions: string
 {
     case View   = 'project.members.view';
-    case Manage = 'project.members.manage';
+    case Create = 'project.members.create';
+    case Update = 'project.members.update';
+    case Delete = 'project.members.delete';
 
     public function label(): string
     {
         return match ($this) {
             self::View   => 'Visualizar membros',
-            self::Manage => 'Gerenciar membros',
+            self::Create => 'Cadastrar membros',
+            self::Update => 'Editar membros',
+            self::Delete => 'Remover membros',
         };
     }
 

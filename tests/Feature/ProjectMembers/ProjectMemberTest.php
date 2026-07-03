@@ -26,17 +26,20 @@ test('project members connect projects users and project roles', function () {
         ->and($projectRole->members()->first()->is($member))->toBeTrue();
 });
 
-test('soft deleted project members are not returned as active project users', function () {
+test('deleted project members are removed from project users without deleting the user', function () {
     $project     = Project::factory()->create();
     $user        = User::factory()->create();
     $projectRole = ProjectRole::factory()->for($project)->create();
 
-    ProjectMember::factory()->trashed()->create([
+    $member = ProjectMember::factory()->create([
         'project_id'      => $project->id,
         'user_id'         => $user->id,
         'project_role_id' => $projectRole->id,
     ]);
 
+    $member->delete();
+
     expect($project->users)->toBeEmpty()
-        ->and($user->projects)->toBeEmpty();
+        ->and($user->projects)->toBeEmpty()
+        ->and($user->exists())->toBeTrue();
 });

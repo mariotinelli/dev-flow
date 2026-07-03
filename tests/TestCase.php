@@ -4,11 +4,11 @@ declare(strict_types = 1);
 
 namespace Tests;
 
-use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
-use Laravel\Fortify\Features;
 use Database\Seeders\PermissionSeeder;
+use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Fortify\Features;
 
 abstract class TestCase extends BaseTestCase
 {

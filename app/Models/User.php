@@ -84,8 +84,7 @@ class User extends Authenticatable implements PasskeyUser
     public function projects(): BelongsToMany
     {
         return $this->belongsToMany(Project::class, 'project_members')
-            ->withPivot(['project_role_id', 'deleted_at'])
-            ->wherePivotNull('deleted_at')
+            ->withPivot(['project_role_id'])
             ->withTimestamps();
     }
 

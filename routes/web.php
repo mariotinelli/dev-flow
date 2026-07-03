@@ -2,8 +2,9 @@
 
 declare(strict_types = 1);
 
-use App\Http\Controllers\ProjectSettings;
+use App\Http\Controllers\ProjectMembers;
 use App\Http\Controllers\Projects;
+use App\Http\Controllers\ProjectSettings;
 use App\Http\Controllers\Roles;
 use App\Http\Controllers\Users;
 use Illuminate\Support\Facades\Route;
@@ -45,6 +46,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('{projectRole}', ProjectSettings\ProjectRoles\UpdateController::class)->name('update');
             Route::post('{projectRole}/ativar', ProjectSettings\ProjectRoles\ActivateController::class)->withTrashed()->name('activate');
             Route::delete('{projectRole}', ProjectSettings\ProjectRoles\DestroyController::class)->name('destroy');
+        });
+
+    });
+
+    Route::prefix('projeto')->name('project.')->group(function () {
+        Route::prefix('membros')->name('members.')->group(function () {
+            Route::get('/', ProjectMembers\IndexController::class)->name('index');
+            Route::post('/', ProjectMembers\StoreController::class)->name('store');
+            Route::post('{projectMember}', ProjectMembers\UpdateController::class)->name('update');
+            Route::delete('{projectMember}', ProjectMembers\DestroyController::class)->name('destroy');
         });
     });
 

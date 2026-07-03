@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Users;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\UpdateUserRequest;
 use App\Models\User;
+use App\Support\CurrentProject;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -43,6 +44,8 @@ class UpdateController extends Controller
             ]);
 
             $user->syncRoles([Role::findById($validated['role_id'])]);
+
+            CurrentProject::clearCache();
         });
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Usuário atualizado.']);

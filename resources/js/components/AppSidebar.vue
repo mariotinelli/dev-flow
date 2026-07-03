@@ -29,6 +29,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import { index as projectMembersIndex } from '@/routes/project/members';
 import { index as projectRolesIndex } from '@/routes/project-settings/roles';
 import { select } from '@/routes/projects';
 import { index as projectsIndex } from '@/routes/projects';
@@ -115,7 +116,7 @@ const mainNavGroups: NavGroup[] = [
         items: [
             {
                 title: 'Membros',
-                href: dashboard(),
+                href: projectMembersIndex(),
                 icon: Users,
                 permission: 'project.members.view',
                 permissionScope: 'project',

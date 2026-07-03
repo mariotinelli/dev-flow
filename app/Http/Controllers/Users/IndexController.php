@@ -29,6 +29,7 @@ class IndexController extends Controller
         $filters = $request->validated();
 
         $users = User::query()
+            ->with('roles')
             ->withTrashed()
             ->withoutAdmin()
             ->filters($filters)

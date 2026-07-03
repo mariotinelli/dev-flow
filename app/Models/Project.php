@@ -5,7 +5,9 @@ declare(strict_types = 1);
 namespace App\Models;
 
 use App\Enums\BaseStatus;
+use App\Observers\ProjectObserver;
 use Database\Factories\ProjectFactory;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -18,6 +20,7 @@ use Illuminate\Support\Str;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
+#[ObservedBy(ProjectObserver::class)]
 /**
  * @property int $id
  * @property string $name
@@ -81,8 +84,7 @@ class Project extends Model
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'project_members')
-            ->withPivot(['project_role_id', 'deleted_at'])
-            ->wherePivotNull('deleted_at')
+            ->withPivot(['project_role_id'])
             ->withTimestamps();
     }
 

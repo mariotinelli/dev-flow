@@ -5,7 +5,9 @@ declare(strict_types = 1);
 namespace App\Providers;
 
 use App\Models\Project;
+use App\Models\ProjectMember;
 use App\Models\ProjectRole;
+use App\Policies\ProjectMemberPolicy;
 use App\Policies\ProjectPolicy;
 use App\Policies\ProjectRolePolicy;
 use App\Policies\RolePolicy;
@@ -71,6 +73,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Gate::policy(Role::class, RolePolicy::class);
         Gate::policy(Project::class, ProjectPolicy::class);
+        Gate::policy(ProjectMember::class, ProjectMemberPolicy::class);
         Gate::policy(ProjectRole::class, ProjectRolePolicy::class);
     }
 }

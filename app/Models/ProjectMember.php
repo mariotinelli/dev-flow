@@ -4,12 +4,16 @@ declare(strict_types = 1);
 
 namespace App\Models;
 
+use App\Observers\ProjectMemberObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
+#[ObservedBy(ProjectMemberObserver::class)]
 /**
  * @property int $id
  * @property int $project_id
@@ -17,13 +21,11 @@ use Illuminate\Support\Carbon;
  * @property int $project_role_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property Carbon|null $deleted_at
  */
 class ProjectMember extends Model
 {
     /** @use HasFactory<\Database\Factories\ProjectMemberFactory> */
     use HasFactory;
-    use SoftDeletes;
 
     /**
      * @return BelongsTo<Project, $this>
@@ -38,7 +40,7 @@ class ProjectMember extends Model
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class)->withTrashed();
     }
 
     /**
@@ -46,6 +48,17 @@ class ProjectMember extends Model
      */
     public function projectRole(): BelongsTo
     {
-        return $this->belongsTo(ProjectRole::class);
+        return $this->belongsTo(ProjectRole::class)->withTrashed();
+    }
+
+    #[Scope]
+    public function filters(Builder $query, array $filters): void
+    {
+        $query->when($filters['search'] ?? null, function (Builder $query, string $search): void {
+            $query->where(function (Builder $query) use ($search): void {
+                $query->whereHas('user', fn (Builder $query) => $query->whereAny(['name', 'email'], 'like', "%{$search}%"))
+                    ->orWhereHas('projectRole', fn (Builder $query) => $query->where('name', 'like', "%{$search}%"));
+            });
+        });
     }
 }

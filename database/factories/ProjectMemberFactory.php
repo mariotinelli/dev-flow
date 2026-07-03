@@ -30,11 +30,4 @@ class ProjectMemberFactory extends Factory
                 ->id,
         ];
     }
-
-    public function trashed(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'deleted_at' => now(),
-        ]);
-    }
 }

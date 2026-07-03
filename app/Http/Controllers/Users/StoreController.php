@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\StoreUserRequest;
 use App\Models\User;
 use App\Notifications\UserPasswordSetupNotification;
+use App\Support\CurrentProject;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -37,6 +38,8 @@ class StoreController extends Controller
             ]);
 
             $user->syncRoles([Role::findById($validated['role_id'])]);
+
+            CurrentProject::clearCache();
 
             return $user;
         });
