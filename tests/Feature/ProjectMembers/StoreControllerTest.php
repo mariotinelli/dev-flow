@@ -6,6 +6,7 @@ use App\Enums\Permissions\Projects\MemberPermissions;
 use App\Models\Project;
 use App\Models\ProjectMember;
 use App\Models\ProjectRole;
+use App\Models\Scopes\BelongsToCurrentProjectScope;
 use App\Models\User;
 
 test('guests are redirected when creating project members', function () {
@@ -106,7 +107,7 @@ test('the same user can be added to different projects', function () {
         ])
         ->assertRedirect(route('project.members.index', absolute: false));
 
-    expect(ProjectMember::query()->where('user_id', $targetUser->id)->count())->toBe(2);
+    expect(ProjectMember::query()->withoutGlobalScope(BelongsToCurrentProjectScope::class)->where('user_id', $targetUser->id)->count())->toBe(2);
 });
 
 test('project roles from other projects are rejected', function () {

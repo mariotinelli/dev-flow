@@ -33,7 +33,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('{role}', Roles\DestroyController::class)->name('destroy');
     });
 
-    Route::prefix('configuracoes-do-projeto')->name('project-settings.')->group(function () {
+    Route::prefix('configuracoes-do-projeto')->name('project-settings.')->middleware('project.scope')->group(function () {
         Route::inertia('gitlab', 'project-settings/Gitlab')->name('gitlab');
         Route::inertia('loom', 'project-settings/Loom')->name('loom');
 
@@ -50,7 +50,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     });
 
-    Route::prefix('projeto')->name('project.')->group(function () {
+    Route::prefix('projeto')->name('project.')->middleware('project.scope')->group(function () {
         Route::prefix('membros')->name('members.')->group(function () {
             Route::get('/', ProjectMembers\IndexController::class)->name('index');
             Route::post('/', ProjectMembers\StoreController::class)->name('store');

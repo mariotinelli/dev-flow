@@ -24,12 +24,8 @@ class IndexController extends Controller
     public function __invoke(IndexProjectMemberRequest $request): Response
     {
         $filters = $request->validated();
-        $project = $this->currentProject->resolve($request);
-
-        abort_unless($project, 404);
 
         $projectMembers = ProjectMember::query()
-            ->whereBelongsTo($project)
             ->with(['user', 'projectRole'])
             ->filters($filters)
             ->latest()
@@ -44,36 +40,43 @@ class IndexController extends Controller
             'filters' => [
                 'search' => $filters['search'] ?? '',
             ],
-            'users'        => $this->getUsers($request, $project),
-            'projectRoles' => $this->getProjectRoles($project),
+            'users'        => $this->getUsers($request, $this->currentProject->resolve($request)),
+            'projectRoles' => $this->getProjectRoles(),
         ]);
     }
 
-    private function getUsers(IndexProjectMemberRequest $request, Project $project): array
+    private function getUsers(IndexProjectMemberRequest $request, ?Project $project): array
     {
+        $projectId = $project?->id;
+
+        if (!$projectId) {
+            return [];
+        }
+
         return User::query()
             ->withTrashed()
             ->whereKeyNot($request->user()->id)
-            ->whereDoesntHave('projectMembers', fn ($query) => $query->where('project_id', $project->id))
+            ->whereDoesntHave('projectMembers', fn ($query) => $query->where('project_id', $projectId))
             ->orderBy('name')
             ->get()
             ->map(fn (User $user): array => [
                 'value' => $user->id,
                 'label' => "{$user->name} ({$user->email})",
             ])
-            ->values();
+            ->values()
+            ->all();
     }
 
-    private function getProjectRoles(Project $project): array
+    private function getProjectRoles(): array
     {
         return ProjectRole::query()
-            ->whereBelongsTo($project)
             ->orderBy('name')
             ->get()
             ->map(fn (ProjectRole $projectRole): array => [
                 'value' => $projectRole->id,
                 'label' => $projectRole->name,
             ])
-            ->values();
+            ->values()
+            ->all();
     }
 }

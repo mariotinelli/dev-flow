@@ -22,6 +22,7 @@ test('admin users can view project role settings', function () {
 
 test('admin users can view gitlab settings', function () {
     $user = User::factory()->admin()->create();
+    Project::factory()->create();
 
     $this->actingAs($user)
         ->get(route('project-settings.gitlab'))
@@ -31,6 +32,7 @@ test('admin users can view gitlab settings', function () {
 
 test('admin users can view loom settings', function () {
     $user = User::factory()->admin()->create();
+    Project::factory()->create();
 
     $this->actingAs($user)
         ->get(route('project-settings.loom'))

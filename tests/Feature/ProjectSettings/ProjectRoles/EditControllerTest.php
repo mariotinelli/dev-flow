@@ -20,7 +20,7 @@ test('users without permission cannot view project role edition', function () {
 
     $this->actingAs($user)
         ->get(route('project-settings.roles.edit', $projectRole))
-        ->assertForbidden();
+        ->assertNotFound();
 });
 
 test('project members with manage settings permission can view project role edition', function () {

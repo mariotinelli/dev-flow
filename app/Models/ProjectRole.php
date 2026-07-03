@@ -5,6 +5,8 @@ declare(strict_types = 1);
 namespace App\Models;
 
 use App\Enums\BaseStatus;
+use App\Models\Traits\HasProjectId;
+use App\Models\Traits\ScopedByCurrentProject;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -28,6 +30,8 @@ class ProjectRole extends Model
 {
     /** @use HasFactory<\Database\Factories\ProjectRoleFactory> */
     use HasFactory;
+    use HasProjectId;
+    use ScopedByCurrentProject;
     use SoftDeletes;
 
     /**

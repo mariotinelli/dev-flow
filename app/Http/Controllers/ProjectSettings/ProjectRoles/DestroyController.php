@@ -6,21 +6,14 @@ namespace App\Http\Controllers\ProjectSettings\ProjectRoles;
 
 use App\Http\Controllers\Controller;
 use App\Models\ProjectRole;
-use App\Support\CurrentProject;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 
 class DestroyController extends Controller
 {
-    public function __construct(private CurrentProject $currentProject)
-    {
-    }
-
     public function __invoke(ProjectRole $projectRole): RedirectResponse
     {
         $this->authorize('delete', $projectRole);
-
-        abort_unless($projectRole->project_id === $this->currentProject->resolve()?->id, 404);
 
         $projectRole->delete();
 

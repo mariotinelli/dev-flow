@@ -44,7 +44,7 @@ class CurrentProject
             ->orderBy('name');
 
         if (!$user->hasRole('admin')) {
-            $query->whereHas('members', fn ($query) => $query->where('user_id', $user->id));
+            $query->whereRaw('EXISTS (SELECT 1 FROM project_members WHERE project_members.project_id = projects.id AND project_members.user_id = ?)', [$user->id]);
         }
 
         return $query->get();

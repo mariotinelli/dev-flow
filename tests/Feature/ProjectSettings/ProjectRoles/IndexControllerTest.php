@@ -28,7 +28,7 @@ test('users without permission cannot view project roles', function () {
 
     $this->actingAs($user)
         ->get(route('project-settings.roles.index'))
-        ->assertForbidden();
+        ->assertNotFound();
 });
 
 test('project members with manage settings permission can view project roles', function () {

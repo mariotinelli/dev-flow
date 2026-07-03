@@ -8,33 +8,28 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ProjectRoles\CopyProjectRolesRequest;
 use App\Models\Project;
 use App\Models\ProjectRole;
-use App\Support\CurrentProject;
+use App\Models\Scopes\BelongsToCurrentProjectScope;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class CopyController extends Controller
 {
-    public function __construct(private CurrentProject $currentProject)
-    {
-    }
-
     public function __invoke(CopyProjectRolesRequest $request): RedirectResponse
     {
         $validated = $request->validated();
-        $project   = $this->currentProject->resolve($request);
-
-        abort_unless($project, 404);
 
         $sourceProject = Project::query()
-            ->with(['projectRoles.permissions'])
+            ->with([
+                'projectRoles' => fn ($query) => $query->withoutGlobalScope(BelongsToCurrentProjectScope::class)->withTrashed(),
+                'projectRoles.permissions',
+            ])
             ->findOrFail($validated['source_project_id']);
 
-        DB::transaction(function () use ($project, $sourceProject): void {
+        DB::transaction(function () use ($sourceProject): void {
             foreach ($sourceProject->projectRoles as $sourceRole) {
                 $projectRole = ProjectRole::withTrashed()->firstOrNew([
-                    'project_id' => $project->id,
-                    'name'       => $sourceRole->name,
+                    'name' => $sourceRole->name,
                 ]);
 
                 $projectRole->save();

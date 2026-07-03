@@ -67,7 +67,7 @@ test('users without permission cannot create project roles', function () {
         ->post(route('project-settings.roles.store'), [
             'name' => 'forbidden-project-role',
         ])
-        ->assertForbidden();
+        ->assertNotFound();
 });
 
 test('project role name is required', function () {

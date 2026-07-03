@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace App\Models;
 
+use App\Models\Traits\HasProjectId;
+use App\Models\Traits\ScopedByCurrentProject;
 use App\Observers\ProjectMemberObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -26,6 +28,8 @@ class ProjectMember extends Model
 {
     /** @use HasFactory<\Database\Factories\ProjectMemberFactory> */
     use HasFactory;
+    use HasProjectId;
+    use ScopedByCurrentProject;
 
     /**
      * @return BelongsTo<Project, $this>

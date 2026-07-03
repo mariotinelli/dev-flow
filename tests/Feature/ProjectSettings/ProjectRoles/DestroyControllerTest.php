@@ -21,7 +21,7 @@ test('users without permission cannot delete project roles', function () {
 
     $this->actingAs($user)
         ->delete(route('project-settings.roles.destroy', $projectRole))
-        ->assertForbidden();
+        ->assertNotFound();
 });
 
 test('project members with manage settings permission can inactivate project roles', function () {

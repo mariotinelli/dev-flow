@@ -30,7 +30,7 @@ test('users without permission cannot update project roles', function () {
         ->post(route('project-settings.roles.update', $projectRole), [
             'name' => 'forbidden-updated-project-role',
         ])
-        ->assertForbidden();
+        ->assertNotFound();
 });
 
 test('project members with manage settings permission can update project roles', function () {

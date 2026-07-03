@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace App\Http\Requests\ProjectRoles;
 
 use App\Models\ProjectRole;
+use App\Models\Scopes\BelongsToCurrentProjectScope;
 use App\Support\CurrentProject;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -63,7 +64,7 @@ class CopyProjectRolesRequest extends FormRequest
         }
 
         return $this->currentProject->availableFor($user)
-            ->loadCount('projectRoles')
+            ->loadCount(['projectRoles' => fn ($query) => $query->withoutGlobalScope(BelongsToCurrentProjectScope::class)])
             ->reject(fn ($project): bool => $project->id === $currentProject->id)
             ->filter(fn ($project): bool => $project->project_roles_count > 0)
             ->pluck('id')

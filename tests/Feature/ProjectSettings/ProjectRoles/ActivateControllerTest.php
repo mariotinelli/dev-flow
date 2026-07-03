@@ -19,7 +19,7 @@ test('users without permission cannot activate project roles', function () {
 
     $this->actingAs($user)
         ->post(route('project-settings.roles.activate', $projectRole))
-        ->assertForbidden();
+        ->assertNotFound();
 });
 
 test('project members with manage settings permission can activate project roles', function () {

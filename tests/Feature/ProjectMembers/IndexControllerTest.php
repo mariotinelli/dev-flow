@@ -18,7 +18,7 @@ test('users without permission cannot view project members', function () {
 
     $this->actingAs($user)
         ->get(route('project.members.index'))
-        ->assertForbidden();
+        ->assertNotFound();
 });
 
 test('project members with view permission can view project members', function () {
