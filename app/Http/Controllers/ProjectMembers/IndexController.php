@@ -52,7 +52,6 @@ class IndexController extends Controller
                 ->values(),
             'projectRoles' => ProjectRole::query()
                 ->whereBelongsTo($project)
-                ->whereNull('deleted_at')
                 ->orderBy('name')
                 ->get()
                 ->map(fn (ProjectRole $projectRole): array => [
