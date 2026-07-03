@@ -13,11 +13,15 @@ use Inertia\Inertia;
 
 class UpdateController extends Controller
 {
+    public function __construct(private CurrentProject $currentProject)
+    {
+    }
+
     public function __invoke(UpdateProjectMemberRequest $request, ProjectMember $projectMember): RedirectResponse
     {
         $validated = $request->validated();
 
-        abort_unless($projectMember->project_id === CurrentProject::resolve($request)?->id, 404);
+        abort_unless($projectMember->project_id === $this->currentProject->resolve($request)?->id, 404);
 
         $projectMember->update([
             'user_id'         => $validated['user_id'],

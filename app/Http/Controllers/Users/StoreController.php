@@ -19,6 +19,10 @@ use Spatie\Permission\Models\Role;
 
 class StoreController extends Controller
 {
+    public function __construct(private CurrentProject $currentProject)
+    {
+    }
+
     /**
      * Handle the incoming request.
      */
@@ -39,7 +43,7 @@ class StoreController extends Controller
 
             $user->syncRoles([Role::findById($validated['role_id'])]);
 
-            CurrentProject::clearCache();
+            $this->currentProject->clearCache();
 
             return $user;
         });

@@ -12,6 +12,19 @@ use Illuminate\Validation\Rule;
 
 class StoreProjectMemberRequest extends FormRequest
 {
+    public function __construct(
+        private CurrentProject $currentProject,
+        array $query = [],
+        array $request = [],
+        array $attributes = [],
+        array $cookies = [],
+        array $files = [],
+        array $server = [],
+        $content = null,
+    ) {
+        parent::__construct($query, $request, $attributes, $cookies, $files, $server, $content);
+    }
+
     public function authorize(): bool
     {
         return $this->user()?->can('create', ProjectMember::class) ?? false;
@@ -22,7 +35,7 @@ class StoreProjectMemberRequest extends FormRequest
      */
     public function rules(): array
     {
-        $project = CurrentProject::resolve($this);
+        $project = $this->currentProject->resolve();
 
         return [
             'user_id' => [

@@ -12,6 +12,19 @@ use Illuminate\Validation\Rule;
 
 class CopyProjectRolesRequest extends FormRequest
 {
+    public function __construct(
+        private CurrentProject $currentProject,
+        array $query = [],
+        array $request = [],
+        array $attributes = [],
+        array $cookies = [],
+        array $files = [],
+        array $server = [],
+        $content = null,
+    ) {
+        parent::__construct($query, $request, $attributes, $cookies, $files, $server, $content);
+    }
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -43,13 +56,13 @@ class CopyProjectRolesRequest extends FormRequest
             return [];
         }
 
-        $currentProject = CurrentProject::resolve($this);
+        $currentProject = $this->currentProject->resolve();
 
         if (!$currentProject) {
             return [];
         }
 
-        return CurrentProject::availableFor($user)
+        return $this->currentProject->availableFor($user)
             ->loadCount('projectRoles')
             ->reject(fn ($project): bool => $project->id === $currentProject->id)
             ->filter(fn ($project): bool => $project->project_roles_count > 0)

@@ -5,13 +5,15 @@ declare(strict_types = 1);
 namespace App\Policies;
 
 use App\Enums\Permissions\Projects\SettingPermissions;
-use App\Models\ProjectMember;
 use App\Models\ProjectRole;
 use App\Models\User;
+use App\Policies\Traits\BelongsToCurrentProject;
 use App\Support\CurrentProject;
 
 class ProjectRolePolicy
 {
+    use BelongsToCurrentProject;
+
     public function viewAny(User $user): bool
     {
         return $this->canManageProjectSettings($user);
@@ -53,21 +55,6 @@ class ProjectRolePolicy
             return true;
         }
 
-        $project = CurrentProject::resolve(request());
-
-        if (!$project) {
-            return false;
-        }
-
-        return ProjectMember::query()
-            ->where('project_id', $project->id)
-            ->where('user_id', $user->id)
-            ->whereHas('projectRole.permissions', fn ($query) => $query->where('name', SettingPermissions::Manage->value))
-            ->exists();
-    }
-
-    private function belongsToCurrentProject(ProjectRole $projectRole): bool
-    {
-        return $projectRole->project_id === CurrentProject::resolve(request())?->id;
+        return app(CurrentProject::class)->hasPermission(SettingPermissions::Manage->value);
     }
 }

@@ -15,10 +15,14 @@ use Inertia\Inertia;
 
 class CopyController extends Controller
 {
+    public function __construct(private CurrentProject $currentProject)
+    {
+    }
+
     public function __invoke(CopyProjectRolesRequest $request): RedirectResponse
     {
         $validated = $request->validated();
-        $project   = CurrentProject::resolve($request);
+        $project   = $this->currentProject->resolve($request);
 
         abort_unless($project, 404);
 

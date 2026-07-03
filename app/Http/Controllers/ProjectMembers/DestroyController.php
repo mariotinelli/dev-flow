@@ -6,7 +6,6 @@ namespace App\Http\Controllers\ProjectMembers;
 
 use App\Http\Controllers\Controller;
 use App\Models\ProjectMember;
-use App\Support\CurrentProject;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 

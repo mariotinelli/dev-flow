@@ -16,6 +16,10 @@ use Spatie\Permission\Models\Role;
 
 class UpdateController extends Controller
 {
+    public function __construct(private CurrentProject $currentProject)
+    {
+    }
+
     /**
      * Handle the incoming request.
      */
@@ -45,7 +49,7 @@ class UpdateController extends Controller
 
             $user->syncRoles([Role::findById($validated['role_id'])]);
 
-            CurrentProject::clearCache();
+            $this->currentProject->clearCache();
         });
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Usuário atualizado.']);

@@ -15,10 +15,14 @@ use Inertia\Response;
 
 class IndexController extends Controller
 {
+    public function __construct(private CurrentProject $currentProject)
+    {
+    }
+
     public function __invoke(IndexProjectRoleRequest $request): Response
     {
         $filters = $request->validated();
-        $project = CurrentProject::resolve($request);
+        $project = $this->currentProject->resolve($request);
 
         abort_unless($project, 404);
 
@@ -41,7 +45,7 @@ class IndexController extends Controller
                 'deleted_status' => $filters['deleted_status'] ?? 'all',
             ],
             'deletedStatuses' => BaseStatus::options(),
-            'sourceProjects'  => CurrentProject::availableFor($request->user())
+            'sourceProjects'  => $this->currentProject->availableFor($request->user())
                 ->loadCount('projectRoles')
                 ->reject(fn ($sourceProject): bool => $sourceProject->id === $project->id)
                 ->filter(fn ($sourceProject): bool => $sourceProject->project_roles_count > 0)

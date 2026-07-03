@@ -16,10 +16,14 @@ use Inertia\Response;
 
 class IndexController extends Controller
 {
+    public function __construct(private CurrentProject $currentProject)
+    {
+    }
+
     public function __invoke(IndexProjectMemberRequest $request): Response
     {
         $filters = $request->validated();
-        $project = CurrentProject::resolve($request);
+        $project = $this->currentProject->resolve($request);
 
         abort_unless($project, 404);
 

@@ -9,9 +9,14 @@ use App\Support\CurrentProject;
 
 final class ProjectObserver
 {
+    public function __construct(
+        private CurrentProject $currentProject,
+    ) {
+    }
+
     public function created(Project $project): void
     {
-        CurrentProject::clearCache();
+        $this->currentProject->clearCache();
     }
 
     public function updated(Project $project): void
@@ -20,16 +25,16 @@ final class ProjectObserver
             return;
         }
 
-        CurrentProject::clearCache();
+        $this->currentProject->clearCache();
     }
 
     public function deleted(Project $project): void
     {
-        CurrentProject::clearCache();
+        $this->currentProject->clearCache();
     }
 
     public function restored(Project $project): void
     {
-        CurrentProject::clearCache();
+        $this->currentProject->clearCache();
     }
 }

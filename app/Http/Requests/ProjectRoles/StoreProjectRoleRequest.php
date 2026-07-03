@@ -13,6 +13,19 @@ use Illuminate\Validation\Rule;
 
 class StoreProjectRoleRequest extends FormRequest
 {
+    public function __construct(
+        private CurrentProject $currentProject,
+        array $query = [],
+        array $request = [],
+        array $attributes = [],
+        array $cookies = [],
+        array $files = [],
+        array $server = [],
+        $content = null,
+    ) {
+        parent::__construct($query, $request, $attributes, $cookies, $files, $server, $content);
+    }
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -28,7 +41,7 @@ class StoreProjectRoleRequest extends FormRequest
      */
     public function rules(): array
     {
-        $project = CurrentProject::resolve($this);
+        $project = $this->currentProject->resolve();
 
         return [
             'name'          => ['required', 'string', 'max:255', Rule::unique('project_roles', 'name')->where('project_id', $project?->id)],

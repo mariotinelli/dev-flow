@@ -16,6 +16,11 @@ use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
 {
+    public function __construct(
+        private CurrentProject $currentProject,
+    ) {
+    }
+
     /**
      * The root template that's loaded on the first page visit.
      *
@@ -44,7 +49,7 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        $currentProject = $request->user() ? CurrentProject::resolve($request) : null;
+        $currentProject = $request->user() ? $this->currentProject->resolve($request) : null;
 
         return [
             ...parent::share($request),
@@ -105,7 +110,7 @@ class HandleInertiaRequests extends Middleware
      */
     private function projects(Request $request): array
     {
-        return CurrentProject::availableFor($request->user())
+        return $this->currentProject->availableFor($request->user())
             ->map(fn (Project $project): array => $this->projectOption($project))
             ->values()
             ->all();

@@ -12,6 +12,10 @@ use Illuminate\Http\Request;
 
 class SelectController extends Controller
 {
+    public function __construct(private CurrentProject $currentProject)
+    {
+    }
+
     /**
      * Handle the incoming request.
      */
@@ -21,7 +25,7 @@ class SelectController extends Controller
 
         abort_unless($user->hasRole('admin') || $user->isMemberOf($project), 403);
 
-        CurrentProject::select($request, $project);
+        $this->currentProject->select($project, $request);
 
         return back();
     }

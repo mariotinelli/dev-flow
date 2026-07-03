@@ -11,6 +11,7 @@ use App\Policies\ProjectMemberPolicy;
 use App\Policies\ProjectPolicy;
 use App\Policies\ProjectRolePolicy;
 use App\Policies\RolePolicy;
+use App\Support\CurrentProject;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Date;
@@ -27,6 +28,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->singleton(CurrentProject::class);
+
         if ($this->app->environment('local')) {
             $this->app->register(\Laravel\Telescope\TelescopeServiceProvider::class);
             $this->app->register(TelescopeServiceProvider::class);

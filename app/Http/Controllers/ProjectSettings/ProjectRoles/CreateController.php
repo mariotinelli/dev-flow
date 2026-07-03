@@ -13,11 +13,15 @@ use Inertia\Response;
 
 class CreateController extends Controller
 {
+    public function __construct(private CurrentProject $currentProject)
+    {
+    }
+
     public function __invoke(): Response
     {
         $this->authorize('create', ProjectRole::class);
 
-        abort_unless(CurrentProject::resolve(request()), 404);
+        abort_unless($this->currentProject->resolve(), 404);
 
         return Inertia::render('project-settings/roles/Create', [
             'permissionGroups' => Permission::projectGroupedOptions(),

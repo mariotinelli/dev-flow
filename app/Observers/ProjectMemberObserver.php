@@ -9,18 +9,23 @@ use App\Support\CurrentProject;
 
 final class ProjectMemberObserver
 {
+    public function __construct(
+        private CurrentProject $currentProject,
+    ) {
+    }
+
     public function created(ProjectMember $projectMember): void
     {
-        CurrentProject::clearCache();
+        $this->currentProject->clearCache();
     }
 
     public function updated(ProjectMember $projectMember): void
     {
-        CurrentProject::clearCache();
+        $this->currentProject->clearCache();
     }
 
     public function deleted(ProjectMember $projectMember): void
     {
-        CurrentProject::clearCache();
+        $this->currentProject->clearCache();
     }
 }

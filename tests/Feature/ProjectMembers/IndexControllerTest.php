@@ -81,9 +81,11 @@ test('admin users can view members from the selected project without being a mem
 });
 
 test('index provides modal options with users outside the selected project', function () {
-    [$user, $project] = projectMemberWithMemberPermissions(MemberPermissions::View, MemberPermissions::Create);
-    $availableUser    = User::factory()->create(['name' => 'Available User']);
-    $projectRole      = ProjectRole::factory()->for($project)->create(['name' => 'Contributor']);
+    [$user, $project, $role] = projectMemberWithMemberPermissions(MemberPermissions::View, MemberPermissions::Create);
+    $availableUser           = User::factory()->create(['name' => 'Available User']);
+    $contributorRole         = ProjectRole::factory()->for($project)->create(['name' => 'Contributor']);
+
+    $role->update(['name' => 'Z-Admin']);
 
     $this->actingAs($user)
         ->get(route('project.members.index'))
@@ -92,7 +94,7 @@ test('index provides modal options with users outside the selected project', fun
             fn (Assert $page) => $page
                 ->component('project-members/Index')
                 ->where('users.0.value', $availableUser->id)
-                ->where('projectRoles.0.value', $projectRole->id)
+                ->where('projectRoles.0.value', $contributorRole->id)
                 ->missing('users.1'),
         );
 });

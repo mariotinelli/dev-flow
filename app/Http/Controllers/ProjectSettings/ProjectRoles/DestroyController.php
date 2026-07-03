@@ -12,11 +12,15 @@ use Inertia\Inertia;
 
 class DestroyController extends Controller
 {
+    public function __construct(private CurrentProject $currentProject)
+    {
+    }
+
     public function __invoke(ProjectRole $projectRole): RedirectResponse
     {
         $this->authorize('delete', $projectRole);
 
-        abort_unless($projectRole->project_id === CurrentProject::resolve(request())?->id, 404);
+        abort_unless($projectRole->project_id === $this->currentProject->resolve()?->id, 404);
 
         $projectRole->delete();
 

@@ -7,6 +7,7 @@ use App\Models\ProjectMember;
 use App\Models\User;
 use App\Support\CurrentProject;
 use Illuminate\Support\Facades\Cache;
+use Inertia\Testing\AssertableInertia;
 
 beforeEach(fn () => Cache::store('array')->flush());
 
@@ -16,7 +17,7 @@ test('returns all non-deleted projects for admin users', function () {
     Project::factory()->create(['name' => 'Bravo']);
     Project::factory()->create(['name' => 'Charlie']);
 
-    $available = CurrentProject::availableFor($admin);
+    $available = app(CurrentProject::class)->availableFor($admin);
 
     expect($available)->toHaveCount(3)
         ->and($available->pluck('name')->toArray())->toEqual(['Alpha', 'Bravo', 'Charlie']);
@@ -31,7 +32,7 @@ test('returns only member projects for non-admin users', function () {
     ]);
     Project::factory(2)->create();
 
-    $available = CurrentProject::availableFor($user);
+    $available = app(CurrentProject::class)->availableFor($user);
 
     expect($available)->toHaveCount(1)
         ->and($available->first()->id)->toBe($project->id);
@@ -43,7 +44,7 @@ test('excludes soft-deleted projects', function () {
     $deleted = Project::factory()->create();
     $deleted->delete();
 
-    $available = CurrentProject::availableFor($admin);
+    $available = app(CurrentProject::class)->availableFor($admin);
 
     expect($available)->toHaveCount(2);
 });
@@ -57,7 +58,7 @@ test('resolves the selected project from session', function () {
 
     $response = $this->get(route('dashboard'));
 
-    $response->assertInertia(fn (Inertia\Testing\AssertableInertia $page) => $page
+    $response->assertInertia(fn (AssertableInertia $page) => $page
         ->where('auth.current_project.id', $projectA->id));
 });
 
@@ -75,7 +76,7 @@ test('caches available projects per user', function () {
     $admin = User::factory()->admin()->create();
     Project::factory(2)->create();
 
-    CurrentProject::availableFor($admin);
+    app(CurrentProject::class)->availableFor($admin);
 
     $version = Cache::memo()->get('current_project:version');
     expect(Cache::memo()->has("current_project:available_for:{$admin->id}:v{$version}"))->toBeTrue();
@@ -91,7 +92,7 @@ test('cache version increments when a project is created', function () {
 });
 
 test('cache version increments when a project is updated', function () {
-    $project = Project::factory()->create();
+    $project       = Project::factory()->create();
     $versionBefore = Cache::memo()->get('current_project:version');
 
     $project->update(['name' => 'Updated']);
@@ -101,7 +102,7 @@ test('cache version increments when a project is updated', function () {
 });
 
 test('cache version increments when a project is soft-deleted', function () {
-    $project = Project::factory()->create();
+    $project       = Project::factory()->create();
     $versionBefore = Cache::memo()->get('current_project:version');
 
     $project->delete();
@@ -155,8 +156,8 @@ test('cache is isolated per user', function () {
     $admin1 = User::factory()->admin()->create();
     $admin2 = User::factory()->admin()->create();
 
-    CurrentProject::availableFor($admin1);
-    CurrentProject::availableFor($admin2);
+    app(CurrentProject::class)->availableFor($admin1);
+    app(CurrentProject::class)->availableFor($admin2);
 
     $version = Cache::memo()->get('current_project:version');
     expect($version)->not->toBeNull();
@@ -168,12 +169,12 @@ test('cache is isolated per user', function () {
 test('returns fresh data after project creation', function () {
     $admin = User::factory()->admin()->create();
 
-    $before = CurrentProject::availableFor($admin);
+    $before = app(CurrentProject::class)->availableFor($admin);
     expect($before)->toHaveCount(0);
 
     Project::factory()->create();
 
-    $after = CurrentProject::availableFor($admin);
+    $after = app(CurrentProject::class)->availableFor($admin);
     expect($after)->toHaveCount(1);
 });
 
@@ -185,11 +186,11 @@ test('returns fresh data after member removal', function () {
         'user_id'    => $user->id,
     ]);
 
-    $before = CurrentProject::availableFor($user);
+    $before = app(CurrentProject::class)->availableFor($user);
     expect($before)->toHaveCount(1);
 
     $member->delete();
 
-    $after = CurrentProject::availableFor($user);
+    $after = app(CurrentProject::class)->availableFor($user);
     expect($after)->toHaveCount(0);
 });
