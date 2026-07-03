@@ -63,6 +63,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/', ProjectDocumentations\IndexController::class)->name('index');
             Route::post('/', ProjectDocumentations\StoreController::class)->name('store');
             Route::get('{projectDocumentation}/download', ProjectDocumentations\DownloadController::class)->name('download');
+            Route::get('{projectDocumentation}/editar', ProjectDocumentations\EditController::class)->name('edit');
+            Route::post('{projectDocumentation}', ProjectDocumentations\UpdateController::class)->name('update');
+            Route::delete('{projectDocumentation}', ProjectDocumentations\DestroyController::class)->name('destroy');
             Route::get('{projectDocumentation}', ProjectDocumentations\ShowController::class)->name('show');
         });
     });

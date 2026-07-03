@@ -9,7 +9,9 @@ use App\Enums\ProjectDocumentationType;
 use App\Enums\ProjectDocumentationVisibility;
 use App\Models\Traits\HasProjectId;
 use App\Models\Traits\ScopedByCurrentProject;
+use App\Observers\ProjectDocumentationObserver;
 use Database\Factories\ProjectDocumentationFactory;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -32,6 +34,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
+#[ObservedBy(ProjectDocumentationObserver::class)]
 class ProjectDocumentation extends Model
 {
     /** @use HasFactory<ProjectDocumentationFactory> */
