@@ -1,5 +1,10 @@
 import type { PaginationMeta } from '@/types';
 
+export type ProjectDocumentationFilterValues = {
+    search: string;
+    type: string;
+};
+
 export type ProjectDocumentation = {
     id: number;
     title: string;

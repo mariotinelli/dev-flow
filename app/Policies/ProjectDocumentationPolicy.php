@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace App\Policies;
 
 use App\Enums\Permissions\Projects\DocumentPermissions;
+use App\Enums\ProjectDocumentationVisibility;
 use App\Models\ProjectDocumentation;
 use App\Models\User;
 use App\Policies\Traits\BelongsToCurrentProject;
@@ -23,6 +24,10 @@ class ProjectDocumentationPolicy
 
     public function view(User $user, ProjectDocumentation $projectDocumentation): bool
     {
+        if ($projectDocumentation->visibility === ProjectDocumentationVisibility::AdministratorsOnly) {
+            return false;
+        }
+
         return $this->belongsToCurrentProject($projectDocumentation)
             && $this->hasProjectPermission(DocumentPermissions::View);
     }
@@ -34,12 +39,20 @@ class ProjectDocumentationPolicy
 
     public function update(User $user, ProjectDocumentation $projectDocumentation): bool
     {
+        if ($projectDocumentation->visibility === ProjectDocumentationVisibility::AdministratorsOnly) {
+            return false;
+        }
+
         return $this->belongsToCurrentProject($projectDocumentation)
             && $this->hasProjectPermission(DocumentPermissions::Update);
     }
 
     public function delete(User $user, ProjectDocumentation $projectDocumentation): bool
     {
+        if ($projectDocumentation->visibility === ProjectDocumentationVisibility::AdministratorsOnly) {
+            return false;
+        }
+
         return $this->belongsToCurrentProject($projectDocumentation)
             && $this->hasProjectPermission(DocumentPermissions::Delete);
     }

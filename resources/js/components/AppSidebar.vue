@@ -29,11 +29,11 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import { index as projectDocumentationsIndex } from '@/routes/project/documentations';
 import { index as projectMembersIndex } from '@/routes/project/members';
 import { index as projectRolesIndex } from '@/routes/project-settings/roles';
 import { select } from '@/routes/projects';
 import { index as projectsIndex } from '@/routes/projects';
-import { index as projectDocumentationsIndex } from '@/routes/project/documentations';
 import { index as roles } from '@/routes/roles';
 import { index as users } from '@/routes/users';
 import type { Auth, NavGroup } from '@/types';
@@ -43,8 +43,10 @@ const page = usePage<{ auth: Auth }>();
 const projects = computed(() => page.props.auth.projects);
 const selectedProject = ref(page.props.auth.current_project ? String(page.props.auth.current_project.id) : '');
 
-const currentProject = computed(() =>
-    projects.value.find((project) => String(project.id) === selectedProject.value) ?? page.props.auth.current_project,
+const currentProject = computed(
+    () =>
+        projects.value.find((project) => String(project.id) === selectedProject.value) ??
+        page.props.auth.current_project,
 );
 
 function projectBadge(project: NonNullable<typeof currentProject.value>): string {
@@ -87,7 +89,7 @@ const mainNavGroups: NavGroup[] = [
         title: 'Trabalho',
         items: [
             {
-                title: 'Ciclo',
+                title: 'Sprint',
                 href: dashboard(),
                 icon: Zap,
                 permission: 'project.overview.view',
@@ -226,7 +228,10 @@ const visibleMainNavGroups = computed<NavGroup[]>(() =>
             </SidebarMenu>
         </SidebarHeader>
 
-        <div v-if="currentProject" class="border-y border-sidebar-border/70 px-3 py-4 group-data-[collapsible=icon]:hidden">
+        <div
+            v-if="currentProject"
+            class="border-y border-sidebar-border/70 px-3 py-4 group-data-[collapsible=icon]:hidden"
+        >
             <div class="mb-2 flex items-center justify-between px-1">
                 <span class="text-xs font-medium text-sidebar-foreground/70">Projeto Atual</span>
                 <span

@@ -79,5 +79,7 @@ class ProjectDocumentation extends Model
     public function filters(Builder $query, array $filters): void
     {
         $query->when($filters['search'] ?? null, fn (Builder $query, string $search) => $query->where('title', 'like', "%{$search}%"));
+
+        $query->when($filters['type'] ?? null, fn (Builder $query, int $type) => $query->where('type', $type));
     }
 }

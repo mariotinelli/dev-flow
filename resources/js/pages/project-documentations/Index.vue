@@ -6,8 +6,9 @@ import Heading from '@/components/Heading.vue';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { index, show } from '@/routes/project/documentations';
-import type { PaginatedProjectDocumentations } from '@/types';
+import type { PaginatedProjectDocumentations, ProjectDocumentationFilterValues } from '@/types';
 import ProjectPagination from '../projects/partials/ProjectPagination.vue';
+import ProjectDocumentationFilters from './partials/ProjectDocumentationFilters.vue';
 import ProjectDocumentationFormDialog from './partials/ProjectDocumentationFormDialog.vue';
 import ProjectDocumentationGrid from './partials/ProjectDocumentationGrid.vue';
 
@@ -16,10 +17,9 @@ const props = defineProps<{
     can: {
         create: boolean;
     };
-    filters: {
-        search: string;
-    };
+    filters: ProjectDocumentationFilterValues;
     categories: Array<{ value: number; label: string }>;
+    types: Array<{ value: number; label: string }>;
 }>();
 
 defineOptions({
@@ -38,7 +38,7 @@ defineOptions({
 });
 
 const viewMode = ref<'grid' | 'list'>('grid');
-const filterForm = reactive<{ search: string }>({ ...props.filters });
+const filterForm = reactive<ProjectDocumentationFilterValues>({ ...props.filters });
 
 function submitFilters(): void {
     const query = Object.fromEntries(Object.entries(filterForm).filter(([, value]) => value !== '' && value !== 'all'));
@@ -52,6 +52,7 @@ function submitFilters(): void {
 
 function clearFilters(): void {
     filterForm.search = '';
+    filterForm.type = '';
 
     router.get(
         index.url(),
@@ -112,6 +113,13 @@ function clearFilters(): void {
                 </ProjectDocumentationFormDialog>
             </div>
         </div>
+
+        <ProjectDocumentationFilters
+            v-model:filters="filterForm"
+            :types="types"
+            @submit="submitFilters"
+            @clear="clearFilters"
+        />
 
         <div
             v-if="projectDocumentations.data.length === 0"

@@ -4,15 +4,17 @@ declare(strict_types = 1);
 
 namespace App\Http\Resources;
 
+use App\Enums\ProjectDocumentationType;
 use App\Models\ProjectDocumentation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 /** @mixin ProjectDocumentation */
 class ProjectDocumentationResource extends JsonResource
 {
     /**
-     * @return array{id: int, title: string, description: string|null, type: string, type_label: string, category: string, category_label: string, url: string|null, author: array{id: int, name: string}, created_at: string|null, can: array{update: bool, delete: bool}}
+     * @return array{id: int, title: string, description: string|null, type: int, type_label: string, category: int, category_label: string, url: string|null, download_url: string|null, author: array{id: int, name: string}, created_at: string|null, can: array{update: bool, delete: bool}}
      */
     public function toArray(Request $request): array
     {
@@ -25,7 +27,10 @@ class ProjectDocumentationResource extends JsonResource
             'category'       => $this->category->value,
             'category_label' => $this->category->label(),
             'url'            => $this->url,
-            'author'         => [
+            'download_url'   => in_array($this->type, [ProjectDocumentationType::File, ProjectDocumentationType::Image], true) && $this->file_path
+                ? Storage::disk('s3')->temporaryUrl($this->file_path, now()->addMinutes(5))
+                : null,
+            'author' => [
                 'id'   => $this->author->id,
                 'name' => $this->author->name,
             ],
