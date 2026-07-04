@@ -7,6 +7,8 @@ defineOptions({
     inheritAttrs: false,
 });
 
+const model = defineModel<File | null>({ default: null });
+
 const preview = ref<string | null>(null);
 
 function handleFile(event: Event) {
@@ -14,10 +16,12 @@ function handleFile(event: Event) {
 
     if (!file) return;
 
+    model.value = file;
     preview.value = URL.createObjectURL(file);
 }
 
 function clearImage() {
+    model.value = null;
     preview.value = null;
 }
 </script>

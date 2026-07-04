@@ -3,6 +3,8 @@ import { useForm } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 import StoreController from '@/actions/App/Http/Controllers/ProjectDocumentations/StoreController';
 import UpdateController from '@/actions/App/Http/Controllers/ProjectDocumentations/UpdateController';
+import FileUpload from '@/components/ui/file-upload/FileUpload.vue';
+import ImageUpload from '@/components/ui/image-upload/ImageUpload.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -58,6 +60,8 @@ function defaults(projectDocumentation?: ProjectDocumentation): {
 const form = useForm(defaults(props.projectDocumentation));
 
 const isLinkType = computed(() => form.type === LinkType);
+const isImageType = computed(() => form.type === ImageType);
+const isPlainFileType = computed(() => form.type === FileType);
 const isFileType = computed(() => form.type === FileType || form.type === ImageType);
 
 watch(() => form.type, (newType, oldType) => {
@@ -194,14 +198,15 @@ function submit(): void {
                         <InputError :message="form.errors.url" />
                     </div>
 
-                    <div v-if="isFileType" class="grid gap-2">
+                    <div v-if="isImageType" class="grid gap-2">
+                        <Label for="project-documentation-image" required>Imagem</Label>
+                        <ImageUpload id="project-documentation-image" name="file" accept="image/*" v-model="form.file" />
+                        <InputError :message="form.errors.file" />
+                    </div>
+
+                    <div v-if="isPlainFileType" class="grid gap-2">
                         <Label for="project-documentation-file" required>Arquivo</Label>
-                        <Input
-                            id="project-documentation-file"
-                            name="file"
-                            type="file"
-                            @input="(e: Event) => { const target = e.target as HTMLInputElement; if (target.files) form.file = target.files[0]; }"
-                        />
+                        <FileUpload id="project-documentation-file" name="file" v-model="form.file" />
                         <InputError :message="form.errors.file" />
                     </div>
                 </div>
