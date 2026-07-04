@@ -35,7 +35,7 @@ defineEmits<{
                 </SelectTrigger>
                 <SelectContent>
                     <SelectGroup>
-                        <SelectItem value="">Todos os tipos</SelectItem>
+                        <SelectItem value="0">Todos os tipos</SelectItem>
                         <SelectItem v-for="type in types" :key="type.value" :value="String(type.value)">
                             {{ type.label }}
                         </SelectItem>

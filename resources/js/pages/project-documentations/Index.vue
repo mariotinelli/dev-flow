@@ -43,7 +43,7 @@ const viewMode = ref<'grid' | 'list'>('grid');
 const filterForm = reactive<ProjectDocumentationFilterValues>({ ...props.filters });
 
 function submitFilters(): void {
-    const query = Object.fromEntries(Object.entries(filterForm).filter(([, value]) => value !== '' && value !== 'all'));
+    const query = Object.fromEntries(Object.entries(filterForm).filter(([, value]) => value !== '' && value !== '0' && value !== 'all'));
 
     router.get(index.url(), query, {
         preserveScroll: true,
@@ -62,7 +62,7 @@ function downloadFile(id: number): void {
 
 function clearFilters(): void {
     filterForm.search = '';
-    filterForm.type = '';
+    filterForm.type = '0';
 
     router.get(
         index.url(),

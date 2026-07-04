@@ -36,7 +36,7 @@ class IndexController extends Controller
             ],
             'filters' => [
                 'search' => $filters['search'] ?? '',
-                'type'   => $filters['type'] ?? '',
+                'type'   => $filters['type'] ?? '0',
             ],
             'categories'   => ProjectDocumentationCategory::options(),
             'types'        => ProjectDocumentationType::options(),

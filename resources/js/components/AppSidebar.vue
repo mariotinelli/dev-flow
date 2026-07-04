@@ -206,8 +206,8 @@ const visibleMainNavGroups = computed<NavGroup[]>(() =>
                 }
 
                 return item.permissionScope === 'project'
-                    ? page.props.auth.project_permissions[item.permission]
-                    : page.props.auth.permissions[item.permission];
+                    ? page.props.auth.project_permissions?.[item.permission]
+                    : page.props.auth.permissions?.[item.permission];
             }),
         }))
         .filter((group) => group.items.length > 0),
