@@ -12,7 +12,10 @@ function createLinkDocumentation(overrides: Partial<ProjectDocumentation> = {}):
         type_label: 'Link',
         category: 3,
         category_label: 'API',
+        visibility: 1,
+        visibility_label: 'Membros do projeto',
         url: 'https://example.com/api-guide',
+        download_url: null,
         author: { id: 1, name: 'John' },
         created_at: '2026-01-01',
         can: { update: true, delete: true },
@@ -20,12 +23,18 @@ function createLinkDocumentation(overrides: Partial<ProjectDocumentation> = {}):
     };
 }
 
+const formOptions = {
+    categories: [{ value: 3, label: 'API' }],
+    types: [{ value: 3, label: 'Link' }],
+    visibilities: [{ value: 1, label: 'Membros do projeto' }],
+};
+
 describe('ProjectDocumentationCard', () => {
     test('renders link documentation title as external URL with target="_blank"', () => {
         const doc = createLinkDocumentation();
 
         const wrapper = mount(ProjectDocumentationCard, {
-            props: { projectDocumentation: doc },
+            props: { projectDocumentation: doc, ...formOptions },
         });
 
         const anchor = wrapper.find('a[href="https://example.com/api-guide"]');
@@ -40,7 +49,7 @@ describe('ProjectDocumentationCard', () => {
         const doc = createLinkDocumentation({ can: { update: true, delete: false } });
 
         const wrapper = mount(ProjectDocumentationCard, {
-            props: { projectDocumentation: doc },
+            props: { projectDocumentation: doc, ...formOptions },
         });
 
         expect(wrapper.find('[data-testid="edit-button"]').exists()).toBe(true);
@@ -50,7 +59,7 @@ describe('ProjectDocumentationCard', () => {
         const doc = createLinkDocumentation({ can: { update: false, delete: false } });
 
         const wrapper = mount(ProjectDocumentationCard, {
-            props: { projectDocumentation: doc },
+            props: { projectDocumentation: doc, ...formOptions },
         });
 
         expect(wrapper.find('[data-testid="edit-button"]').exists()).toBe(false);
@@ -60,7 +69,7 @@ describe('ProjectDocumentationCard', () => {
         const doc = createLinkDocumentation({ can: { update: false, delete: true } });
 
         const wrapper = mount(ProjectDocumentationCard, {
-            props: { projectDocumentation: doc },
+            props: { projectDocumentation: doc, ...formOptions },
         });
 
         expect(wrapper.find('[data-testid="delete-button"]').exists()).toBe(true);
@@ -70,7 +79,7 @@ describe('ProjectDocumentationCard', () => {
         const doc = createLinkDocumentation({ can: { update: true, delete: false } });
 
         const wrapper = mount(ProjectDocumentationCard, {
-            props: { projectDocumentation: doc },
+            props: { projectDocumentation: doc, ...formOptions },
         });
 
         expect(wrapper.find('[data-testid="delete-button"]').exists()).toBe(false);
@@ -80,7 +89,7 @@ describe('ProjectDocumentationCard', () => {
         const doc = createLinkDocumentation({ can: { update: false, delete: false } });
 
         const wrapper = mount(ProjectDocumentationCard, {
-            props: { projectDocumentation: doc },
+            props: { projectDocumentation: doc, ...formOptions },
         });
 
         expect(wrapper.text()).not.toContain('Sem ações');
@@ -93,7 +102,7 @@ describe('ProjectDocumentationCard', () => {
         const doc = createLinkDocumentation();
 
         const wrapper = mount(ProjectDocumentationCard, {
-            props: { projectDocumentation: doc },
+            props: { projectDocumentation: doc, ...formOptions },
         });
 
         const copyButton = wrapper.find('[data-testid="copy-link-button"]');

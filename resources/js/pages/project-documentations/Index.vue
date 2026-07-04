@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3';
-import { ClipboardCopy, LayoutGrid, List, Pencil, Plus, Trash2 } from '@lucide/vue';
+import { ClipboardCopy, Download, LayoutGrid, List, Pencil, Plus } from '@lucide/vue';
 import { reactive, ref } from 'vue';
 import Heading from '@/components/Heading.vue';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { destroy, edit, index } from '@/routes/project/documentations';
+import { download, index } from '@/routes/project/documentations';
 import type { PaginatedProjectDocumentations, ProjectDocumentationFilterValues } from '@/types';
 import ProjectPagination from '../projects/partials/ProjectPagination.vue';
+import ProjectDocumentationDeleteAction from './partials/ProjectDocumentationDeleteAction.vue';
 import ProjectDocumentationFilters from './partials/ProjectDocumentationFilters.vue';
 import ProjectDocumentationFormDialog from './partials/ProjectDocumentationFormDialog.vue';
 import ProjectDocumentationGrid from './partials/ProjectDocumentationGrid.vue';
@@ -53,6 +54,10 @@ function submitFilters(): void {
 
 function copyLink(url: string): void {
     navigator.clipboard.writeText(url);
+}
+
+function downloadFile(id: number): void {
+    window.location.href = download({ projectDocumentation: id }).url;
 }
 
 function clearFilters(): void {
@@ -136,6 +141,9 @@ function clearFilters(): void {
         <ProjectDocumentationGrid
             v-else-if="viewMode === 'grid'"
             :project-documentations="projectDocumentations.data"
+            :categories="categories"
+            :types="types"
+            :visibilities="visibilities"
         />
 
         <div
@@ -165,7 +173,7 @@ function clearFilters(): void {
                             >
                                 {{ projectDocumentation.title }}
                             </a>
-                            <span v-else class="text-foreground">
+                            <span v-else class="cursor-pointer text-foreground hover:underline" @click="downloadFile(projectDocumentation.id)">
                                 {{ projectDocumentation.title }}
                             </span>
                         </TableCell>
@@ -185,7 +193,7 @@ function clearFilters(): void {
                             <div class="flex items-center justify-end gap-1">
                                 <Button
                                     v-if="projectDocumentation.type === 3"
-                                    variant="ghost"
+                                    variant="outline"
                                     size="sm"
                                     title="Copiar link"
                                     @click="copyLink(projectDocumentation.url ?? '')"
@@ -193,30 +201,33 @@ function clearFilters(): void {
                                     <ClipboardCopy class="size-4" />
                                 </Button>
                                 <Button
+                                    v-else
+                                    variant="outline"
+                                    size="icon"
+                                    title="Baixar arquivo"
+                                    @click="downloadFile(projectDocumentation.id)"
+                                >
+                                    <Download class="size-4" />
+                                </Button>
+                                <ProjectDocumentationFormDialog
                                     v-if="projectDocumentation.can.update"
-                                    variant="ghost"
-                                    size="sm"
-                                    title="Editar"
-                                    class="bg-amber-100 text-amber-700 hover:bg-amber-200"
-                                    @click="router.visit(edit({ projectDocumentation: projectDocumentation.id }))"
+                                    :project-documentation="projectDocumentation"
+                                    :categories="categories"
+                                    :types="types"
+                                    :visibilities="visibilities"
                                 >
-                                    <Pencil class="size-4" />
-                                </Button>
-                                <Button
-                                    v-if="projectDocumentation.can.delete"
-                                    variant="destructive"
-                                    size="sm"
-                                    title="Excluir"
-                                    @click="router.delete(destroy({ projectDocumentation: projectDocumentation.id }))"
-                                >
-                                    <Trash2 class="size-4" />
-                                </Button>
-                                <span
-                                    v-if="projectDocumentation.type !== 3 && !projectDocumentation.can.update && !projectDocumentation.can.delete"
-                                    class="text-sm text-muted-foreground"
-                                >
-                                    Sem ações
-                                </span>
+                                    <template #trigger>
+                                        <Button
+                                            variant="outline"
+                                            size="icon"
+                                            data-testid="edit-button"
+                                            title="Editar"
+                                        >
+                                            <Pencil class="size-4" />
+                                        </Button>
+                                    </template>
+                                </ProjectDocumentationFormDialog>
+                                <ProjectDocumentationDeleteAction :project-documentation="projectDocumentation" icon-only />
                             </div>
                         </TableCell>
                     </TableRow>

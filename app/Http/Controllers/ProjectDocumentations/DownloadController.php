@@ -6,12 +6,12 @@ namespace App\Http\Controllers\ProjectDocumentations;
 
 use App\Http\Controllers\Controller;
 use App\Models\ProjectDocumentation;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DownloadController extends Controller
 {
-    public function __invoke(ProjectDocumentation $projectDocumentation): RedirectResponse
+    public function __invoke(ProjectDocumentation $projectDocumentation): StreamedResponse
     {
         $this->authorize('view', $projectDocumentation);
 
@@ -19,10 +19,6 @@ class DownloadController extends Controller
 
         $filename = $projectDocumentation->file_original_name ?? basename($projectDocumentation->file_path);
 
-        return redirect()->away(
-            Storage::disk('s3')->temporaryUrl($projectDocumentation->file_path, now()->addMinutes(5), [
-                'ResponseContentDisposition' => 'attachment; filename="' . $filename . '"',
-            ]),
-        );
+        return Storage::disk('s3')->download($projectDocumentation->file_path, $filename);
     }
 }

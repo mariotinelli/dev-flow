@@ -10,6 +10,20 @@ use Illuminate\Support\Facades\Storage;
 
 final class ProjectDocumentationObserver
 {
+    public function creating(ProjectDocumentation $projectDocumentation): void
+    {
+        if (in_array($projectDocumentation->type, [ProjectDocumentationType::File, ProjectDocumentationType::Image], true)) {
+            $projectDocumentation->url = null;
+
+            return;
+        }
+
+        if ($projectDocumentation->type === ProjectDocumentationType::Link) {
+            $projectDocumentation->file_path          = null;
+            $projectDocumentation->file_original_name = null;
+        }
+    }
+
     public function updating(ProjectDocumentation $projectDocumentation): void
     {
         if (in_array($projectDocumentation->type, [ProjectDocumentationType::File, ProjectDocumentationType::Image], true)) {
@@ -23,7 +37,8 @@ final class ProjectDocumentationObserver
                 Storage::disk('s3')->delete($projectDocumentation->file_path);
             }
 
-            $projectDocumentation->file_path = null;
+            $projectDocumentation->file_path          = null;
+            $projectDocumentation->file_original_name = null;
         }
     }
 }

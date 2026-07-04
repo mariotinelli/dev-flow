@@ -28,7 +28,6 @@ class UpdateController extends Controller
 
         if (in_array($type, [ProjectDocumentationType::File->value, ProjectDocumentationType::Image->value], true) && isset($validated['file']) && $validated['file'] instanceof UploadedFile) {
             $file = $validated['file'];
-            unset($validated['file']);
 
             $validated['file_path']          = $file->store('project-documentations', 's3');
             $validated['file_original_name'] = $file->getClientOriginalName();
@@ -37,6 +36,8 @@ class UpdateController extends Controller
                 Storage::disk('s3')->delete($previousFilePath);
             }
         }
+
+        unset($validated['file']);
 
         if ($typeChanged) {
             if ($type === ProjectDocumentationType::Link->value) {

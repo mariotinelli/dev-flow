@@ -31,21 +31,33 @@ class StoreProjectDocumentationRequest extends FormRequest
             'description' => ['nullable', 'string', 'max:65535'],
             'type'        => ['required', Rule::enum(ProjectDocumentationType::class)],
             'category'    => ['required', Rule::enum(ProjectDocumentationCategory::class)],
-            'visibility'  => ['required', Rule::enum(ProjectDocumentationVisibility::class)],
-            'url'         => [
-                Rule::requiredIf(fn () => (int) $this->input('type') === ProjectDocumentationType::Link->value),
-                'url',
-                'max:255',
-            ],
-            'file' => [
-                Rule::requiredIf(fn () => in_array((int) $this->input('type'), [
+            'visibility'  => ['required', Rule::in($this->allowedVisibilityValues())],
+            'url'         => Rule::when(
+                fn () => (int) $this->input('type') === ProjectDocumentationType::Link->value,
+                ['required', 'url', 'max:255'],
+            ),
+            'file' => Rule::when(
+                fn () => in_array((int) $this->input('type'), [
                     ProjectDocumentationType::File->value,
                     ProjectDocumentationType::Image->value,
-                ], true)),
-                'file',
-                'mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt,md,zip,rar,7z,json,xml,csv,jpg,jpeg,png,webp,gif',
-                'max:102400',
-            ],
+                ], true),
+                ['required', 'file', 'mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt,md,zip,rar,7z,json,xml,csv,jpg,jpeg,png,webp,gif', 'max:102400'],
+            ),
         ];
+    }
+
+    /**
+     * @return list<int>
+     */
+    private function allowedVisibilityValues(): array
+    {
+        return collect(ProjectDocumentationVisibility::cases())
+            ->reject(
+                fn (ProjectDocumentationVisibility $visibility): bool => !$this->user()?->hasRole('admin')
+                    && $visibility === ProjectDocumentationVisibility::AdministratorsOnly,
+            )
+            ->map(fn (ProjectDocumentationVisibility $visibility): int => $visibility->value)
+            ->values()
+            ->all();
     }
 }

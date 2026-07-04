@@ -2,6 +2,7 @@
 import { useForm } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 import StoreController from '@/actions/App/Http/Controllers/ProjectDocumentations/StoreController';
+import UpdateController from '@/actions/App/Http/Controllers/ProjectDocumentations/UpdateController';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -17,11 +18,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectItemText, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import type { ProjectDocumentation } from '@/types';
 
-defineProps<{
+const props = defineProps<{
     categories: Array<{ value: number; label: string }>;
     types: Array<{ value: number; label: string }>;
     visibilities: Array<{ value: number; label: string }>;
+    projectDocumentation?: ProjectDocumentation;
 }>();
 
 const isOpen = ref(false);
@@ -30,15 +33,29 @@ const LinkType = 3;
 const FileType = 1;
 const ImageType = 2;
 
-const form = useForm({
-    title: '',
-    description: '',
-    type: LinkType,
-    category: 11,
-    visibility: 1,
-    url: '',
-    file: null as File | null,
-});
+const isEditing = computed(() => Boolean(props.projectDocumentation));
+
+function defaults(projectDocumentation?: ProjectDocumentation): {
+    title: string;
+    description: string;
+    type: number;
+    category: number;
+    visibility: number;
+    url: string;
+    file: File | null;
+} {
+    return {
+        title: projectDocumentation?.title ?? '',
+        description: projectDocumentation?.description ?? '',
+        type: projectDocumentation?.type ?? LinkType,
+        category: projectDocumentation?.category ?? props.categories[0]?.value ?? 11,
+        visibility: projectDocumentation?.visibility ?? props.visibilities[0]?.value ?? 1,
+        url: projectDocumentation?.url ?? '',
+        file: null,
+    };
+}
+
+const form = useForm(defaults(props.projectDocumentation));
 
 const isLinkType = computed(() => form.type === LinkType);
 const isFileType = computed(() => form.type === FileType || form.type === ImageType);
@@ -53,8 +70,30 @@ watch(() => form.type, (newType, oldType) => {
     }
 });
 
+watch(
+    () => props.projectDocumentation,
+    (projectDocumentation) => {
+        form.defaults(defaults(projectDocumentation));
+        form.reset();
+    },
+);
+
+watch(isOpen, (opened) => {
+    if (!opened) {
+        return;
+    }
+
+    form.defaults(defaults(props.projectDocumentation));
+    form.reset();
+    form.clearErrors();
+});
+
 function submit(): void {
-    form.post(StoreController.url(), {
+    const url = isEditing.value
+        ? UpdateController.url({ projectDocumentation: props.projectDocumentation!.id })
+        : StoreController.url();
+
+    form.post(url, {
         preserveScroll: true,
         onSuccess: () => {
             isOpen.value = false;
@@ -70,11 +109,13 @@ function submit(): void {
             <slot name="trigger" />
         </DialogTrigger>
 
-        <DialogContent>
+        <DialogContent class="sm:max-w-3xl">
             <form class="space-y-6" enctype="multipart/form-data" @submit.prevent="submit">
                 <DialogHeader>
-                    <DialogTitle>Nova documentação</DialogTitle>
-                    <DialogDescription>Cadastre um material relacionado ao projeto selecionado.</DialogDescription>
+                    <DialogTitle>{{ isEditing ? 'Editar documentação' : 'Nova documentação' }}</DialogTitle>
+                    <DialogDescription>
+                        {{ isEditing ? 'Atualize os dados do material selecionado.' : 'Cadastre um material relacionado ao projeto selecionado.' }}
+                    </DialogDescription>
                 </DialogHeader>
 
                 <div class="grid gap-4">
@@ -100,19 +141,51 @@ function submit(): void {
                         <InputError :message="form.errors.description" />
                     </div>
 
-                    <div class="grid gap-2">
-                        <Label for="project-documentation-type" required>Tipo</Label>
-                        <Select v-model="form.type">
-                            <SelectTrigger id="project-documentation-type">
-                                <SelectValue placeholder="Selecione" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem v-for="type in types" :key="type.value" :value="type.value">
-                                    <SelectItemText>{{ type.label }}</SelectItemText>
-                                </SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <InputError :message="form.errors.type" />
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="grid gap-2">
+                            <Label for="project-documentation-type" required>Tipo</Label>
+                            <Select v-model="form.type">
+                                <SelectTrigger id="project-documentation-type">
+                                    <SelectValue placeholder="Selecione" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem v-for="type in types" :key="type.value" :value="type.value">
+                                        <SelectItemText>{{ type.label }}</SelectItemText>
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <InputError :message="form.errors.type" />
+                        </div>
+
+                        <div class="grid gap-2">
+                            <Label for="project-documentation-category" required>Categoria</Label>
+                            <Select v-model="form.category">
+                                <SelectTrigger id="project-documentation-category">
+                                    <SelectValue placeholder="Selecione" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem v-for="category in categories" :key="category.value" :value="category.value">
+                                        <SelectItemText>{{ category.label }}</SelectItemText>
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <InputError :message="form.errors.category" />
+                        </div>
+
+                        <div class="grid gap-2">
+                            <Label for="project-documentation-visibility" required>Visibilidade</Label>
+                            <Select v-model="form.visibility">
+                                <SelectTrigger id="project-documentation-visibility">
+                                    <SelectValue placeholder="Selecione" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem v-for="visibility in visibilities" :key="visibility.value" :value="visibility.value">
+                                        <SelectItemText>{{ visibility.label }}</SelectItemText>
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <InputError :message="form.errors.visibility" />
+                        </div>
                     </div>
 
                     <div v-if="isLinkType" class="grid gap-2">
@@ -131,41 +204,11 @@ function submit(): void {
                         />
                         <InputError :message="form.errors.file" />
                     </div>
-
-                    <div class="grid gap-2">
-                        <Label for="project-documentation-category" required>Categoria</Label>
-                        <Select v-model="form.category">
-                            <SelectTrigger id="project-documentation-category">
-                                <SelectValue placeholder="Selecione" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem v-for="category in categories" :key="category.value" :value="category.value">
-                                    <SelectItemText>{{ category.label }}</SelectItemText>
-                                </SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <InputError :message="form.errors.category" />
-                    </div>
-
-                    <div class="grid gap-2">
-                        <Label for="project-documentation-visibility" required>Visibilidade</Label>
-                        <Select v-model="form.visibility">
-                            <SelectTrigger id="project-documentation-visibility">
-                                <SelectValue placeholder="Selecione" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem v-for="visibility in visibilities" :key="visibility.value" :value="visibility.value">
-                                    <SelectItemText>{{ visibility.label }}</SelectItemText>
-                                </SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <InputError :message="form.errors.visibility" />
-                    </div>
                 </div>
 
                 <DialogFooter>
                     <Button type="button" variant="outline" @click="isOpen = false">Cancelar</Button>
-                    <Button type="submit" :disabled="form.processing">Cadastrar</Button>
+                    <Button type="submit" :disabled="form.processing">{{ isEditing ? 'Salvar' : 'Cadastrar' }}</Button>
                 </DialogFooter>
             </form>
         </DialogContent>

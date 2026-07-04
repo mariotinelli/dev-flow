@@ -4,6 +4,9 @@ import ProjectDocumentationCard from './ProjectDocumentationCard.vue';
 
 defineProps<{
     projectDocumentations: ProjectDocumentation[];
+    categories: Array<{ value: number; label: string }>;
+    types: Array<{ value: number; label: string }>;
+    visibilities: Array<{ value: number; label: string }>;
 }>();
 </script>
 
@@ -13,6 +16,9 @@ defineProps<{
             v-for="projectDocumentation in projectDocumentations"
             :key="projectDocumentation.id"
             :project-documentation="projectDocumentation"
+            :categories="categories"
+            :types="types"
+            :visibilities="visibilities"
         />
     </div>
 </template>

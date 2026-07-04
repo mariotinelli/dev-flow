@@ -1,19 +1,27 @@
 <script setup lang="ts">
-import { Link, router } from '@inertiajs/vue3';
-import { CalendarDays, ClipboardCopy, FileText, Pencil, Trash2, UserRound } from '@lucide/vue';
+import { CalendarDays, ClipboardCopy, Download, FileText, Pencil, UserRound } from '@lucide/vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { destroy, edit, show } from '@/routes/project/documentations';
+import { download } from '@/routes/project/documentations';
 import type { ProjectDocumentation } from '@/types';
+import ProjectDocumentationDeleteAction from './ProjectDocumentationDeleteAction.vue';
+import ProjectDocumentationFormDialog from './ProjectDocumentationFormDialog.vue';
 
 const props = defineProps<{
     projectDocumentation: ProjectDocumentation;
+    categories: Array<{ value: number; label: string }>;
+    types: Array<{ value: number; label: string }>;
+    visibilities: Array<{ value: number; label: string }>;
 }>();
 
 function copyLink(): void {
     if (props.projectDocumentation.url) {
         navigator.clipboard.writeText(props.projectDocumentation.url);
     }
+}
+
+function downloadFile(id: number): void {
+    window.location.href = download({ projectDocumentation: id }).url;
 }
 </script>
 
@@ -32,13 +40,13 @@ function copyLink(): void {
                 >
                     {{ projectDocumentation.title }}
                 </a>
-                <Link
+                <span
                     v-else
-                    class="font-semibold hover:underline"
-                    :href="show({ projectDocumentation: projectDocumentation.id })"
+                    class="cursor-pointer font-semibold hover:underline"
+                    @click="downloadFile(projectDocumentation.id)"
                 >
                     {{ projectDocumentation.title }}
-                </Link>
+                </span>
                 <p v-if="projectDocumentation.description" class="mt-1 truncate text-sm text-muted-foreground">
                     {{ projectDocumentation.description }}
                 </p>
@@ -77,34 +85,31 @@ function copyLink(): void {
             >
                 <ClipboardCopy class="size-4" />
             </Button>
-
             <Button
+                v-else
+                variant="outline"
+                size="icon"
+                title="Baixar arquivo"
+                @click="downloadFile(projectDocumentation.id)"
+            >
+                <Download class="size-4" />
+            </Button>
+
+            <ProjectDocumentationFormDialog
                 v-if="projectDocumentation.can.update"
-                variant="outline"
-                size="icon"
-                tone="primary"
-                data-testid="edit-button"
-                title="Editar"
-                @click="router.visit(edit({ projectDocumentation: projectDocumentation.id }))"
+                :project-documentation="projectDocumentation"
+                :categories="categories"
+                :types="types"
+                :visibilities="visibilities"
             >
-                <Pencil class="size-4" />
-            </Button>
+                <template #trigger>
+                    <Button variant="outline" size="icon" data-testid="edit-button" title="Editar">
+                        <Pencil class="size-4" />
+                    </Button>
+                </template>
+            </ProjectDocumentationFormDialog>
 
-            <Button
-                v-if="projectDocumentation.can.delete"
-                variant="outline"
-                tone="destructive"
-                size="icon"
-                data-testid="delete-button"
-                title="Excluir"
-                @click="router.delete(destroy({ projectDocumentation: projectDocumentation.id }))"
-            >
-                <Trash2 class="size-4" />
-            </Button>
-
-            <span v-if="projectDocumentation.type !== 3 && !projectDocumentation.can.update && !projectDocumentation.can.delete" class="text-sm text-muted-foreground">
-                Sem ações
-            </span>
+            <ProjectDocumentationDeleteAction :project-documentation="projectDocumentation" icon-only />
         </div>
     </article>
 </template>

@@ -13,7 +13,10 @@ export type ProjectDocumentation = {
     type_label: string;
     category: number;
     category_label: string;
+    visibility: number;
+    visibility_label: string;
     url: string | null;
+    download_url: string | null;
     author: {
         id: number;
         name: string;

@@ -59,7 +59,7 @@ test('admin users can download AdministratorsOnly project documentations', funct
     $this->actingAs($user)
         ->withSession(['selected_project_id' => $project->id])
         ->get(route('project.documentations.download', $projectDocumentation))
-        ->assertRedirect();
+        ->assertSuccessful();
 });
 
 test('project members with view permission can download file project documentations', function () {
@@ -84,7 +84,7 @@ test('project members with view permission can download file project documentati
     $this->actingAs($user)
         ->withSession(['selected_project_id' => $project->id])
         ->get(route('project.documentations.download', $projectDocumentation))
-        ->assertRedirect();
+        ->assertSuccessful();
 });
 
 test('project members without view permission cannot download file project documentations', function () {

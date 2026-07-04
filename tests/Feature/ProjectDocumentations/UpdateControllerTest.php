@@ -159,3 +159,28 @@ test('project members can change type from file to link', function () {
 
     Storage::disk('s3')->assertMissing($oldFilePath);
 });
+
+test('non-admin project members cannot update project documentation visibility to administrators only', function () {
+    [$user, $project] = projectMemberWithDocumentPermissions(DocumentPermissions::Update);
+
+    $projectDocumentation = ProjectDocumentation::factory()->create([
+        'project_id' => $project->id,
+        'author_id'  => $user->id,
+        'title'      => 'Project docs',
+        'type'       => ProjectDocumentationType::Link,
+        'category'   => ProjectDocumentationCategory::Other,
+        'visibility' => ProjectDocumentationVisibility::ProjectMembers,
+        'url'        => 'https://example.com/docs',
+    ]);
+
+    $this->actingAs($user)
+        ->withSession(['selected_project_id' => $project->id])
+        ->post(route('project.documentations.update', $projectDocumentation), [
+            'title'      => 'Project docs',
+            'type'       => ProjectDocumentationType::Link->value,
+            'category'   => ProjectDocumentationCategory::Other->value,
+            'visibility' => ProjectDocumentationVisibility::AdministratorsOnly->value,
+            'url'        => 'https://example.com/docs',
+        ])
+        ->assertSessionHasErrors(['visibility']);
+});

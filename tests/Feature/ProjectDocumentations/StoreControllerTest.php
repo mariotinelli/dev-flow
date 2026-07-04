@@ -72,3 +72,18 @@ test('project members with create permission can create file project documentati
 
     Storage::disk('s3')->assertExists($documentation->file_path);
 });
+
+test('non-admin project members cannot create administrators only project documentations', function () {
+    [$user, $project] = projectMemberWithDocumentPermissions(DocumentPermissions::Create);
+
+    $this->actingAs($user)
+        ->withSession(['selected_project_id' => $project->id])
+        ->post(route('project.documentations.store'), [
+            'title'      => 'Admin only docs',
+            'type'       => ProjectDocumentationType::Link->value,
+            'category'   => ProjectDocumentationCategory::Other->value,
+            'visibility' => ProjectDocumentationVisibility::AdministratorsOnly->value,
+            'url'        => 'https://example.com/admin-only',
+        ])
+        ->assertSessionHasErrors(['visibility']);
+});
