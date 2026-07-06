@@ -26,6 +26,13 @@ class UpdateController extends Controller
 
         $typeChanged = $type !== $previousType;
 
+        if ($previousFilePath && ($validated['remove_file'] ?? false)) {
+            Storage::disk('s3')->delete($previousFilePath);
+
+            $validated['file_path']          = null;
+            $validated['file_original_name'] = null;
+        }
+
         if (in_array($type, [ProjectDocumentationType::File->value, ProjectDocumentationType::Image->value], true) && isset($validated['file']) && $validated['file'] instanceof UploadedFile) {
             $file = $validated['file'];
 
@@ -37,7 +44,7 @@ class UpdateController extends Controller
             }
         }
 
-        unset($validated['file']);
+        unset($validated['file'], $validated['remove_file']);
 
         if ($typeChanged) {
             if ($type === ProjectDocumentationType::Link->value) {

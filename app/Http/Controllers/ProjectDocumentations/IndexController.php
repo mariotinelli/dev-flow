@@ -34,9 +34,12 @@ class IndexController extends Controller
             'can'                   => [
                 'create' => $request->user()->can('create', ProjectDocumentation::class),
             ],
+            'isAdmin' => $request->user()->hasRole('admin'),
             'filters' => [
-                'search' => $filters['search'] ?? '',
-                'type'   => $filters['type'] ?? '0',
+                'search'     => $filters['search'] ?? '',
+                'type'       => $filters['type'] ?? '0',
+                'category'   => $filters['category'] ?? '0',
+                'visibility' => $filters['visibility'] ?? '0',
             ],
             'categories'   => ProjectDocumentationCategory::options(),
             'types'        => ProjectDocumentationType::options(),

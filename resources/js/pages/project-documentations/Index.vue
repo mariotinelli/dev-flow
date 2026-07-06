@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3';
-import { ClipboardCopy, Download, LayoutGrid, List, Pencil, Plus } from '@lucide/vue';
+import { ArrowUpRight, Download, LayoutGrid, List, Pencil, Plus } from '@lucide/vue';
 import { reactive, ref } from 'vue';
 import Heading from '@/components/Heading.vue';
 import { Button } from '@/components/ui/button';
@@ -22,6 +22,7 @@ const props = defineProps<{
     categories: Array<{ value: number; label: string }>;
     types: Array<{ value: number; label: string }>;
     visibilities: Array<{ value: number; label: string }>;
+    isAdmin: boolean;
 }>();
 
 defineOptions({
@@ -52,8 +53,8 @@ function submitFilters(): void {
     });
 }
 
-function copyLink(url: string): void {
-    navigator.clipboard.writeText(url);
+function openLink(url: string): void {
+    window.open(url, '_blank', 'noreferrer');
 }
 
 function downloadFile(id: number): void {
@@ -63,6 +64,8 @@ function downloadFile(id: number): void {
 function clearFilters(): void {
     filterForm.search = '';
     filterForm.type = '0';
+    filterForm.category = '0';
+    filterForm.visibility = '0';
 
     router.get(
         index.url(),
@@ -127,6 +130,9 @@ function clearFilters(): void {
         <ProjectDocumentationFilters
             v-model:filters="filterForm"
             :types="types"
+            :categories="categories"
+            :visibilities="visibilities"
+            :is-admin="isAdmin"
             @submit="submitFilters"
             @clear="clearFilters"
         />
@@ -144,6 +150,7 @@ function clearFilters(): void {
             :categories="categories"
             :types="types"
             :visibilities="visibilities"
+            :is-admin="isAdmin"
         />
 
         <div
@@ -156,6 +163,7 @@ function clearFilters(): void {
                         <TableHead class="px-4 py-3">Título</TableHead>
                         <TableHead class="px-4 py-3">Tipo</TableHead>
                         <TableHead class="px-4 py-3">Categoria</TableHead>
+                        <TableHead v-if="isAdmin" class="px-4 py-3">Visibilidade</TableHead>
                         <TableHead class="px-4 py-3">Autor</TableHead>
                         <TableHead class="px-4 py-3">Criado em</TableHead>
                         <TableHead class="px-4 py-3 text-right">Ações</TableHead>
@@ -183,6 +191,9 @@ function clearFilters(): void {
                         <TableCell class="px-4 py-4">
                             {{ projectDocumentation.category_label }}
                         </TableCell>
+                        <TableCell v-if="isAdmin" class="px-4 py-4">
+                            {{ projectDocumentation.visibility_label }}
+                        </TableCell>
                         <TableCell class="px-4 py-4 text-muted-foreground">
                             {{ projectDocumentation.author.name }}
                         </TableCell>
@@ -191,15 +202,16 @@ function clearFilters(): void {
                         </TableCell>
                         <TableCell class="px-4 py-4">
                             <div class="flex items-center justify-end gap-1">
-                                <Button
-                                    v-if="projectDocumentation.type === 3"
-                                    variant="outline"
-                                    size="sm"
-                                    title="Copiar link"
-                                    @click="copyLink(projectDocumentation.url ?? '')"
-                                >
-                                    <ClipboardCopy class="size-4" />
-                                </Button>
+                            <Button
+                                v-if="projectDocumentation.type === 3"
+                                variant="outline"
+                                size="sm"
+                                title="Abrir link"
+                                @click="openLink(projectDocumentation.url ?? '')"
+                            >
+                                <ArrowUpRight class="size-4" />
+                                Abrir
+                            </Button>
                                 <Button
                                     v-else
                                     variant="outline"

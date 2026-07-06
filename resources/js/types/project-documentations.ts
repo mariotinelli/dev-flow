@@ -3,6 +3,8 @@ import type { PaginationMeta } from '@/types';
 export type ProjectDocumentationFilterValues = {
     search: string;
     type: string;
+    category: string;
+    visibility: string;
 };
 
 export type ProjectDocumentation = {
@@ -16,7 +18,9 @@ export type ProjectDocumentation = {
     visibility: number;
     visibility_label: string;
     url: string | null;
+    file_original_name: string | null;
     download_url: string | null;
+    preview_url: string | null;
     author: {
         id: number;
         name: string;

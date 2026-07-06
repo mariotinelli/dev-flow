@@ -82,5 +82,9 @@ class ProjectDocumentation extends Model
         $query->when($filters['search'] ?? null, fn (Builder $query, string $search) => $query->where('title', 'like', "%{$search}%"));
 
         $query->when($filters['type'] ?? null, fn (Builder $query, int $type) => $query->where('type', $type));
+
+        $query->when($filters['category'] ?? null, fn (Builder $query, int $category) => $query->where('category', $category));
+
+        $query->when($filters['visibility'] ?? null, fn (Builder $query, int $visibility) => $query->where('visibility', $visibility));
     }
 }

@@ -27,6 +27,7 @@ const formOptions = {
     categories: [{ value: 3, label: 'API' }],
     types: [{ value: 3, label: 'Link' }],
     visibilities: [{ value: 1, label: 'Membros do projeto' }],
+    isAdmin: false,
 };
 
 describe('ProjectDocumentationCard', () => {
@@ -95,9 +96,9 @@ describe('ProjectDocumentationCard', () => {
         expect(wrapper.text()).not.toContain('Sem ações');
     });
 
-    test('link documentation card exposes copy-link button that copies URL to clipboard', async () => {
-        const writeText = vi.fn();
-        Object.assign(navigator, { clipboard: { writeText } });
+    test('link documentation card exposes open-link button that opens URL in new tab', async () => {
+        const openSpy = vi.fn();
+        vi.spyOn(window, 'open').mockImplementation(openSpy);
 
         const doc = createLinkDocumentation();
 
@@ -105,11 +106,11 @@ describe('ProjectDocumentationCard', () => {
             props: { projectDocumentation: doc, ...formOptions },
         });
 
-        const copyButton = wrapper.find('[data-testid="copy-link-button"]');
-        expect(copyButton.exists()).toBe(true);
+        const openButton = wrapper.find('[data-testid="open-link-button"]');
+        expect(openButton.exists()).toBe(true);
 
-        await copyButton.trigger('click');
+        await openButton.trigger('click');
 
-        expect(writeText).toHaveBeenCalledWith('https://example.com/api-guide');
+        expect(openSpy).toHaveBeenCalledWith('https://example.com/api-guide', '_blank', 'noreferrer');
     });
 });

@@ -3,6 +3,7 @@
 declare(strict_types = 1);
 
 use App\Enums\Permissions\Projects\DocumentPermissions;
+use App\Enums\ProjectDocumentationCategory;
 use App\Enums\ProjectDocumentationType;
 use App\Enums\ProjectDocumentationVisibility;
 use App\Models\ProjectDocumentation;
@@ -170,4 +171,79 @@ test('can combine search and type filters', function () {
         ->assertInertia(fn (Assert $page) => $page
             ->has('projectDocumentations.data', 1)
             ->where('projectDocumentations.data.0.title', 'Setup Guide'));
+});
+
+test('can filter project documentations by category', function () {
+    [$user, $project] = projectMemberWithDocumentPermissions(DocumentPermissions::View);
+
+    ProjectDocumentation::factory()->create([
+        'project_id' => $project->id,
+        'author_id'  => $user->id,
+        'title'      => 'API Docs',
+        'category'   => ProjectDocumentationCategory::API,
+        'type'       => ProjectDocumentationType::Link,
+        'url'        => 'https://api.com',
+    ]);
+
+    ProjectDocumentation::factory()->create([
+        'project_id' => $project->id,
+        'author_id'  => $user->id,
+        'title'      => 'Architecture Overview',
+        'category'   => ProjectDocumentationCategory::Architecture,
+        'type'       => ProjectDocumentationType::Link,
+        'url'        => 'https://arch.com',
+    ]);
+
+    $this->actingAs($user)
+        ->withSession(['selected_project_id' => $project->id])
+        ->get(route('project.documentations.index', ['category' => ProjectDocumentationCategory::API->value]))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->has('projectDocumentations.data', 1)
+            ->where('projectDocumentations.data.0.title', 'API Docs')
+            ->where('filters.category', (string) ProjectDocumentationCategory::API->value));
+});
+
+test('admin users can filter project documentations by visibility', function () {
+    [$user, $project] = projectMemberWithDocumentPermissions(DocumentPermissions::View);
+
+    $user->assignRole('admin');
+
+    ProjectDocumentation::factory()->create([
+        'project_id' => $project->id,
+        'author_id'  => $user->id,
+        'visibility' => ProjectDocumentationVisibility::AdministratorsOnly,
+        'type'       => ProjectDocumentationType::Link,
+        'url'        => 'https://example.com/admin',
+    ]);
+
+    ProjectDocumentation::factory()->create([
+        'project_id' => $project->id,
+        'author_id'  => $user->id,
+        'visibility' => ProjectDocumentationVisibility::ProjectMembers,
+        'type'       => ProjectDocumentationType::Link,
+        'url'        => 'https://example.com/public',
+    ]);
+
+    $this->actingAs($user)
+        ->withSession(['selected_project_id' => $project->id])
+        ->get(route('project.documentations.index', ['visibility' => ProjectDocumentationVisibility::AdministratorsOnly->value]))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->has('projectDocumentations.data', 1)
+            ->where('projectDocumentations.data.0.url', 'https://example.com/admin')
+            ->where('filters.visibility', (string) ProjectDocumentationVisibility::AdministratorsOnly->value));
+});
+
+test('index passes isAdmin to the view', function () {
+    [$user, $project] = projectMemberWithDocumentPermissions(DocumentPermissions::View);
+
+    $user->assignRole('admin');
+
+    $this->actingAs($user)
+        ->withSession(['selected_project_id' => $project->id])
+        ->get(route('project.documentations.index'))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('isAdmin', true));
 });

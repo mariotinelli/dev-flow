@@ -7,6 +7,7 @@ defineProps<{
     categories: Array<{ value: number; label: string }>;
     types: Array<{ value: number; label: string }>;
     visibilities: Array<{ value: number; label: string }>;
+    isAdmin: boolean;
 }>();
 </script>
 
@@ -19,6 +20,7 @@ defineProps<{
             :categories="categories"
             :types="types"
             :visibilities="visibilities"
+            :is-admin="isAdmin"
         />
     </div>
 </template>

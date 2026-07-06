@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CalendarDays, ClipboardCopy, Download, FileText, Pencil, UserRound } from '@lucide/vue';
+import { ArrowUpRight, CalendarDays, Download, FileText, Pencil, UserRound } from '@lucide/vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { download } from '@/routes/project/documentations';
@@ -12,11 +12,12 @@ const props = defineProps<{
     categories: Array<{ value: number; label: string }>;
     types: Array<{ value: number; label: string }>;
     visibilities: Array<{ value: number; label: string }>;
+    isAdmin: boolean;
 }>();
 
-function copyLink(): void {
+function openLink(): void {
     if (props.projectDocumentation.url) {
-        navigator.clipboard.writeText(props.projectDocumentation.url);
+        window.open(props.projectDocumentation.url, '_blank', 'noreferrer');
     }
 }
 
@@ -61,6 +62,9 @@ function downloadFile(id: number): void {
             <Badge variant="outline">
                 {{ projectDocumentation.category_label }}
             </Badge>
+            <Badge v-if="isAdmin" variant="default">
+                {{ projectDocumentation.visibility_label }}
+            </Badge>
         </div>
 
         <div class="grid gap-2 text-sm text-muted-foreground">
@@ -79,11 +83,11 @@ function downloadFile(id: number): void {
                 v-if="projectDocumentation.type === 3"
                 variant="outline"
                 size="icon"
-                data-testid="copy-link-button"
-                title="Copiar link"
-                @click="copyLink"
+                data-testid="open-link-button"
+                title="Abrir link"
+                @click="openLink"
             >
-                <ClipboardCopy class="size-4" />
+                <ArrowUpRight class="size-4" />
             </Button>
             <Button
                 v-else

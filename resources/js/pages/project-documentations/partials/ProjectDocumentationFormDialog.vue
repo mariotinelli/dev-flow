@@ -37,6 +37,18 @@ const ImageType = 2;
 
 const isEditing = computed(() => Boolean(props.projectDocumentation));
 
+const existingFileName = computed(() =>
+    isEditing.value && props.projectDocumentation?.file_original_name
+        ? props.projectDocumentation.file_original_name
+        : null,
+);
+
+const existingImageUrl = computed(() =>
+    isEditing.value && props.projectDocumentation?.preview_url
+        ? props.projectDocumentation.preview_url
+        : null,
+);
+
 function defaults(projectDocumentation?: ProjectDocumentation): {
     title: string;
     description: string;
@@ -45,6 +57,7 @@ function defaults(projectDocumentation?: ProjectDocumentation): {
     visibility: number;
     url: string;
     file: File | null;
+    remove_file: boolean;
 } {
     return {
         title: projectDocumentation?.title ?? '',
@@ -54,6 +67,7 @@ function defaults(projectDocumentation?: ProjectDocumentation): {
         visibility: projectDocumentation?.visibility ?? props.visibilities[0]?.value ?? 1,
         url: projectDocumentation?.url ?? '',
         file: null,
+        remove_file: false,
     };
 }
 
@@ -84,6 +98,9 @@ watch(
 
 watch(isOpen, (opened) => {
     if (!opened) {
+        form.defaults(defaults(props.projectDocumentation));
+        form.reset();
+
         return;
     }
 
@@ -200,13 +217,26 @@ function submit(): void {
 
                     <div v-if="isImageType" class="grid gap-2">
                         <Label for="project-documentation-image" required>Imagem</Label>
-                        <ImageUpload id="project-documentation-image" name="file" accept="image/*" v-model="form.file" />
+                        <ImageUpload
+                            id="project-documentation-image"
+                            name="file"
+                            accept="image/*"
+                            :existing-image-url="existingImageUrl"
+                            v-model="form.file"
+                            @remove-existing="form.remove_file = true"
+                        />
                         <InputError :message="form.errors.file" />
                     </div>
 
                     <div v-if="isPlainFileType" class="grid gap-2">
                         <Label for="project-documentation-file" required>Arquivo</Label>
-                        <FileUpload id="project-documentation-file" name="file" v-model="form.file" />
+                        <FileUpload
+                            id="project-documentation-file"
+                            name="file"
+                            :existing-file-name="existingFileName"
+                            v-model="form.file"
+                            @remove-existing="form.remove_file = true"
+                        />
                         <InputError :message="form.errors.file" />
                     </div>
                 </div>
