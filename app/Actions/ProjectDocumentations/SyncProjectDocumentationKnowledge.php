@@ -4,8 +4,6 @@ declare(strict_types = 1);
 
 namespace App\Actions\ProjectDocumentations;
 
-use App\Enums\ProjectDocumentationType;
-use App\Enums\ProjectDocumentationVisibility;
 use App\Models\ProjectDocumentation;
 use App\Models\ProjectKnowledgeSource;
 use Illuminate\Support\Facades\DB;
@@ -27,7 +25,7 @@ class SyncProjectDocumentationKnowledge
             return;
         }
 
-        if (!$this->isIndexable($projectDocumentation)) {
+        if (!$projectDocumentation->isIndexableFile()) {
             $this->deleteKnowledgeSource($projectDocumentation);
 
             return;
@@ -116,13 +114,6 @@ class SyncProjectDocumentationKnowledge
     private function deleteKnowledgeSource(ProjectDocumentation $projectDocumentation): void
     {
         $this->knowledgeSource($projectDocumentation)?->delete();
-    }
-
-    private function isIndexable(ProjectDocumentation $projectDocumentation): bool
-    {
-        return $projectDocumentation->type === ProjectDocumentationType::File
-            && $projectDocumentation->visibility === ProjectDocumentationVisibility::ProjectMembers
-            && filled($projectDocumentation->file_path);
     }
 
     /**

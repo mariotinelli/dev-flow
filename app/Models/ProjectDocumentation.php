@@ -97,4 +97,11 @@ class ProjectDocumentation extends Model
 
         $query->when($filters['visibility'] ?? null, fn (Builder $query, int $visibility) => $query->where('visibility', $visibility));
     }
+
+    public function isIndexableFile(): bool
+    {
+        return $this->type === ProjectDocumentationType::File
+            && $this->visibility === ProjectDocumentationVisibility::ProjectMembers
+            && filled($this->file_path);
+    }
 }

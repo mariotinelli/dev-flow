@@ -43,20 +43,20 @@ final class ProjectDocumentationObserver
 
     public function created(ProjectDocumentation $projectDocumentation): void
     {
-        if ($this->shouldGenerateKnowledge() && $this->isIndexableFile($projectDocumentation)) {
+        if ($this->shouldGenerateKnowledge() && $projectDocumentation->isIndexableFile()) {
             GenerateProjectKnowledgeJob::dispatch($projectDocumentation->id)->afterCommit();
         }
     }
 
     public function updated(ProjectDocumentation $projectDocumentation): void
     {
-        if ($this->shouldGenerateKnowledge() && $this->isIndexableFile($projectDocumentation) && $projectDocumentation->wasChanged(['title', 'category', 'visibility', 'file_path'])) {
+        if ($this->shouldGenerateKnowledge() && $projectDocumentation->isIndexableFile() && $projectDocumentation->wasChanged(['title', 'category', 'visibility', 'file_path'])) {
             GenerateProjectKnowledgeJob::dispatch($projectDocumentation->id)->afterCommit();
 
             return;
         }
 
-        if (!$this->isIndexableFile($projectDocumentation) && $projectDocumentation->wasChanged(['type', 'visibility', 'file_path'])) {
+        if (!$projectDocumentation->isIndexableFile() && $projectDocumentation->wasChanged(['type', 'visibility', 'file_path'])) {
             ProjectKnowledgeSource::query()
                 ->where('project_id', $projectDocumentation->project_id)
                 ->where('source_type', 'documentation')
@@ -72,13 +72,6 @@ final class ProjectDocumentationObserver
             ->where('source_type', 'documentation')
             ->where('source_id', $projectDocumentation->id)
             ->delete();
-    }
-
-    private function isIndexableFile(ProjectDocumentation $projectDocumentation): bool
-    {
-        return $projectDocumentation->type === ProjectDocumentationType::File
-            && $projectDocumentation->visibility === ProjectDocumentationVisibility::ProjectMembers
-            && filled($projectDocumentation->file_path);
     }
 
     private function shouldGenerateKnowledge(): bool
