@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 
 /**
@@ -71,6 +72,15 @@ class ProjectDocumentation extends Model
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'author_id');
+    }
+
+    /**
+     * @return HasOne<ProjectKnowledgeSource, $this>
+     */
+    public function knowledgeSource(): HasOne
+    {
+        return $this->hasOne(ProjectKnowledgeSource::class, 'source_id')
+            ->where('source_type', 'documentation');
     }
 
     /**

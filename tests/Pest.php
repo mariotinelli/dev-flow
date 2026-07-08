@@ -5,11 +5,16 @@ declare(strict_types = 1);
 use App\Enums\Permissions\Projects\DocumentPermissions;
 use App\Enums\Permissions\Projects\MemberPermissions;
 use App\Enums\Permissions\Projects\SettingPermissions;
+use App\Enums\ProjectDocumentationCategory;
+use App\Enums\ProjectDocumentationType;
+use App\Enums\ProjectDocumentationVisibility;
 use App\Models\Project;
+use App\Models\ProjectDocumentation;
 use App\Models\ProjectMember;
 use App\Models\ProjectRole;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
 
@@ -123,4 +128,55 @@ function projectMemberWithDocumentPermissions(DocumentPermissions ...$permission
     ]);
 
     return [$user, $project, $role];
+}
+
+function createFileProjectDocumentationWithContent(
+    int $userId,
+    int $projectId,
+    string $filename,
+    string $content,
+    ProjectDocumentationVisibility $visibility = ProjectDocumentationVisibility::ProjectMembers,
+): ProjectDocumentation {
+    $filePath = UploadedFile::fake()->createWithContent($filename, $content)->store('project-documentations', 's3');
+
+    return ProjectDocumentation::factory()->create([
+        'project_id'         => $projectId,
+        'author_id'          => $userId,
+        'title'              => 'Project documentation',
+        'type'               => ProjectDocumentationType::File,
+        'category'           => ProjectDocumentationCategory::Architecture,
+        'visibility'         => $visibility,
+        'url'                => null,
+        'file_path'          => $filePath,
+        'file_original_name' => $filename,
+    ]);
+}
+
+function fakePdftotextBinary(string $text): void
+{
+    $directory = sys_get_temp_dir() . '/fake-pdftotext-' . uniqid();
+
+    mkdir($directory);
+
+    $binary = $directory . '/pdftotext';
+    file_put_contents($binary, "#!/bin/sh\nprintf '%s' " . escapeshellarg($text) . ' > "$3"' . "\n");
+    chmod($binary, 0755);
+
+    putenv('PATH=' . $directory . PATH_SEPARATOR . getenv('PATH'));
+}
+
+function officeOpenXmlWith(string $entryName, string $xml): string
+{
+    $path = tempnam(sys_get_temp_dir(), 'office-open-xml-');
+    $zip  = new ZipArchive();
+
+    $zip->open($path, ZipArchive::OVERWRITE);
+    $zip->addFromString($entryName, $xml);
+    $zip->close();
+
+    $contents = file_get_contents($path);
+
+    unlink($path);
+
+    return $contents ?: '';
 }

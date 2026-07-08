@@ -18,6 +18,8 @@ abstract class TestCase extends BaseTestCase
 
         $this->withoutVite();
 
+        config(['semantic-search.enabled' => false]);
+
         Hash::setRounds(4);
 
         $this->seed(PermissionSeeder::class);
