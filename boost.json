@@ -19,6 +19,7 @@
         "inertia-vue-development",
         "tailwindcss-development",
         "laravel-permission-development",
-        "sluggable-development"
+        "sluggable-development",
+        "rag-semantic-search-harness"
     ]
 }
