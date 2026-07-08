@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\StoreUserRequest;
 use App\Models\User;
 use App\Notifications\UserPasswordSetupNotification;
+use App\Support\CurrentProject;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -18,6 +19,10 @@ use Spatie\Permission\Models\Role;
 
 class StoreController extends Controller
 {
+    public function __construct(private CurrentProject $currentProject)
+    {
+    }
+
     /**
      * Handle the incoming request.
      */
@@ -37,6 +42,8 @@ class StoreController extends Controller
             ]);
 
             $user->syncRoles([Role::findById($validated['role_id'])]);
+
+            $this->currentProject->clearCache();
 
             return $user;
         });

@@ -122,7 +122,7 @@ defineOptions({
                 <Button variant="outline" as-child>
                     <Link :href="index()">Cancelar</Link>
                 </Button>
-                <Button type="submit" :disabled="processing">Salvar perfil</Button>
+                <Button type="submit" :disabled="processing">Salvar</Button>
             </div>
         </Form>
     </div>

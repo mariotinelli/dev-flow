@@ -1,17 +1,15 @@
 <script setup lang="ts">
 import { Form, Head, Link } from '@inertiajs/vue3';
-import { ChevronsUpDown } from '@lucide/vue';
 import { ref } from 'vue';
 import UpdateController from '@/actions/App/Http/Controllers/Users/UpdateController';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
+import SearchableSelect from '@/components/SearchableSelect.vue';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import ImageUpload from '@/components/ui/image-upload/ImageUpload.vue';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { getInitials } from '@/composables/useInitials';
 import { index } from '@/routes/users';
@@ -25,7 +23,6 @@ const props = defineProps<{
     roles: SelectOption[];
 }>();
 
-const roleOpen = ref(false);
 const selectedRoleId = ref(props.user.role_id ? String(props.user.role_id) : '');
 
 defineOptions({
@@ -153,54 +150,15 @@ defineOptions({
 
                     <div class="grid gap-2">
                         <Label for="role_id" required>Perfil</Label>
-                        <input type="hidden" name="role_id" :value="selectedRoleId" />
-
-                        <Popover v-model:open="roleOpen">
-                            <PopoverTrigger as-child>
-                                <Button
-                                    id="role_id"
-                                    type="button"
-                                    variant="outline"
-                                    role="combobox"
-                                    :aria-expanded="roleOpen"
-                                    class="w-full justify-between"
-                                >
-                                    <span class="truncate">
-                                        {{
-                                            selectedRoleId
-                                                ? roles.find((role) => String(role.value) === selectedRoleId)?.label
-                                                : 'Selecione'
-                                        }}
-                                    </span>
-
-                                    <ChevronsUpDown class="size-4 shrink-0 opacity-50" />
-                                </Button>
-                            </PopoverTrigger>
-
-                            <PopoverContent class="w-(--reka-popover-trigger-width) p-0">
-                                <Command>
-                                    <CommandInput placeholder="Pesquisar perfil..." />
-
-                                    <CommandList>
-                                        <CommandEmpty>Nenhum perfil encontrado.</CommandEmpty>
-
-                                        <CommandGroup>
-                                            <CommandItem
-                                                v-for="role in roles"
-                                                :key="role.value"
-                                                :value="String(role.value)"
-                                                @select="
-                                                    selectedRoleId = String(role.value);
-                                                    roleOpen = false;
-                                                "
-                                            >
-                                                {{ role.label }}
-                                            </CommandItem>
-                                        </CommandGroup>
-                                    </CommandList>
-                                </Command>
-                            </PopoverContent>
-                        </Popover>
+                        <SearchableSelect
+                            id="role_id"
+                            v-model="selectedRoleId"
+                            name="role_id"
+                            :options="roles"
+                            placeholder="Selecione"
+                            search-placeholder="Pesquisar perfil..."
+                            empty-message="Nenhum perfil encontrado."
+                        />
                         <InputError :message="errors.role_id" />
                     </div>
                 </div>

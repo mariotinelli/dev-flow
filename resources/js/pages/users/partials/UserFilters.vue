@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import { ChevronsUpDown, Search, X } from '@lucide/vue';
-import { ref } from 'vue';
+import { Search, X } from '@lucide/vue';
+import { computed } from 'vue';
+import SearchableSelect from '@/components/SearchableSelect.vue';
 import { Button } from '@/components/ui/button';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { UserFilterValues, SelectOption, StatusOption } from '@/types';
 
-defineProps<{
+const props = defineProps<{
     roles: SelectOption[];
     jobTitles: SelectOption[];
     contractTypes: SelectOption[];
@@ -17,11 +16,11 @@ defineProps<{
     statuses: StatusOption[];
 }>();
 
-const roleOpen = ref(false);
-
 const filters = defineModel<UserFilterValues>('filters', {
     required: true,
 });
+
+const roleOptions = computed(() => [{ value: 'all', label: 'Todos' }, ...props.roles]);
 
 const emit = defineEmits<{
     submit: [];
@@ -63,61 +62,14 @@ const emit = defineEmits<{
         <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
             <div class="grid gap-2">
                 <Label for="role-filter">Perfil</Label>
-                <Popover v-model:open="roleOpen">
-                    <PopoverTrigger as-child>
-                        <Button
-                            id="role-filter"
-                            variant="outline"
-                            role="combobox"
-                            :aria-expanded="roleOpen"
-                            class="w-full justify-between"
-                        >
-                            <span class="truncate">
-                                {{
-                                    filters.role !== 'all'
-                                        ? roles.find((role) => String(role.value) === filters.role)?.label
-                                        : 'Todos'
-                                }}
-                            </span>
-
-                            <ChevronsUpDown class="size-4 shrink-0 opacity-50" />
-                        </Button>
-                    </PopoverTrigger>
-
-                    <PopoverContent class="w-(--reka-popover-trigger-width) p-0">
-                        <Command>
-                            <CommandInput placeholder="Pesquisar perfil..." />
-
-                            <CommandList>
-                                <CommandEmpty>Nenhum perfil encontrado.</CommandEmpty>
-
-                                <CommandGroup>
-                                    <CommandItem
-                                        value="all"
-                                        @select="
-                                            filters.role = 'all';
-                                            roleOpen = false;
-                                        "
-                                    >
-                                        Todos
-                                    </CommandItem>
-
-                                    <CommandItem
-                                        v-for="role in roles"
-                                        :key="role.value"
-                                        :value="String(role.value)"
-                                        @select="
-                                            filters.role = String(role.value);
-                                            roleOpen = false;
-                                        "
-                                    >
-                                        {{ role.label }}
-                                    </CommandItem>
-                                </CommandGroup>
-                            </CommandList>
-                        </Command>
-                    </PopoverContent>
-                </Popover>
+                <SearchableSelect
+                    id="role-filter"
+                    v-model="filters.role"
+                    :options="roleOptions"
+                    placeholder="Todos"
+                    search-placeholder="Pesquisar perfil..."
+                    empty-message="Nenhum perfil encontrado."
+                />
             </div>
 
             <div class="grid gap-2">

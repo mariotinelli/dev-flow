@@ -4,7 +4,14 @@ declare(strict_types = 1);
 
 namespace App\Providers;
 
+use App\Models\Project;
+use App\Models\ProjectMember;
+use App\Models\ProjectRole;
+use App\Policies\ProjectMemberPolicy;
+use App\Policies\ProjectPolicy;
+use App\Policies\ProjectRolePolicy;
 use App\Policies\RolePolicy;
+use App\Support\CurrentProject;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Date;
@@ -21,10 +28,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        if ($this->app->environment('local')) {
-            $this->app->register(\Laravel\Telescope\TelescopeServiceProvider::class);
-            $this->app->register(TelescopeServiceProvider::class);
-        }
+        $this->app->singleton(CurrentProject::class);
+        $this->configureTelescope();
     }
 
     /**
@@ -66,5 +71,16 @@ class AppServiceProvider extends ServiceProvider
     protected function configureGates(): void
     {
         Gate::policy(Role::class, RolePolicy::class);
+        Gate::policy(Project::class, ProjectPolicy::class);
+        Gate::policy(ProjectMember::class, ProjectMemberPolicy::class);
+        Gate::policy(ProjectRole::class, ProjectRolePolicy::class);
+    }
+
+    protected function configureTelescope(): void
+    {
+        if ($this->app->environment('local')) {
+            $this->app->register(\Laravel\Telescope\TelescopeServiceProvider::class);
+            $this->app->register(TelescopeServiceProvider::class);
+        }
     }
 }

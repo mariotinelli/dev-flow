@@ -10,6 +10,16 @@ use App\Notifications\UserPasswordSetupNotification;
 use Illuminate\Support\Facades\Notification;
 use Spatie\Permission\Models\Role;
 
+test('guests are redirected when creating users', function () {
+    $this->post(route('users.store'))->assertRedirect(route('login'));
+});
+
+test('authenticated users without permission cannot create users', function () {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)->post(route('users.store'))->assertForbidden();
+});
+
 test('authenticated users can create users and send a password setup link', function () {
     Notification::fake();
 
@@ -69,4 +79,23 @@ test('user email must be unique', function () {
         'role_id'       => $role->id,
     ])
         ->assertSessionHasErrors(['email']);
+});
+
+test('users cannot be created with the admin role', function () {
+    $user      = User::factory()->admin()->create();
+    $adminRole = Role::findByName('admin');
+
+    $this->actingAs($user)->post(route('users.store'), [
+        'name'          => 'Grace Hopper',
+        'email'         => 'grace@example.com',
+        'job_title'     => JobTitle::BackendDeveloper->value,
+        'contract_type' => ContractType::Fixed->value,
+        'seniority'     => Seniority::Lead->value,
+        'role_id'       => $adminRole->id,
+    ])
+        ->assertSessionHasErrors(['role_id']);
+
+    $this->assertDatabaseMissing('users', [
+        'email' => 'grace@example.com',
+    ]);
 });

@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace App\Http\Resources;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
@@ -19,21 +20,21 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $role = $this->roles()->first();
+        $role = $this->whenLoaded('roles', fn (Collection $roles) => $roles->first());
 
         return [
             'id'                  => $this->id,
             'name'                => $this->name,
             'email'               => $this->email,
             'avatar_url'          => $this->avatar_path ? Storage::url($this->avatar_path) : null,
-            'job_title'           => $this->job_title->value,
-            'job_title_label'     => $this->job_title->label(),
-            'contract_type'       => $this->contract_type->value,
-            'contract_type_label' => $this->contract_type->label(),
-            'seniority'           => $this->seniority->value,
-            'seniority_label'     => $this->seniority->label(),
+            'job_title'           => $this->job_title?->value,
+            'job_title_label'     => $this->job_title?->label(),
+            'contract_type'       => $this->contract_type?->value,
+            'contract_type_label' => $this->contract_type?->label(),
+            'seniority'           => $this->seniority?->value,
+            'seniority_label'     => $this->seniority?->label(),
             'role_id'             => $role?->id,
-            'role'                => str($role?->name ?? '')->lower()->replace('_', ' ')->ucfirst(),
+            'role'                => $role ? str($role->name)->lower()->replace('_', ' ')->ucfirst() : null,
             'is_active'           => !$this->trashed(),
             'status_label'        => $this->trashed() ? 'Inativo' : 'Ativo',
             'can'                 => [

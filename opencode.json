@@ -5,12 +5,12 @@
             "type": "local",
             "enabled": true,
             "command": [
-                "php",
+                "vendor/bin/sail",
                 "artisan",
                 "boost:mcp"
             ]
         },
-            "shadcnVue": {
+        "shadcnVue": {
             "type": "local",
             "enabled": true,
             "command": [

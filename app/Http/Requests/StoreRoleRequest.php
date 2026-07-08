@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace App\Http\Requests;
 
 use App\Enums\Permission;
+use App\Rules\NotReservedRoleName;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Role;
@@ -22,9 +23,15 @@ class StoreRoleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'          => ['required', 'string', 'max:255', 'not_in:admin', Rule::unique('roles', 'name')->where('guard_name', 'web')],
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                new NotReservedRoleName(),
+                Rule::unique('roles', 'name')->where('guard_name', 'web'),
+            ],
             'permissions'   => ['array'],
-            'permissions.*' => ['string', Rule::in(Permission::values())],
+            'permissions.*' => ['string', Rule::in(Permission::systemValues())],
         ];
     }
 }
