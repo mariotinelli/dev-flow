@@ -4,8 +4,8 @@ declare(strict_types = 1);
 
 namespace App\Policies;
 
-use App\Enums\Permissions\ProjectPermissions;
-use App\Enums\Permissions\Projects\AiChatPermissions;
+use App\Enums\Permissions\Intelligence\AiChatPermissions;
+use App\Enums\Permissions\System\ProjectPermissions;
 use App\Models\Project;
 use App\Models\User;
 use App\Policies\Traits\CheckIsAdmin;

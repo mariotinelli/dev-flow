@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Ai\Tools;
 
-use App\Actions\ProjectAiChat\SearchProjectKnowledge;
+use App\Actions\Intelligence\AiChat\SearchProjectKnowledge;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Tools\Request;

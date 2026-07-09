@@ -68,7 +68,7 @@ test('select stores the project id in session', function () {
 
     $this->actingAs($admin);
 
-    $this->post(route('projects.select', $project))
+    $this->post(route('system.projects.select', $project))
         ->assertSessionHas('selected_project_id', $project->id);
 });
 

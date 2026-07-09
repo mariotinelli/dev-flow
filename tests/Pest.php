@@ -2,10 +2,12 @@
 
 declare(strict_types = 1);
 
-use App\Enums\Permissions\Projects\AiChatPermissions;
-use App\Enums\Permissions\Projects\DocumentPermissions;
-use App\Enums\Permissions\Projects\MemberPermissions;
-use App\Enums\Permissions\Projects\SettingPermissions;
+use App\Enums\Permissions\Intelligence\AiChatPermissions;
+use App\Enums\Permissions\Project\DocumentationPermissions;
+use App\Enums\Permissions\Project\MemberPermissions;
+use App\Enums\Permissions\Project\Settings\GitlabPermissions;
+use App\Enums\Permissions\Project\Settings\LoomPermissions;
+use App\Enums\Permissions\Project\Settings\RolePermissions as ProjectSettingsRolePermissions;
 use App\Enums\ProjectDocumentationCategory;
 use App\Enums\ProjectDocumentationType;
 use App\Enums\ProjectDocumentationVisibility;
@@ -82,7 +84,11 @@ function projectMemberWithSettingsPermission(): array
     $role    = ProjectRole::factory()->for($project)->create();
     $user    = User::factory()->create();
 
-    $role->syncPermissionNames([SettingPermissions::Manage->value]);
+    $role->syncPermissionNames([
+        ...array_map(fn (ProjectSettingsRolePermissions $permission): string => $permission->value, ProjectSettingsRolePermissions::cases()),
+        GitlabPermissions::View->value,
+        LoomPermissions::View->value,
+    ]);
 
     ProjectMember::factory()->create([
         'project_id'      => $project->id,
@@ -116,13 +122,13 @@ function projectMemberWithMemberPermissions(MemberPermissions ...$permissions): 
 /**
  * @return array{0: User, 1: Project, 2: ProjectRole}
  */
-function projectMemberWithDocumentPermissions(DocumentPermissions ...$permissions): array
+function projectMemberWithDocumentPermissions(DocumentationPermissions ...$permissions): array
 {
     $project = Project::factory()->create();
     $role    = ProjectRole::factory()->for($project)->create();
     $user    = User::factory()->create();
 
-    $role->syncPermissionNames(array_map(fn (DocumentPermissions $permission): string => $permission->value, $permissions));
+    $role->syncPermissionNames(array_map(fn (DocumentationPermissions $permission): string => $permission->value, $permissions));
 
     ProjectMember::factory()->create([
         'project_id'      => $project->id,

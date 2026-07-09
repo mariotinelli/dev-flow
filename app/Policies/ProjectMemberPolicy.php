@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Policies;
 
-use App\Enums\Permissions\Projects\MemberPermissions;
+use App\Enums\Permissions\Project\MemberPermissions;
 use App\Models\ProjectMember;
 use App\Models\User;
 use App\Policies\Traits\BelongsToCurrentProject;

@@ -4,12 +4,15 @@ declare(strict_types = 1);
 
 namespace App\Policies;
 
-use App\Enums\Permissions\RolePermissions;
+use App\Enums\Permissions\System\RolePermissions;
 use App\Models\User;
+use App\Policies\Traits\CheckIsAdmin;
 use Spatie\Permission\Models\Role;
 
 class RolePolicy
 {
+    use CheckIsAdmin;
+    
     public function viewAny(User $user): bool
     {
         return $user->can(RolePermissions::View->value);

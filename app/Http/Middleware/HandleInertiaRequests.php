@@ -5,9 +5,9 @@ declare(strict_types = 1);
 namespace App\Http\Middleware;
 
 use App\Enums\Permission;
-use App\Enums\Permissions\ProjectPermissions;
-use App\Enums\Permissions\RolePermissions;
-use App\Enums\Permissions\UserPermissions;
+use App\Enums\Permissions\System\ProjectPermissions;
+use App\Enums\Permissions\System\RolePermissions;
+use App\Enums\Permissions\System\UserPermissions;
 use App\Models\Project;
 use App\Models\ProjectMember;
 use App\Support\CurrentProject;

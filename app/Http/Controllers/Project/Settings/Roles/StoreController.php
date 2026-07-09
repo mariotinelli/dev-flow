@@ -1,0 +1,29 @@
+<?php
+
+declare(strict_types = 1);
+
+namespace App\Http\Controllers\Project\Settings\Roles;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Project\Settings\Roles\StoreProjectRoleRequest;
+use App\Models\ProjectRole;
+use Illuminate\Http\RedirectResponse;
+use Inertia\Inertia;
+
+class StoreController extends Controller
+{
+    public function __invoke(StoreProjectRoleRequest $request): RedirectResponse
+    {
+        $validated = $request->validated();
+
+        $projectRole = ProjectRole::create([
+            'name' => $validated['name'],
+        ]);
+
+        $projectRole->syncPermissionNames($validated['permissions'] ?? []);
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Papel do projeto cadastrado.']);
+
+        return to_route('project.settings.roles.index');
+    }
+}

@@ -2,8 +2,8 @@
 
 declare(strict_types = 1);
 
-use App\Actions\ProjectDocumentations\SyncProjectDocumentationKnowledge;
-use App\Enums\Permissions\Projects\DocumentPermissions;
+use App\Actions\Project\Documentations\SyncProjectDocumentationKnowledge;
+use App\Enums\Permissions\Project\DocumentationPermissions;
 use App\Enums\ProjectDocumentationCategory;
 use App\Enums\ProjectDocumentationType;
 use App\Enums\ProjectDocumentationVisibility;
@@ -18,7 +18,7 @@ use Laravel\Ai\Embeddings;
 test('it dispatches knowledge generation when a file project documentation is created', function () {
     config(['semantic-search.enabled' => true]);
 
-    [$user, $project] = projectMemberWithDocumentPermissions(DocumentPermissions::Create);
+    [$user, $project] = projectMemberWithDocumentPermissions(DocumentationPermissions::Create);
 
     Queue::fake();
     Storage::fake('s3');

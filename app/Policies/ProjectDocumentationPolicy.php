@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Policies;
 
-use App\Enums\Permissions\Projects\DocumentPermissions;
+use App\Enums\Permissions\Project\DocumentationPermissions;
 use App\Enums\ProjectDocumentationVisibility;
 use App\Models\ProjectDocumentation;
 use App\Models\User;
@@ -19,7 +19,7 @@ class ProjectDocumentationPolicy
 
     public function viewAny(User $user): bool
     {
-        return $this->hasProjectPermission(DocumentPermissions::View);
+        return $this->hasProjectPermission(DocumentationPermissions::View);
     }
 
     public function view(User $user, ProjectDocumentation $projectDocumentation): bool
@@ -29,12 +29,12 @@ class ProjectDocumentationPolicy
         }
 
         return $this->belongsToCurrentProject($projectDocumentation)
-            && $this->hasProjectPermission(DocumentPermissions::View);
+            && $this->hasProjectPermission(DocumentationPermissions::View);
     }
 
     public function create(User $user): bool
     {
-        return $this->hasProjectPermission(DocumentPermissions::Create);
+        return $this->hasProjectPermission(DocumentationPermissions::Create);
     }
 
     public function update(User $user, ProjectDocumentation $projectDocumentation): bool
@@ -44,7 +44,7 @@ class ProjectDocumentationPolicy
         }
 
         return $this->belongsToCurrentProject($projectDocumentation)
-            && $this->hasProjectPermission(DocumentPermissions::Update);
+            && $this->hasProjectPermission(DocumentationPermissions::Update);
     }
 
     public function delete(User $user, ProjectDocumentation $projectDocumentation): bool
@@ -54,7 +54,7 @@ class ProjectDocumentationPolicy
         }
 
         return $this->belongsToCurrentProject($projectDocumentation)
-            && $this->hasProjectPermission(DocumentPermissions::Delete);
+            && $this->hasProjectPermission(DocumentationPermissions::Delete);
     }
 
     /**
@@ -73,7 +73,7 @@ class ProjectDocumentationPolicy
         return false;
     }
 
-    private function hasProjectPermission(DocumentPermissions $permission): bool
+    private function hasProjectPermission(DocumentationPermissions $permission): bool
     {
         return app(CurrentProject::class)->hasPermission($permission->value);
     }

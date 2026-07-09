@@ -16,7 +16,7 @@ use Throwable;
 
 #[Tries(3)]
 #[Backoff([1, 5, 10])]
-#[Queue(QueuePriority::LowPriority)]
+#[Queue(QueuePriority::KnowledgeChunks)]
 class GenerateProjectKnowledgeChunkJob implements ShouldQueue
 {
     use Queueable;

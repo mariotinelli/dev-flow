@@ -25,5 +25,5 @@ test('admin users receive project navigation permission', function () {
         ->get(route('dashboard'))
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page
-            ->where('auth.permissions', fn ($permissions): bool => $permissions->get('projects.view') === true));
+            ->where('auth.permissions', fn ($permissions): bool => $permissions->get('system.projects.view') === true));
 });

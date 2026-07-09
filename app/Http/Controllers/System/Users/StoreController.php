@@ -1,0 +1,57 @@
+<?php
+
+declare(strict_types = 1);
+
+namespace App\Http\Controllers\System\Users;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\System\Users\StoreUserRequest;
+use App\Models\User;
+use App\Notifications\UserPasswordSetupNotification;
+use App\Support\CurrentProject;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
+use Inertia\Inertia;
+use Spatie\Permission\Models\Role;
+
+class StoreController extends Controller
+{
+    public function __construct(private CurrentProject $currentProject)
+    {
+    }
+
+    /**
+     * Handle the incoming request.
+     */
+    public function __invoke(StoreUserRequest $request): RedirectResponse
+    {
+        $validated = $request->validated();
+
+        $user = DB::transaction(function () use ($request, $validated): User {
+            $user = User::create([
+                'name'          => $validated['name'],
+                'email'         => $validated['email'],
+                'password'      => Hash::make(Str::password(32)),
+                'avatar_path'   => $request->file('avatar')?->store('system/users/avatars', 'public'),
+                'job_title'     => $validated['job_title'],
+                'contract_type' => $validated['contract_type'],
+                'seniority'     => $validated['seniority'],
+            ]);
+
+            $user->syncRoles([Role::findById($validated['role_id'])]);
+
+            $this->currentProject->clearCache();
+
+            return $user;
+        });
+
+        $user->notify(new UserPasswordSetupNotification(Password::broker()->createToken($user)));
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Usuário cadastrado.']);
+
+        return to_route('system.users.index');
+    }
+}

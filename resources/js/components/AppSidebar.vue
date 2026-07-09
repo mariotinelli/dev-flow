@@ -29,14 +29,15 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
-import { index as projectAiChatIndex } from '@/routes/project/ai-chat';
+import { index as projectAiChatIndex } from '@/routes/intelligence/ai-chat';
 import { index as projectDocumentationsIndex } from '@/routes/project/documentations';
 import { index as projectMembersIndex } from '@/routes/project/members';
-import { index as projectRolesIndex } from '@/routes/project-settings/roles';
-import { select } from '@/routes/projects';
-import { index as projectsIndex } from '@/routes/projects';
-import { index as roles } from '@/routes/roles';
-import { index as users } from '@/routes/users';
+import { gitlab, loom } from '@/routes/project/settings';
+import { index as projectRolesIndex } from '@/routes/project/settings/roles';
+import { select } from '@/routes/system/projects';
+import { index as projectsIndex } from '@/routes/system/projects';
+import { index as roles } from '@/routes/system/roles';
+import { index as users } from '@/routes/system/users';
 import type { Auth, NavGroup } from '@/types';
 
 const page = usePage<{ auth: Auth }>();
@@ -48,6 +49,29 @@ const currentProject = computed(
     () =>
         projects.value.find((project) => String(project.id) === selectedProject.value) ??
         page.props.auth.current_project,
+);
+
+const projectSettingsNavItems = [
+    {
+        href: projectRolesIndex(),
+        permission: 'project.settings.roles.view',
+    },
+    {
+        href: gitlab(),
+        permission: 'project.settings.gitlab.view',
+    },
+    {
+        href: loom(),
+        permission: 'project.settings.loom.view',
+    },
+];
+
+const projectSettingsPermissions = projectSettingsNavItems.map((item) => item.permission);
+
+const projectSettingsHref = computed(
+    () =>
+        projectSettingsNavItems.find((item) => page.props.auth.project_permissions?.[item.permission])?.href ??
+        projectRolesIndex(),
 );
 
 function projectBadge(project: NonNullable<typeof currentProject.value>): string {
@@ -66,7 +90,7 @@ function selectProject(projectId: string): void {
     );
 }
 
-const mainNavGroups: NavGroup[] = [
+const mainNavGroups = computed<NavGroup[]>(() => [
     {
         title: 'Visão Geral',
         items: [
@@ -112,7 +136,7 @@ const mainNavGroups: NavGroup[] = [
                 title: 'Chat IA',
                 href: projectAiChatIndex(),
                 icon: Bot,
-                permission: 'project.ai-chat.use',
+                permission: 'intelligence.ai-chat.use',
                 permissionScope: 'project',
             },
         ],
@@ -131,14 +155,14 @@ const mainNavGroups: NavGroup[] = [
                 title: 'Documentação',
                 href: projectDocumentationsIndex(),
                 icon: FileText,
-                permission: 'project.documents.view',
+                permission: 'project.documentations.view',
                 permissionScope: 'project',
             },
             {
                 title: 'Configurações',
-                href: projectRolesIndex(),
+                href: projectSettingsHref.value,
                 icon: Settings,
-                permission: 'project.settings.manage',
+                permissions: projectSettingsPermissions,
                 permissionScope: 'project',
             },
         ],
@@ -169,21 +193,21 @@ const mainNavGroups: NavGroup[] = [
                 title: 'Projetos',
                 href: projectsIndex(),
                 icon: FolderKanban,
-                permission: 'projects.view',
+                permission: 'system.projects.view',
                 permissionScope: 'system',
             },
             {
                 title: 'Usuários',
                 href: users(),
                 icon: Users,
-                permission: 'users.view',
+                permission: 'system.users.view',
                 permissionScope: 'system',
             },
             {
                 title: 'Perfis',
                 href: roles(),
                 icon: ShieldCheck,
-                permission: 'roles.view',
+                permission: 'system.roles.view',
                 permissionScope: 'system',
             },
             {
@@ -193,14 +217,16 @@ const mainNavGroups: NavGroup[] = [
             },
         ],
     },
-];
+]);
 
 const visibleMainNavGroups = computed<NavGroup[]>(() =>
-    mainNavGroups
+    mainNavGroups.value
         .map((group) => ({
             ...group,
             items: group.items.filter((item) => {
-                if (!item.permission) {
+                const permissions = item.permissions ?? (item.permission ? [item.permission] : []);
+
+                if (permissions.length === 0) {
                     return true;
                 }
 
@@ -209,8 +235,8 @@ const visibleMainNavGroups = computed<NavGroup[]>(() =>
                 }
 
                 return item.permissionScope === 'project'
-                    ? page.props.auth.project_permissions?.[item.permission]
-                    : page.props.auth.permissions?.[item.permission];
+                    ? permissions.some((permission) => page.props.auth.project_permissions?.[permission])
+                    : permissions.some((permission) => page.props.auth.permissions?.[permission]);
             }),
         }))
         .filter((group) => group.items.length > 0),

@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Policies;
 
-use App\Enums\Permissions\UserPermissions;
+use App\Enums\Permissions\System\UserPermissions;
 use App\Models\User;
 use App\Policies\Traits\CheckIsAdmin;
 
