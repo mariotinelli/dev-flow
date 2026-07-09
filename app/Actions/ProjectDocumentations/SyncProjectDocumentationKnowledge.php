@@ -4,10 +4,10 @@ declare(strict_types = 1);
 
 namespace App\Actions\ProjectDocumentations;
 
+use App\Jobs\GenerateProjectKnowledgeChunkJob;
 use App\Models\ProjectDocumentation;
 use App\Models\ProjectKnowledgeSource;
 use Illuminate\Support\Facades\DB;
-use Laravel\Ai\Embeddings;
 
 class SyncProjectDocumentationKnowledge
 {
@@ -43,6 +43,9 @@ class SyncProjectDocumentationKnowledge
         $model      = (string) config('semantic-search.embeddings.model');
         $dimensions = (int) config('semantic-search.embeddings.dimensions', 1536);
 
+        $knowledgeSource  = $this->knowledgeSource($projectDocumentation);
+        $previousMetadata = $knowledgeSource?->metadata ?? [];
+
         $knowledgeSource = ProjectKnowledgeSource::query()->updateOrCreate([
             'project_id'  => $projectDocumentation->project_id,
             'source_type' => 'documentation',
@@ -52,12 +55,10 @@ class SyncProjectDocumentationKnowledge
             'metadata' => $this->sourceMetadata($projectDocumentation, $sourceHash, $provider, $model, $dimensions),
         ]);
 
-        $metadata = $knowledgeSource->metadata ?? [];
-
-        if (($metadata['source_hash'] ?? null) === $sourceHash
-            && ($metadata['embedding_provider'] ?? null) === $provider
-            && ($metadata['embedding_model'] ?? null) === $model
-            && ($metadata['embedding_dimensions'] ?? null) === $dimensions
+        if (($previousMetadata['source_hash'] ?? null) === $sourceHash
+            && ($previousMetadata['embedding_provider'] ?? null) === $provider
+            && ($previousMetadata['embedding_model'] ?? null) === $model
+            && ($previousMetadata['embedding_dimensions'] ?? null) === $dimensions
             && $knowledgeSource->chunks()->exists()) {
             return;
         }
@@ -70,36 +71,37 @@ class SyncProjectDocumentationKnowledge
             return;
         }
 
-        $response = Embeddings::for(array_column($chunks, 'embedded_content'))
-            ->dimensions($dimensions)
-            ->generate($provider, $model);
-
-        DB::transaction(function () use ($projectDocumentation, $chunks, $response, $sourceHash, $provider, $model, $dimensions): void {
+        $knowledgeSourceId = DB::transaction(function () use ($projectDocumentation): ?int {
             $knowledgeSource = $this->knowledgeSource($projectDocumentation);
 
             if (!$knowledgeSource instanceof ProjectKnowledgeSource) {
-                return;
+                return null;
             }
 
             $knowledgeSource->chunks()->delete();
 
-            foreach ($chunks as $position => $chunk) {
-                $knowledgeSource->chunks()->create([
-                    'project_id' => $projectDocumentation->project_id,
-                    'content'    => $chunk['content'],
-                    'embedding'  => $response->embeddings[$position],
-                    'position'   => $position,
-                    'metadata'   => [
-                        'section_path'         => $chunk['section_path'],
-                        'content_hash'         => $chunk['content_hash'],
-                        'source_hash'          => $sourceHash,
-                        'embedding_provider'   => $provider,
-                        'embedding_model'      => $model,
-                        'embedding_dimensions' => $dimensions,
-                    ],
-                ]);
-            }
+            return $knowledgeSource->id;
         });
+
+        if ($knowledgeSourceId === null) {
+            return;
+        }
+
+        foreach ($chunks as $position => $chunk) {
+            GenerateProjectKnowledgeChunkJob::dispatch(
+                projectKnowledgeSourceId: $knowledgeSourceId,
+                projectId: $projectDocumentation->project_id,
+                position: $position,
+                content: $chunk['content'],
+                embeddedContent: $chunk['embedded_content'],
+                sectionPath: $chunk['section_path'],
+                contentHash: $chunk['content_hash'],
+                sourceHash: $sourceHash,
+                provider: $provider,
+                model: $model,
+                dimensions: $dimensions,
+            )->afterCommit();
+        }
     }
 
     private function knowledgeSource(ProjectDocumentation $projectDocumentation): ?ProjectKnowledgeSource

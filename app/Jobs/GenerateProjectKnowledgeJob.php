@@ -16,7 +16,7 @@ use Throwable;
 
 #[Tries(3)]
 #[Backoff([1, 5, 10])]
-#[Queue(QueuePriority::LowPriority)]
+#[Queue(QueuePriority::HighPriority)]
 class GenerateProjectKnowledgeJob implements ShouldQueue
 {
     use Queueable;
