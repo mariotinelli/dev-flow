@@ -6,9 +6,9 @@ namespace App\Enums;
 
 enum QueuePriority: string
 {
-    case LowPriority  = 'low_priority';
-    case HighPriority = 'high_priority';
-    case LongTimeout  = 'long_timeout';
+    case LowPriority  = 'low-priority';
+    case HighPriority = 'high-priority';
+    case LongTimeout  = 'long-timeout';
 
     public static function all(): array
     {

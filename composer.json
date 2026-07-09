@@ -62,7 +62,7 @@
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-            "npx concurrently -c \"#c4b5fd,#fdba74\" \"php artisan queue:work --tries=1 --queue=high_priority,low_priority,long_timeout\" \"npm run dev\" --names='queue,vite'"
+            "npx concurrently -c \"#c4b5fd,#fdba74\" \"php artisan horizon\" \"npm run dev\" --names='queue,vite'"
         ],
         "lint": [
             "pint --parallel"
