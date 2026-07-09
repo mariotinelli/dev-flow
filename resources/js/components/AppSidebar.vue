@@ -29,6 +29,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import { index as projectAiChatIndex } from '@/routes/project/ai-chat';
 import { index as projectDocumentationsIndex } from '@/routes/project/documentations';
 import { index as projectMembersIndex } from '@/routes/project/members';
 import { index as projectRolesIndex } from '@/routes/project-settings/roles';
@@ -109,8 +110,10 @@ const mainNavGroups: NavGroup[] = [
         items: [
             {
                 title: 'Chat IA',
-                href: dashboard(),
+                href: projectAiChatIndex(),
                 icon: Bot,
+                permission: 'project.ai-chat.use',
+                permissionScope: 'project',
             },
         ],
     },

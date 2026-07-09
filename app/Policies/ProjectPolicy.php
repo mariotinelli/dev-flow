@@ -5,9 +5,11 @@ declare(strict_types = 1);
 namespace App\Policies;
 
 use App\Enums\Permissions\ProjectPermissions;
+use App\Enums\Permissions\Projects\AiChatPermissions;
 use App\Models\Project;
 use App\Models\User;
 use App\Policies\Traits\CheckIsAdmin;
+use App\Support\CurrentProject;
 
 class ProjectPolicy
 {
@@ -67,5 +69,10 @@ class ProjectPolicy
     public function forceDelete(User $user, Project $project): bool
     {
         return false;
+    }
+
+    public function useAiChat(User $user): bool
+    {
+        return app(CurrentProject::class)->hasPermission(AiChatPermissions::Use->value);
     }
 }

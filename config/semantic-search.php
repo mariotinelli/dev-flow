@@ -11,6 +11,11 @@ return [
         'dimensions' => 1536,
     ],
 
+    'retrieval' => [
+        'limit'          => (int) env('SEMANTIC_SEARCH_RETRIEVAL_LIMIT', 10),
+        'min_similarity' => (float) env('SEMANTIC_SEARCH_MIN_SIMILARITY', 0.4),
+    ],
+
     'chunking' => [
         'size'    => 1200,
         'overlap' => 200,

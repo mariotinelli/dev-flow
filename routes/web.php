@@ -2,6 +2,7 @@
 
 declare(strict_types = 1);
 
+use App\Http\Controllers\ProjectAiChat;
 use App\Http\Controllers\ProjectDocumentations;
 use App\Http\Controllers\ProjectMembers;
 use App\Http\Controllers\Projects;
@@ -52,6 +53,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::prefix('projeto')->name('project.')->middleware('project.scope')->group(function () {
+        Route::prefix('chat-ia')->name('ai-chat.')->group(function () {
+            Route::get('/', ProjectAiChat\IndexController::class)->name('index');
+            Route::post('stream', ProjectAiChat\StreamController::class)->name('stream');
+        });
+
         Route::prefix('membros')->name('members.')->group(function () {
             Route::get('/', ProjectMembers\IndexController::class)->name('index');
             Route::post('/', ProjectMembers\StoreController::class)->name('store');

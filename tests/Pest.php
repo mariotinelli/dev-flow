@@ -2,6 +2,7 @@
 
 declare(strict_types = 1);
 
+use App\Enums\Permissions\Projects\AiChatPermissions;
 use App\Enums\Permissions\Projects\DocumentPermissions;
 use App\Enums\Permissions\Projects\MemberPermissions;
 use App\Enums\Permissions\Projects\SettingPermissions;
@@ -10,6 +11,8 @@ use App\Enums\ProjectDocumentationType;
 use App\Enums\ProjectDocumentationVisibility;
 use App\Models\Project;
 use App\Models\ProjectDocumentation;
+use App\Models\ProjectKnowledgeChunk;
+use App\Models\ProjectKnowledgeSource;
 use App\Models\ProjectMember;
 use App\Models\ProjectRole;
 use App\Models\User;
@@ -130,6 +133,26 @@ function projectMemberWithDocumentPermissions(DocumentPermissions ...$permission
     return [$user, $project, $role];
 }
 
+/**
+ * @return array{0: User, 1: Project, 2: ProjectRole}
+ */
+function projectMemberWithAiChatPermission(): array
+{
+    $project = Project::factory()->create();
+    $role    = ProjectRole::factory()->for($project)->create();
+    $user    = User::factory()->create();
+
+    $role->syncPermissionNames([AiChatPermissions::Use->value]);
+
+    ProjectMember::factory()->create([
+        'project_id'      => $project->id,
+        'user_id'         => $user->id,
+        'project_role_id' => $role->id,
+    ]);
+
+    return [$user, $project, $role];
+}
+
 function createFileProjectDocumentationWithContent(
     int $userId,
     int $projectId,
@@ -179,4 +202,44 @@ function officeOpenXmlWith(string $entryName, string $xml): string
     unlink($path);
 
     return $contents ?: '';
+}
+
+/**
+ * @return array<int, float>
+ */
+function queryVector(): array
+{
+    return [1.0, ...array_fill(0, 1535, 0.0)];
+}
+
+/**
+ * @return array<int, float>
+ */
+function orthogonalVector(): array
+{
+    return [0.0, 1.0, ...array_fill(0, 1534, 0.0)];
+}
+
+/**
+ * @param  array<int, float>  $embedding
+ * @param  array<string, mixed>  $sourceMetadata
+ */
+function createKnowledgeChunk(Project $project, string $content, array $embedding, int $position, array $sourceMetadata = []): ProjectKnowledgeChunk
+{
+    $source = ProjectKnowledgeSource::query()->create([
+        'project_id'  => $project->id,
+        'source_type' => 'documentation',
+        'source_id'   => $position + 1,
+        'title'       => "Fonte {$position}",
+        'metadata'    => $sourceMetadata,
+    ]);
+
+    return ProjectKnowledgeChunk::query()->create([
+        'project_id'                  => $project->id,
+        'project_knowledge_source_id' => $source->id,
+        'content'                     => $content,
+        'embedding'                   => $embedding,
+        'position'                    => $position,
+        'metadata'                    => ['section_path' => 'Seção'],
+    ]);
 }

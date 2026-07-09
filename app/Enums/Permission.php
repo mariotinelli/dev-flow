@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace App\Enums;
 
 use App\Enums\Permissions\ProjectPermissions;
+use App\Enums\Permissions\Projects\AiChatPermissions;
 use App\Enums\Permissions\Projects\DocumentPermissions;
 use App\Enums\Permissions\Projects\MemberPermissions;
 use App\Enums\Permissions\Projects\MetricPermissions;
@@ -29,7 +30,7 @@ final class Permission
     }
 
     /**
-     * @return list<OverviewPermissions|TaskPermissions|MemberPermissions|DocumentPermissions|MetricPermissions|SettingPermissions>
+     * @return list<OverviewPermissions|TaskPermissions|MemberPermissions|DocumentPermissions|MetricPermissions|SettingPermissions|AiChatPermissions>
      */
     public static function projectCases(): array
     {
@@ -40,11 +41,12 @@ final class Permission
             ...DocumentPermissions::cases(),
             ...MetricPermissions::cases(),
             ...SettingPermissions::cases(),
+            ...AiChatPermissions::cases(),
         ];
     }
 
     /**
-     * @return list<RolePermissions|ProjectPermissions|UserPermissions|OverviewPermissions|TaskPermissions|MemberPermissions|DocumentPermissions|MetricPermissions|SettingPermissions>
+     * @return list<RolePermissions|ProjectPermissions|UserPermissions|OverviewPermissions|TaskPermissions|MemberPermissions|DocumentPermissions|MetricPermissions|SettingPermissions|AiChatPermissions>
      */
     public static function cases(): array
     {
@@ -59,7 +61,7 @@ final class Permission
      */
     public static function values(): array
     {
-        return array_map(fn (RolePermissions | ProjectPermissions | UserPermissions | OverviewPermissions | TaskPermissions | MemberPermissions | DocumentPermissions | MetricPermissions | SettingPermissions $permission): string => $permission->value, self::cases());
+        return array_map(fn (RolePermissions | ProjectPermissions | UserPermissions | OverviewPermissions | TaskPermissions | MemberPermissions | DocumentPermissions | MetricPermissions | SettingPermissions | AiChatPermissions $permission): string => $permission->value, self::cases());
     }
 
     /**
@@ -75,7 +77,7 @@ final class Permission
      */
     public static function projectValues(): array
     {
-        return array_map(fn (OverviewPermissions | TaskPermissions | MemberPermissions | DocumentPermissions | MetricPermissions | SettingPermissions $permission): string => $permission->value, self::projectCases());
+        return array_map(fn (OverviewPermissions | TaskPermissions | MemberPermissions | DocumentPermissions | MetricPermissions | SettingPermissions | AiChatPermissions $permission): string => $permission->value, self::projectCases());
     }
 
     /**
@@ -103,7 +105,7 @@ final class Permission
     }
 
     /**
-     * @param  list<RolePermissions|ProjectPermissions|UserPermissions|OverviewPermissions|TaskPermissions|MemberPermissions|DocumentPermissions|MetricPermissions|SettingPermissions>  $permissions
+     * @param  list<RolePermissions|ProjectPermissions|UserPermissions|OverviewPermissions|TaskPermissions|MemberPermissions|DocumentPermissions|MetricPermissions|SettingPermissions|AiChatPermissions>  $permissions
      * @return array<string, list<array{name: string, label: string}>>
      */
     private static function groupedOptionsFor(array $permissions): array

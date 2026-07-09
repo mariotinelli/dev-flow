@@ -72,7 +72,7 @@ function clearImage() {
             <template v-else-if="showExisting && !preview">
                 <div class="absolute inset-0 flex items-center justify-center rounded-xl bg-muted p-3">
                     <img
-                        :src="existingImageUrl"
+                        :src="existingImageUrl ?? undefined"
                         alt="Imagem existente"
                         class="max-h-full max-w-full rounded-lg object-contain"
                     />
@@ -88,7 +88,7 @@ function clearImage() {
             <template v-else>
                 <div class="absolute inset-0 flex items-center justify-center rounded-xl bg-muted p-3">
                     <img
-                        :src="preview"
+                        :src="preview ?? undefined"
                         alt="Preview da imagem"
                         class="max-h-full max-w-full rounded-lg object-contain"
                     />
